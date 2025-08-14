@@ -30,6 +30,7 @@ appUpdater = "2.7"
 [libraries]
 androidGradleBuildTools = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradleBuildTools" }
 kotlinGradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlinGradlePlugin" }
+react-native-gradle-plugin = { module = "com.facebook.react:react-native-gradle-plugin" }
 androidMaterial = { group = "com.google.android.material", name = "material", version.ref = "androidMaterial" }
 androidx-core = { group = "androidx.core", name = "core-ktx", version.ref = "androidx-core" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidx-appcompat" }
@@ -39,6 +40,8 @@ androidx-lifecycle-livedata = { group = "androidx.lifecycle", name = "lifecycle-
 androidx-lifecycle-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "androidx-lifecycle" }
 androidx-navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "androidx-navigation" }
 androidx-navigation-ui = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "androidx-navigation" }
+react-android = { module = "com.facebook.react:react-android" }
+hermes-android = { module = "com.facebook.react:hermes-android" }
 tesseract4android = { group = "cz.adaptech.tesseract4android", name = "tesseract4android", version.ref = "tesseract4android" }
 stringSimilarity = { group = "net.ricecode", name = "string-similarity", version.ref = "stringSimiliarity"}
 klaxon = { group = "com.beust", name = "klaxon", version.ref = "klaxon" }

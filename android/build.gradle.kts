@@ -9,6 +9,7 @@ buildscript {
     dependencies {
         classpath(libs.androidGradleBuildTools)
         classpath(libs.kotlinGradlePlugin)
+        classpath(libs.react.native.gradle.plugin)
     }
 }
 

@@ -19,17 +19,19 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".MainApplication"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppTheme"
-        tools:ignore="AllowBackup">
+        tools:ignore="AllowBackup"
+        android:usesCleartextTraffic="true"
 
         <!--Users will first be directed to MainActivity and then to HomeFragment.-->
         <activity
-            android:name="com.steve1316.uma_android_automation.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/Theme.AppTheme.NoActionBar">
             <intent-filter>
@@ -55,15 +57,15 @@
 
         <!--The MediaProjection service that controls taking screenshots of the screen.-->
         <service
-            android:name="com.steve1316.uma_android_automation.utils.MediaProjectionService"
+            android:name=".utils.MediaProjectionService"
             android:foregroundServiceType="mediaProjection" />
 
         <!--Bot Service that will automate the specified workflow.-->
-        <service android:name="com.steve1316.uma_android_automation.utils.BotService" />
+        <service android:name=".utils.BotService" />
 
         <!--Receiver that will send the "STOP" Intent to MediaProjection Service when the action button on the Notification is tapped.-->
         <receiver
-            android:name="com.steve1316.uma_android_automation.utils.StopServiceReceiver"
+            android:name=".utils.StopServiceReceiver"
             android:enabled="true"
             android:process=":remote" />
     </application>

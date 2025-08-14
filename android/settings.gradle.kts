@@ -1,3 +1,8 @@
+// Configures the React Native Gradle Settings plugin used for autolinking
+pluginManagement { includeBuild("../node_modules/@react-native/gradle-plugin") }
+extensions.configure<com.facebook.react.ReactSettingsExtension> { autolinkLibrariesFromCommand() }
+includeBuild("../node_modules/@react-native/gradle-plugin")
+
 include(":app")
 rootProject.name = "UmaAndroidAutomation"
 
@@ -7,4 +12,5 @@ rootProject.name = "UmaAndroidAutomation"
 plugins {
     // Settings plugins cannot be declared in version catalog.
     id("org.gradle.toolchains.foojay-resolver-convention").version("1.0.0")
+    id("com.facebook.react.settings")
 }

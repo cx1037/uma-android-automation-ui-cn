@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("kotlin-android")
+    id("com.facebook.react")
 }
 
 android {
@@ -82,8 +83,11 @@ android {
 }
 
 dependencies {
-
     implementation(libs.bundles.androidApp)
+
+    // React Native.
+    implementation(libs.react.android)
+    implementation(libs.hermes.android)
 
     // OpenCV Android 4.12.0 for image processing.
     implementation(libs.opencv)
@@ -102,6 +106,11 @@ dependencies {
 
     // AppUpdater for notifying users when there is a new update available.
     implementation(libs.appUpdater)
+}
+
+react {
+    // Needed to enable Autolinking - https://github.com/react-native-community/cli/blob/master/docs/autolinking.md
+    autolinkLibrariesWithApp()
 }
 
 kotlin {
