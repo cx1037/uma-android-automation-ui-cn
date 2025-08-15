@@ -37,6 +37,7 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
+            android:exported="true"
             android:theme="@style/Theme.AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -48,6 +49,7 @@
         <!--The Accessibility Service that controls gestures on the screen.-->
         <service
             android:name=".utils.MyAccessibilityService"
+            android:exported="false"
             android:foregroundServiceType="mediaProjection"
             android:label="@string/accessibility_service_label"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
