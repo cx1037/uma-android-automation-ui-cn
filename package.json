@@ -5,6 +5,8 @@
     "scripts": {
         "start": "react-native start",
         "android": "react-native run-android",
+        "build": "cd android && ./gradlew assembleDebug",
+        "build:clean": "cd android && ./gradlew clean && ./gradlew assembleDebug",
         "lint": "eslint .",
         "test": "jest",
         "update": "yarn install && yarn upgrade-interactive --latest"
