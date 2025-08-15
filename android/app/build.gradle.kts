@@ -118,3 +118,68 @@ kotlin {
         languageVersion.set(JavaLanguageVersion.of(libs.versions.app.jvm.toolchain.get().toInt()))
     }
 }
+
+// ============================================================================
+// React Native Bundle Configuration and Build Tasks
+// ============================================================================
+
+// Configure React Native to bundle JavaScript code in both debug and release builds.
+project.extra["react"] = mapOf(
+    "bundleInDebug" to true,
+    "bundleInRelease" to true,
+)
+
+// Configure the source sets to include React Native bundle assets in the APK.
+// This ensures the JavaScript bundle and any generated assets are properly packaged.
+android.sourceSets {
+    getByName("main") {
+        assets.srcDirs("src/main/assets", "build/generated/assets/react")
+    }
+}
+
+// Clean task to remove old React Native bundles and generated assets.
+// This prevents stale bundles from being included in new builds.
+tasks.register("cleanBundle", Delete::class.java) {
+    delete("${projectDir}/src/main/assets/index.android.bundle")
+    delete("${projectDir}/src/main/assets/index.android.bundle.meta")
+    delete("${projectDir}/src/main/res/drawable-*")
+    delete("${projectDir}/src/main/res/raw")
+}
+
+// Make the main clean task depend on cleanBundle to ensure React Native assets are cleaned.
+tasks.named("clean") {
+    dependsOn("cleanBundle")
+}
+
+// Generate the React Native JavaScript bundle before building the APK.
+// This task runs the generate-bundle.js script to create the JavaScript bundle.
+tasks.register("generateBundle", Exec::class) {
+    workingDir = projectDir.parentFile
+    commandLine("node", "generate-bundle.js")
+    
+    // Only run if the bundle generation script exists.
+    onlyIf {
+        file("${projectDir.parentFile}/generate-bundle.js").exists()
+    }
+    
+    // Handle case where the bundle generation script doesn't exist.
+    doFirst {
+        if (!file("${projectDir.parentFile}/generate-bundle.js").exists()) {
+            println("Bundle generation script not found, skipping...")
+            enabled = false
+        }
+    }
+}
+
+// Ensure the React Native bundle is generated before the preBuild task runs.
+// This guarantees the bundle is available for the build process.
+tasks.named("preBuild") {
+    dependsOn("generateBundle")
+}
+
+// Make bundle generation run before any application variant is assembled.
+// This ensures the JavaScript bundle is always up-to-date in the final APK.
+android.applicationVariants.all {
+    val variant = this
+    variant.assembleProvider.get().dependsOn("generateBundle")
+}
