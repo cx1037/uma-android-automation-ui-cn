@@ -88,24 +88,11 @@ Make sure to use 1.0 scaling, as well as 80% confidence for best results in 1080
 
 1. Download and extract the project repository.
 2. Go to `https://opencv.org/releases/` and download OpenCV (make sure to download the Android version of OpenCV) and extract it. As of 2025-07-20, the OpenCV version used in this project is 4.12.0.
-3. Create a new folder inside the root of the project repository named `opencv` and copy the extracted files in `/OpenCV-android-sdk/sdk/` from Step 2 into it.
-4. Open the project repository in `Android Studio`.
-5. Open up the `opencv` module's `build.gradle`. At the end of the file, paste the following JVM Toolchain block:
-
-```kotlin
-// Explicitly set Kotlin JVM toolchain to Java 17 to match the OpenCV module's Java target.
-// Without this, Kotlin defaults to JVM 21 (especially with Kotlin 2.x), which causes a build failure:
-// "Inconsistent JVM Target Compatibility Between Java and Kotlin Tasks".
-// See: https://kotl.in/gradle/jvm/toolchain for details.
-kotlin {
-    jvmToolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
-    }
-}
-```
-
-6. You can now build and run on your Android Device or build your own .apk file.
-7. You can set `universalApk` to `true` in the app's `build.gradle` to build a one-for-all .apk file or adjust the `include 'arm64-v8a'` to customize which ABI to build the .apk file for.
+3. Create a new folder inside the `/android` folder named `opencv` and copy the extracted files in `/OpenCV-android-sdk/sdk/` from Step 2 into it.
+4. Open up the root of the folder in your preferred IDE/terminal and execute `yarn install` to install the React Native dependencies from the `package.json`.
+5. Your dev environment should now be set up. You can run the app on your connected Android device/emulator to have hot-reload changes for the frontend via the Metro HTTP server with `yarn android`. You can also now build the APK with `yarn build` or `yarn build:clean` if you encounter problems.
+6. You can set `universalApk` to `true` in the app's `build.gradle` to build a one-for-all .apk file or adjust the `include 'arm64-v8a'` to customize which ABI to build the .apk file for.
+7. Note: New to React Native, you should not run the app directly from Android Studio. Have the Metro bundler run the app for you.
 
 # Technologies Used
 
@@ -117,3 +104,4 @@ kotlin {
 6. [Tesseract4Android - For performing OCR on the screen](https://github.com/adaptech-cz/Tesseract4Android)
 7. [string-similarity - For comparing string similarities during text detection](https://github.com/rrice/java-string-similarity)
 8. [AppUpdater - For automatically checking and notifying the user for new app updates](https://github.com/javiersantos/AppUpdater)
+9. [React Native - Used as the frontend](https://reactnative.dev/)
