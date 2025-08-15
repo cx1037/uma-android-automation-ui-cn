@@ -13,6 +13,12 @@ buildscript {
     }
 }
 
+// This is required for the CMAKE/NDK building of certain native modules for React Native (like react-native-screens).
+// Just setting it only in the app's build.gradle would not resolve the issue because that controls the Java/Kotlin compilation of the app itself.
+extra["minSdkVersion"] = libs.versions.app.minSdk.get().toInt()
+extra["targetSdkVersion"] = libs.versions.app.targetSdk.get().toInt()
+extra["compileSdkVersion"] = libs.versions.app.compileSdk.get().toInt()
+
 allprojects {
     repositories {
         google()
@@ -23,7 +29,6 @@ allprojects {
         }
     }
 }
-
 
 tasks.register("clean", Delete::class.java) {
     delete(layout.buildDirectory)
