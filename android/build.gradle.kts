@@ -19,17 +19,6 @@ extra["minSdkVersion"] = libs.versions.app.minSdk.get().toInt()
 extra["targetSdkVersion"] = libs.versions.app.targetSdk.get().toInt()
 extra["compileSdkVersion"] = libs.versions.app.compileSdk.get().toInt()
 
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-
-        maven {
-            url = URI("https://jitpack.io")
-        }
-    }
-}
-
 tasks.register("clean", Delete::class.java) {
     delete(layout.buildDirectory)
 }

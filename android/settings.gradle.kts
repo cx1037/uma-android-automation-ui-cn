@@ -6,6 +6,17 @@ includeBuild("../node_modules/@react-native/gradle-plugin")
 include(":app")
 rootProject.name = "UmaAndroidAutomation"
 
+// Centralized repository management.
+@Suppress("UnstableApiUsage")
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+    repositories {
+        google()
+        mavenCentral()
+        maven { url = uri("https://jitpack.io") }
+    }
+}
+
 // Automatic provisioning of a compatible JVM toolchain.
 // Convention plugin fetches a jdk into the gradle home directory
 // if it doesn't find any compatible ones in its canonical OS search paths.
