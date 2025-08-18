@@ -48,7 +48,7 @@ android {
 
                 // Auto-generate the file name.
                 // To access the output file name, the apk variants must be explicitly cast to,
-                // as in the previous groovy version (where they were implicitly cast)
+                // as in the previous groovy version (where they were implicitly cast).
                 outputs.asSequence()
                     .filter {
                         it is com.android.build.gradle.internal.api.ApkVariantOutputImpl
@@ -83,29 +83,12 @@ android {
 }
 
 dependencies {
-    implementation(libs.bundles.androidApp)
+    // Automation Library
+    implementation(libs.android.cv.automation.library)
 
-    // React Native.
+    // React Native
     implementation(libs.react.android)
     implementation(libs.hermes.android)
-
-    // OpenCV Android 4.12.0 for image processing.
-    implementation(libs.opencv)
-
-    // Tesseract4Android for OCR text recognition.
-    implementation(libs.tesseract4android)
-
-    // string-similarity to compare the string from OCR to the strings in data.
-    implementation(libs.stringSimilarity)
-
-    // Klaxon to parse JSON data files.
-    implementation(libs.klaxon)
-
-    // Google's Firebase Machine Learning OCR for Text Detection.
-    implementation(libs.mlkitTextRecognition)
-
-    // AppUpdater for notifying users when there is a new update available.
-    implementation(libs.appUpdater)
 }
 
 react {
