@@ -16,11 +16,11 @@ class AoHaru(game: Game) : Campaign(game) {
 
 	override fun handleRaceEvents(): Boolean {
 		// Check for Ao Haru specific race screens first.
-		if (aoHaruRaceFirstTime && game.imageUtils.confirmLocation("aoharu_set_initial_team", tries = 1)) {
+		if (aoHaruRaceFirstTime && game.imageUtils.findImage("aoharu_set_initial_team_header", tries = 1).first != null) {
 			game.findAndTapImage("race_accept_trophy")
 			handleRaceEventsAoHaru()
 			return true
-		} else if (game.imageUtils.confirmLocation("aoharu_race", tries = 1)) {
+		} else if (game.imageUtils.findImage("aoharu_race_header", tries = 1).first != null) {
 			handleRaceEventsAoHaru()
 			return true
 		}
@@ -38,7 +38,7 @@ class AoHaru(game: Game) : Campaign(game) {
 	 */
 	private fun handleTrainingEventAoHaru() {
 		if (tutorialChances > 0) {
-			if (game.imageUtils.confirmLocation("aoharu_tutorial", tries = 2)) {
+			if (game.imageUtils.findImage("aoharu_tutorial_header", tries = 2).first != null) {
 				game.printToLog("\n[AOHARU] Detected tutorial for Ao Haru. Closing it now...", tag = aoHaruTag)
 				
 				// If the tutorial is detected, select the second option to close it.

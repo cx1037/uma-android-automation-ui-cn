@@ -525,7 +525,7 @@ class Game(val myContext: Context) {
 			)) {
 			if (findAndTapImage("recover_injury", tries = 1, region = imageUtils.regionBottomHalf)) {
 				wait(0.3)
-				if (imageUtils.confirmLocation("recover_injury", tries = 1, region = imageUtils.regionMiddle)) {
+				if (imageUtils.findImage("recover_injury_header", tries = 1, region = imageUtils.regionMiddle).first != null) {
 					printToLog("\n[INFO] Injury detected and attempted to heal.")
 					true
 				} else {
@@ -617,7 +617,7 @@ class Game(val myContext: Context) {
 
 		if (speedStatTextLocation != null) {
 			// Perform a percentage check of Speed training to see if the bot has enough energy to do training. As a result, Speed training will be the one selected for the rest of the algorithm.
-			if (!imageUtils.confirmLocation("speed_training", tries = 1, region = imageUtils.regionTopHalf, suppressError = true)) {
+			if (imageUtils.findImage("speed_training_header", tries = 1, region = imageUtils.regionTopHalf, suppressError = true).first != null) {
 				findAndTapImage("training_speed", region = imageUtils.regionBottomHalf)
 				wait(0.5)
 			}
