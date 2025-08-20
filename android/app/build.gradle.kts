@@ -80,6 +80,12 @@ android {
             isUniversalApk = false
         }
     }
+
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
 }
 
 dependencies {
