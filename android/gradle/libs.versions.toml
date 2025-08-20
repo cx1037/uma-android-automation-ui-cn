@@ -13,7 +13,7 @@ app-jvm-toolchain = "17"
 
 androidGradleBuildTools = "8.12.1"
 kotlinGradlePlugin = "2.2.0"
-androidCvAutomationLibrary = "2.0.2"
+androidCvAutomationLibrary = "2.0.3"
 
 [libraries]
 androidGradleBuildTools = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradleBuildTools" }
