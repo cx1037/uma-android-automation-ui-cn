@@ -7,11 +7,12 @@ import android.util.Log
 import androidx.preference.PreferenceManager
 import com.steve1316.uma_android_automation.MainActivity
 import com.steve1316.uma_android_automation.bot.campaigns.AoHaru
-import com.steve1316.uma_android_automation.utils.BotService
-import com.steve1316.uma_android_automation.utils.ImageUtils
-import com.steve1316.uma_android_automation.utils.MediaProjectionService
-import com.steve1316.uma_android_automation.utils.MessageLog
-import com.steve1316.uma_android_automation.utils.MyAccessibilityService
+import com.steve1316.uma_android_automation.utils.CustomImageUtils
+import com.steve1316.automation_library.utils.ImageUtils.ScaleConfidenceResult
+import com.steve1316.automation_library.utils.BotService
+import com.steve1316.automation_library.data.SharedData
+import com.steve1316.automation_library.utils.MessageLog
+import com.steve1316.automation_library.utils.MyAccessibilityService
 import com.steve1316.uma_android_automation.utils.SettingsPrinter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -28,7 +29,7 @@ class Game(val myContext: Context) {
 	private val tag: String = "[${MainActivity.loggerTag}]Game"
 	var notificationMessage: String = ""
 	private val decimalFormat = DecimalFormat("#.##")
-	val imageUtils: ImageUtils = ImageUtils(myContext, this)
+	val imageUtils: CustomImageUtils = CustomImageUtils(myContext, this)
 	val gestureUtils: MyAccessibilityService = MyAccessibilityService.getInstance()
 	private val textDetection: TextDetection = TextDetection(this, imageUtils)
 
@@ -36,7 +37,7 @@ class Game(val myContext: Context) {
 	////////////////////////////////////////////////////////////////////
 	// SharedPreferences
 	private var sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(myContext)
-	private val campaign: String = sharedPreferences.getString("campaign", "")!!
+	val campaign: String = sharedPreferences.getString("campaign", "")!!
 	private val debugMode: Boolean = sharedPreferences.getBoolean("debugMode", false)
 
 	////////////////////////////////////////////////////////////////////
@@ -103,7 +104,7 @@ class Game(val myContext: Context) {
 		val name: String,
 		val statGains: IntArray,
 		val failureChance: Int,
-		val relationshipBars: ArrayList<ImageUtils.BarFillResult>
+		val relationshipBars: ArrayList<CustomImageUtils.BarFillResult>
 	) {
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
@@ -685,7 +686,7 @@ class Game(val myContext: Context) {
 					// Variables to store results from parallel threads.
 					var statGains: IntArray = intArrayOf()
 					var failureChance: Int = -1
-					var relationshipBars: ArrayList<ImageUtils.BarFillResult> = arrayListOf()
+					var relationshipBars: ArrayList<CustomImageUtils.BarFillResult> = arrayListOf()
 
 					// Get the Points and source Bitmap beforehand before starting the threads to make them safe for parallel processing.
 					val (skillPointsLocation, sourceBitmap) = imageUtils.findImage("skill_points", tries = 1, region = imageUtils.regionMiddle)
@@ -986,10 +987,10 @@ class Game(val myContext: Context) {
 			val skillHintLocations = imageUtils.findAll(
 				"stat_skill_hint",
 				region = intArrayOf(
-					MediaProjectionService.displayWidth - (MediaProjectionService.displayWidth / 3),
+					SharedData.displayWidth - (SharedData.displayWidth / 3),
 					0,
-					(MediaProjectionService.displayWidth / 3),
-					MediaProjectionService.displayHeight - (MediaProjectionService.displayHeight / 3)
+					(SharedData.displayWidth / 3),
+					SharedData.displayHeight - (SharedData.displayHeight / 3)
 				)
 			)
 			score += 100.0 * skillHintLocations.size
@@ -1454,7 +1455,7 @@ class Game(val myContext: Context) {
 				)
 			} else {
 				val (sourceBitmap, templateBitmap) = imageUtils.getBitmaps("race_extra_double_prediction")
-				val listOfRaces: ArrayList<ImageUtils.RaceDetails> = arrayListOf()
+				val listOfRaces: ArrayList<CustomImageUtils.RaceDetails> = arrayListOf()
 				while (count < maxCount) {
 					// Save the location of the selected extra race.
 					val selectedExtraRace = imageUtils.findImage("race_extra_selection", region = imageUtils.regionBottomHalf).first
@@ -1465,7 +1466,7 @@ class Game(val myContext: Context) {
 					extraRaceLocation.add(selectedExtraRace)
 
 					// Determine its fan gain and save it.
-					val raceDetails: ImageUtils.RaceDetails = imageUtils.determineExtraRaceFans(extraRaceLocation[count], sourceBitmap, templateBitmap!!, forceRacing = enableForceRacing)
+					val raceDetails: CustomImageUtils.RaceDetails = imageUtils.determineExtraRaceFans(extraRaceLocation[count], sourceBitmap, templateBitmap!!, forceRacing = enableForceRacing)
 					listOfRaces.add(raceDetails)
 					if (count == 0 && raceDetails.fans == -1) {
 						// If the fans were unable to be fetched or the race does not have double predictions for the first attempt, skip racing altogether.
@@ -1966,8 +1967,8 @@ class Game(val myContext: Context) {
 		}
 
 		// Print device and version information.
-		printToLog("[INFO] Device Information: ${MediaProjectionService.displayWidth}x${MediaProjectionService.displayHeight}, DPI ${MediaProjectionService.displayDPI}")
-		if (MediaProjectionService.displayWidth != 1080) printToLog("[WARNING] ⚠️ Bot performance will be severely degraded since display width is not 1080p unless an appropriate scale is set for your device.")
+		printToLog("[INFO] Device Information: ${SharedData.displayWidth}x${SharedData.displayHeight}, DPI ${SharedData.displayDPI}")
+		if (SharedData.displayWidth != 1080) printToLog("[WARNING] ⚠️ Bot performance will be severely degraded since display width is not 1080p unless an appropriate scale is set for your device.")
 		if (debugMode) printToLog("[WARNING] ⚠️ Debug Mode is enabled. All bot operations will be significantly slower as a result.")
 		if (sharedPreferences.getInt("customScale", 100).toDouble() / 100.0 != 1.0) printToLog("[INFO] Manual scale has been set to ${sharedPreferences.getInt("customScale", 100).toDouble() / 100.0}")
 		printToLog("[WARNING] ⚠️ Note that certain Android notification styles (like banners) are big enough that they cover the area that contains the Mood which will interfere with mood recovery logic in the beginning.")

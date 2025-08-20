@@ -6,11 +6,11 @@ import androidx.preference.PreferenceManager
 import com.steve1316.uma_android_automation.MainActivity
 import com.steve1316.uma_android_automation.data.CharacterData
 import com.steve1316.uma_android_automation.data.SupportData
-import com.steve1316.uma_android_automation.utils.ImageUtils
+import com.steve1316.uma_android_automation.utils.CustomImageUtils
 import net.ricecode.similarity.JaroWinklerStrategy
 import net.ricecode.similarity.StringSimilarityServiceImpl
 
-class TextDetection(private val game: Game, private val imageUtils: ImageUtils) {
+class TextDetection(private val game: Game, private val imageUtils: CustomImageUtils) {
 	private val tag: String = "[${MainActivity.loggerTag}]TextDetection"
 	
 	private var sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(game.myContext)
