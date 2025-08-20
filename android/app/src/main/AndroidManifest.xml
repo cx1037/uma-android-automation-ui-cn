@@ -47,7 +47,7 @@
 
         <!--The Accessibility Service that controls gestures on the screen.-->
         <service
-            android:name=".utils.MyAccessibilityService"
+            android:name="com.steve1316.automation_library.utils.MyAccessibilityService"
             android:exported="false"
             android:foregroundServiceType="mediaProjection"
             android:label="@string/accessibility_service_label"
@@ -62,15 +62,15 @@
 
         <!--The MediaProjection service that controls taking screenshots of the screen.-->
         <service
-            android:name=".utils.MediaProjectionService"
+            android:name="com.steve1316.automation_library.utils.MediaProjectionService"
             android:foregroundServiceType="mediaProjection" />
 
         <!--Bot Service that will automate the specified workflow.-->
-        <service android:name=".utils.BotService" />
+        <service android:name="com.steve1316.automation_library.utils.BotService" />
 
         <!--Receiver that will send the "STOP" Intent to MediaProjection Service when the action button on the Notification is tapped.-->
         <receiver
-            android:name=".utils.StopServiceReceiver"
+            android:name="com.steve1316.automation_library.utils.StopServiceReceiver"
             android:enabled="true"
             android:process=":remote" />
     </application>
