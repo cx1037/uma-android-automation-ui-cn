@@ -9,7 +9,9 @@ import androidx.preference.PreferenceManager
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
-import com.googlecode.tesseract.android.TessBaseAPI
+import com.steve1316.automation_library.utils.BotService
+import com.steve1316.automation_library.utils.ImageUtils
+import com.steve1316.automation_library.utils.MessageLog
 import com.steve1316.uma_android_automation.MainActivity
 import com.steve1316.uma_android_automation.bot.Game
 import org.opencv.android.Utils
@@ -20,7 +22,6 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.lang.Integer.max
-import java.text.DecimalFormat
 import androidx.core.graphics.scale
 import androidx.core.graphics.get
 import androidx.core.graphics.createBitmap
@@ -35,101 +36,21 @@ import kotlin.text.replace
 /**
  * Utility functions for image processing via CV like OpenCV.
  */
-class ImageUtils(context: Context, private val game: Game) {
+class CustomImageUtils(context: Context, private val game: Game) : ImageUtils(context) {
 	private val tag: String = "[${MainActivity.loggerTag}]ImageUtils"
-	private var myContext = context
-	private val matchMethod: Int = Imgproc.TM_CCOEFF_NORMED
-	private val decimalFormat = DecimalFormat("#.###")
-	private val textRecognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
-	private val tessBaseAPI: TessBaseAPI
-	private val tesseractLanguages = arrayListOf("eng")
 
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
 	// SharedPreferences
 	private var sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-	private val campaign: String = sharedPreferences.getString("campaign", "")!!
-	private var confidence: Double = sharedPreferences.getInt("confidence", 80).toDouble() / 100.0
-	private var customScale: Double = sharedPreferences.getInt("customScale", 100).toDouble() / 100.0
-	private val debugMode: Boolean = sharedPreferences.getBoolean("debugMode", false)
+	private val threshold = sharedPreferences.getInt("threshold", 230)
 
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
-	// Device configuration
-	private val displayWidth: Int = MediaProjectionService.displayWidth
-	private val displayHeight: Int = MediaProjectionService.displayHeight
-	private val isLowerEnd: Boolean = (displayWidth == 720)
-	private val isDefault: Boolean = (displayWidth == 1080)
-	val isTablet: Boolean = (displayWidth == 1600 && displayHeight == 2560) || (displayWidth == 2560 && displayHeight == 1600) // Galaxy Tab S7 1600x2560 Portrait Mode
-	private val isLandscape: Boolean = (displayWidth == 2560 && displayHeight == 1600) // Galaxy Tab S7 1600x2560 Landscape Mode
-	private val isSplitScreen: Boolean = false // Uma Musume Pretty Derby is only playable in Portrait mode.
-
-	// Scales
-	private val lowerEndScales: MutableList<Double> = generateSequence(0.50) { it + 0.01 }
-		.takeWhile { it <= 0.70 }
-		.toMutableList()
-
-	private val middleEndScales: MutableList<Double> = generateSequence(0.50) { it + 0.01 }
-		.takeWhile { it <= 3.00 }
-		.toMutableList()
-
-	private val tabletSplitPortraitScales: MutableList<Double> = generateSequence(0.50) { it + 0.01 }
-		.takeWhile { it <= 1.00 }
-		.toMutableList()
-
-	private val tabletSplitLandscapeScales: MutableList<Double> = generateSequence(0.50) { it + 0.01 }
-		.takeWhile { it <= 1.00 }
-		.toMutableList()
-
-	private val tabletPortraitScales: MutableList<Double> = generateSequence(1.00) { it + 0.01 }
-		.takeWhile { it <= 2.00 }
-		.toMutableList()
-
-	// TODO: Separate tablet landscape scale to non-splitscreen and splitscreen scales.
-
-	// Define template matching regions of the screen.
-	val regionTopHalf: IntArray = intArrayOf(0, 0, displayWidth, displayHeight / 2)
-	val regionBottomHalf: IntArray = intArrayOf(0, displayHeight / 2, displayWidth, displayHeight / 2)
-	val regionMiddle: IntArray = intArrayOf(0, displayHeight / 4, displayWidth, displayHeight / 2)
-
-	////////////////////////////////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////
-
-	companion object {
-		private var matchFilePath: String = ""
-
-		/**
-		 * Saves the file path to the saved match image file for debugging purposes.
-		 *
-		 * @param filePath File path to where to store the image containing the location of where the match was found.
-		 */
-		private fun updateMatchFilePath(filePath: String) {
-			matchFilePath = filePath
-		}
-	}
-
-	init {
-		// Set the file path to the /files/temp/ folder.
-		val matchFilePath: String = myContext.getExternalFilesDir(null)?.absolutePath + "/temp"
-		updateMatchFilePath(matchFilePath)
-
-		// Initialize Tesseract with the traineddata model.
-		initTesseract()
-		tessBaseAPI = TessBaseAPI()
-
-		// Start up Tesseract.
-		tessBaseAPI.init(myContext.getExternalFilesDir(null)?.absolutePath + "/tesseract/", "eng")
-		game.printToLog("[INFO] Training file loaded.\n", tag = tag)
-	}
 
 	data class RaceDetails (
 		val fans: Int,
 		val hasDoublePredictions: Boolean
-	)
-
-	data class ScaleConfidenceResult(
-		val scale: Double,
-		val confidence: Double
 	)
 
 	data class BarFillResult(
@@ -142,710 +63,6 @@ class ImageUtils(context: Context, private val game: Game) {
 	////////////////////////////////////////////////////////////////////
 
 	/**
-	 * Starts a test to determine what scales are working on this device by looping through some template images.
-	 *
-	 * @return A mapping of template image names used to test and their lists of working scales.
-	 */
-	fun startTemplateMatchingTest(): MutableMap<String, MutableList<ScaleConfidenceResult>> {
-		val results = mutableMapOf<String, MutableList<ScaleConfidenceResult>>(
-			"energy" to mutableListOf(),
-			"tazuna" to mutableListOf(),
-			"skill_points" to mutableListOf()
-		)
-
-		val defaultConfidence = 0.8
-		val testScaleDecimalFormat = DecimalFormat("#.##")
-		val testConfidenceDecimalFormat = DecimalFormat("#.##")
-
-		for (key in results.keys) {
-			val (sourceBitmap, templateBitmap) = getBitmaps(key)
-
-			// First, try the default values of 1.0 for scale and 0.8 for confidence.
-			val (success, _) = match(sourceBitmap, templateBitmap!!, key, useSingleScale = true, customConfidence = defaultConfidence, testScale = 1.0)
-			if (success) {
-				game.printToLog("[TEST] Initial test for $key succeeded at the default values.", tag = tag)
-				results[key]?.add(ScaleConfidenceResult(1.0, defaultConfidence))
-				continue // If it works, skip to the next template.
-			}
-
-			// If not, try all scale/confidence combinations.
-			val scalesToTest = mutableListOf<Double>()
-			var scale = 0.5
-			while (scale <= 3.0) {
-				scalesToTest.add(testScaleDecimalFormat.format(scale).toDouble())
-				scale += 0.1
-			}
-
-			for (testScale in scalesToTest) {
-				var confidence = 0.6
-				while (confidence <= 1.0) {
-					val formattedConfidence = testConfidenceDecimalFormat.format(confidence).toDouble()
-					val (testSuccess, _) = match(sourceBitmap, templateBitmap, key, useSingleScale = true, customConfidence = formattedConfidence, testScale = testScale)
-					if (testSuccess) {
-						game.printToLog("[TEST] Test for $key succeeded at scale $testScale and confidence $formattedConfidence.", tag = tag)
-						results[key]?.add(ScaleConfidenceResult(testScale, formattedConfidence))
-					}
-					confidence += 0.1
-				}
-			}
-		}
-
-		return results
-	}
-
-	////////////////////////////////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////
-
-	/**
-	 * Match between the source Bitmap from /files/temp/ and the template Bitmap from the assets folder.
-	 *
-	 * @param sourceBitmap Bitmap from the /files/temp/ folder.
-	 * @param templateBitmap Bitmap from the assets folder.
-	 * @param templateName Name of the template image to use in debugging log messages.
-	 * @param region Specify the region consisting of (x, y, width, height) of the source screenshot to template match. Defaults to (0, 0, 0, 0) which is equivalent to searching the full image.
-	 * @param useSingleScale Whether to use only the single custom scale or to use a range based off of it.
-	 * @param customConfidence Specify a custom confidence. Defaults to the confidence set in the app's settings.
-	 * @param testScale Scale used by testing. Defaults to 0.0 which will fallback to the other scale conditions.
-	 * @return Pair of (success: Boolean, location: Point?) where success indicates if a match was found and location contains the match coordinates if found.
-	 */
-	private fun match(sourceBitmap: Bitmap, templateBitmap: Bitmap, templateName: String, region: IntArray = intArrayOf(0, 0, 0, 0), useSingleScale: Boolean = false, customConfidence: Double = 0.0, testScale: Double = 0.0): Pair<Boolean, Point?> {
-		// If a custom region was specified, crop the source screenshot.
-		val srcBitmap = if (!region.contentEquals(intArrayOf(0, 0, 0, 0))) {
-			// Validate region bounds to prevent IllegalArgumentException with creating a crop area that goes beyond the source Bitmap.
-			val x = max(0, region[0].coerceAtMost(sourceBitmap.width))
-			val y = max(0, region[1].coerceAtMost(sourceBitmap.height))
-			val width = region[2].coerceAtMost(sourceBitmap.width - x)
-			val height = region[3].coerceAtMost(sourceBitmap.height - y)
-
-			createSafeBitmap(sourceBitmap, x, y, width, height, "match region crop") ?: sourceBitmap
-		} else {
-			sourceBitmap
-		}
-
-		val setConfidence: Double = if (templateName == "training_rainbow") {
-			game.printToLog("[INFO] For detection of rainbow training, confidence will be forcibly set to 0.9 to avoid false positives.", tag = tag)
-			0.9
-		} else if (customConfidence == 0.0) {
-			confidence
-		} else {
-			customConfidence
-		}
-
-		// Scale images if the device is not 1080p which is supported by default.
-		val scales: MutableList<Double> = when {
-			testScale != 0.0 -> {
-				mutableListOf(testScale)
-			}
-			customScale != 1.0 && !useSingleScale -> {
-				mutableListOf(customScale - 0.02, customScale - 0.01, customScale, customScale + 0.01, customScale + 0.02, customScale + 0.03, customScale + 0.04)
-			}
-			customScale != 1.0 && useSingleScale -> {
-				mutableListOf(customScale)
-			}
-			isLowerEnd -> {
-				lowerEndScales.toMutableList()
-			}
-			!isLowerEnd && !isDefault && !isTablet -> {
-				middleEndScales.toMutableList()
-			}
-			isTablet && isSplitScreen && isLandscape -> {
-				tabletSplitLandscapeScales.toMutableList()
-			}
-			isTablet && isSplitScreen && !isLandscape -> {
-				tabletSplitPortraitScales.toMutableList()
-			}
-			isTablet && !isSplitScreen && !isLandscape -> {
-				tabletPortraitScales.toMutableList()
-			}
-			else -> {
-				mutableListOf(1.0)
-			}
-		}
-
-		while (scales.isNotEmpty()) {
-			val newScale: Double = decimalFormat.format(scales.removeAt(0)).toDouble()
-
-			val tmp: Bitmap = if (newScale != 1.0) {
-				templateBitmap.scale((templateBitmap.width * newScale).toInt(), (templateBitmap.height * newScale).toInt())
-			} else {
-				templateBitmap
-			}
-
-			// Create the Mats of both source and template images.
-			val sourceMat = Mat()
-			val templateMat = Mat()
-			Utils.bitmapToMat(srcBitmap, sourceMat)
-			Utils.bitmapToMat(tmp, templateMat)
-
-			// Clamp template dimensions to source dimensions if template is too large.
-			val clampedTemplateMat = if (templateMat.cols() > sourceMat.cols() || templateMat.rows() > sourceMat.rows()) {
-				Log.d(tag, "Image sizes for match assertion failed - sourceMat: ${sourceMat.size()}, templateMat: ${templateMat.size()}")
-				// Create a new Mat with clamped dimensions.
-				val clampedWidth = minOf(templateMat.cols(), sourceMat.cols())
-				val clampedHeight = minOf(templateMat.rows(), sourceMat.rows())
-				Mat(templateMat, Rect(0, 0, clampedWidth, clampedHeight))
-			} else {
-				templateMat
-			}
-
-			// Make the Mats grayscale for the source and the template.
-			Imgproc.cvtColor(sourceMat, sourceMat, Imgproc.COLOR_BGR2GRAY)
-			Imgproc.cvtColor(clampedTemplateMat, clampedTemplateMat, Imgproc.COLOR_BGR2GRAY)
-
-			// Create the result matrix.
-			val resultColumns: Int = sourceMat.cols() - clampedTemplateMat.cols() + 1
-			val resultRows: Int = sourceMat.rows() - clampedTemplateMat.rows() + 1
-			val resultMat = Mat(resultRows, resultColumns, CvType.CV_32FC1)
-
-			// Now perform the matching and localize the result.
-			Imgproc.matchTemplate(sourceMat, clampedTemplateMat, resultMat, matchMethod)
-			val mmr: Core.MinMaxLocResult = Core.minMaxLoc(resultMat)
-
-			var matchLocation = Point()
-			var matchCheck = false
-
-			// Format minVal or maxVal.
-			val minVal: Double = decimalFormat.format(mmr.minVal).toDouble()
-			val maxVal: Double = decimalFormat.format(mmr.maxVal).toDouble()
-
-			// Depending on which matching method was used, the algorithms determine which location was the best.
-			if ((matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= (1.0 - setConfidence)) {
-				matchLocation = mmr.minLoc
-				matchCheck = true
-				if (debugMode) {
-					game.printToLog("[DEBUG] Match found for \"$templateName\" with $minVal <= ${1.0 - setConfidence} at Point $matchLocation using scale: $newScale.", tag = tag)
-				}
-			} else if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= setConfidence) {
-				matchLocation = mmr.maxLoc
-				matchCheck = true
-				if (debugMode) {
-					game.printToLog("[DEBUG] Match found for \"$templateName\" with $maxVal >= $setConfidence at Point $matchLocation using scale: $newScale.", tag = tag)
-				}
-			} else {
-				if (debugMode) {
-					if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED)) {
-						game.printToLog("[DEBUG] Match not found for \"$templateName\" with $maxVal not >= $setConfidence at Point ${mmr.maxLoc} using scale $newScale.", tag = tag)
-					} else {
-						game.printToLog("[DEBUG] Match not found for \"$templateName\" with $minVal not <= ${1.0 - setConfidence} at Point ${mmr.minLoc} using scale $newScale.", tag = tag)
-					}
-				}
-			}
-
-			if (matchCheck) {
-				if (debugMode && matchFilePath != "") {
-					// Draw a rectangle around the supposed best matching location and then save the match into a file in /files/temp/ directory. This is for debugging purposes to see if this
-					// algorithm found the match accurately or not.
-					Imgproc.rectangle(sourceMat, matchLocation, Point(matchLocation.x + templateMat.cols(), matchLocation.y + templateMat.rows()), Scalar(0.0, 0.0, 0.0), 10)
-					Imgcodecs.imwrite("$matchFilePath/match.png", sourceMat)
-				}
-
-				// Center the coordinates so that any tap gesture would be directed at the center of that match location instead of the default
-				// position of the top left corner of the match location.
-				matchLocation.x += (templateMat.cols() / 2)
-				matchLocation.y += (templateMat.rows() / 2)
-
-				// If a custom region was specified, readjust the coordinates to reflect the fullscreen source screenshot.
-				if (!region.contentEquals(intArrayOf(0, 0, 0, 0))) {
-					matchLocation.x = sourceBitmap.width - (sourceBitmap.width - (region[0] + matchLocation.x))
-					matchLocation.y = sourceBitmap.height - (sourceBitmap.height - (region[1] + matchLocation.y))
-				}
-
-				return Pair(true, matchLocation)
-			}
-
-			if (!BotService.isRunning) {
-				throw InterruptedException()
-			}
-
-			sourceMat.release()
-			templateMat.release()
-			clampedTemplateMat.release()
-			resultMat.release()
-		}
-
-		return Pair(false, null)
-	}
-
-	/**
-	 * Search through the whole source screenshot for all matches to the template image.
-	 *
-	 * @param sourceBitmap Bitmap from the /files/temp/ folder.
-	 * @param templateBitmap Bitmap from the assets folder.
-	 * @param region Specify the region consisting of (x, y, width, height) of the source screenshot to template match. Defaults to (0, 0, 0, 0) which is equivalent to searching the full image.
-	 * @param customConfidence Specify a custom confidence. Defaults to the confidence set in the app's settings.
-	 * @return ArrayList of Point objects that represents the matches found on the source screenshot.
-	 */
-	private fun matchAll(sourceBitmap: Bitmap, templateBitmap: Bitmap, region: IntArray = intArrayOf(0, 0, 0, 0), customConfidence: Double = 0.0): java.util.ArrayList<Point> {
-		// Create a local matchLocations list for this method
-		var matchLocation = Point()
-		val matchLocations = arrayListOf<Point>()
-		
-		// If a custom region was specified, crop the source screenshot.
-		val srcBitmap = if (!region.contentEquals(intArrayOf(0, 0, 0, 0))) {
-			// Validate region bounds to prevent IllegalArgumentException with creating a crop area that goes beyond the source Bitmap.
-			val x = max(0, region[0].coerceAtMost(sourceBitmap.width))
-			val y = max(0, region[1].coerceAtMost(sourceBitmap.height))
-			val width = region[2].coerceAtMost(sourceBitmap.width - x)
-			val height = region[3].coerceAtMost(sourceBitmap.height - y)
-
-			createSafeBitmap(sourceBitmap, x, y, width, height, "matchAll region crop") ?: sourceBitmap
-		} else {
-			sourceBitmap
-		}
-
-		// Scale images if the device is not 1080p which is supported by default.
-		val scales: MutableList<Double> = when {
-			customScale != 1.0 -> {
-				mutableListOf(customScale - 0.02, customScale - 0.01, customScale, customScale + 0.01, customScale + 0.02, customScale + 0.03, customScale + 0.04)
-			}
-			isLowerEnd -> {
-				lowerEndScales.toMutableList()
-			}
-			!isLowerEnd && !isDefault && !isTablet -> {
-				middleEndScales.toMutableList()
-			}
-			isTablet && isSplitScreen && isLandscape -> {
-				tabletSplitLandscapeScales.toMutableList()
-			}
-			isTablet && isSplitScreen && !isLandscape -> {
-				tabletSplitPortraitScales.toMutableList()
-			}
-			isTablet && !isSplitScreen && !isLandscape -> {
-				tabletPortraitScales.toMutableList()
-			}
-			else -> {
-				mutableListOf(1.0)
-			}
-		}
-
-		val setConfidence: Double = if (customConfidence == 0.0) {
-			confidence
-		} else {
-			customConfidence
-		}
-
-		var matchCheck = false
-		var newScale = 0.0
-		val sourceMat = Mat()
-		val templateMat = Mat()
-		var resultMat = Mat()
-		var clampedTemplateMat: Mat? = null
-
-		// Set templateMat at whatever scale it found the very first match for the next while loop.
-		while (!matchCheck && scales.isNotEmpty()) {
-			newScale = decimalFormat.format(scales.removeAt(0)).toDouble()
-
-			val tmp: Bitmap = if (newScale != 1.0) {
-				templateBitmap.scale((templateBitmap.width * newScale).toInt(), (templateBitmap.height * newScale).toInt())
-			} else {
-				templateBitmap
-			}
-
-			// Create the Mats of both source and template images.
-			Utils.bitmapToMat(srcBitmap, sourceMat)
-			Utils.bitmapToMat(tmp, templateMat)
-
-			// Clamp template dimensions to source dimensions if template is too large.
-			clampedTemplateMat = if (templateMat.cols() > sourceMat.cols() || templateMat.rows() > sourceMat.rows()) {
-				Log.d(tag, "Image sizes for matchAll assertion failed - sourceMat: ${sourceMat.size()}, templateMat: ${templateMat.size()}")
-				// Create a new Mat with clamped dimensions.
-				val clampedWidth = minOf(templateMat.cols(), sourceMat.cols())
-				val clampedHeight = minOf(templateMat.rows(), sourceMat.rows())
-				Mat(templateMat, Rect(0, 0, clampedWidth, clampedHeight))
-			} else {
-				templateMat
-			}
-
-			// Make the Mats grayscale for the source and the template.
-			Imgproc.cvtColor(sourceMat, sourceMat, Imgproc.COLOR_BGR2GRAY)
-			Imgproc.cvtColor(clampedTemplateMat, clampedTemplateMat, Imgproc.COLOR_BGR2GRAY)
-
-			// Create the result matrix.
-			val resultColumns: Int = sourceMat.cols() - clampedTemplateMat.cols() + 1
-			val resultRows: Int = sourceMat.rows() - clampedTemplateMat.rows() + 1
-			if (resultColumns < 0 || resultRows < 0) {
-				break
-			}
-
-			resultMat = Mat(resultRows, resultColumns, CvType.CV_32FC1)
-
-			// Now perform the matching and localize the result.
-			Imgproc.matchTemplate(sourceMat, clampedTemplateMat, resultMat, matchMethod)
-			val mmr: Core.MinMaxLocResult = Core.minMaxLoc(resultMat)
-
-			// Depending on which matching method was used, the algorithms determine which location was the best.
-			if ((matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= (1.0 - setConfidence)) {
-				matchLocation = mmr.minLoc
-				matchCheck = true
-
-				// Draw a rectangle around the match on the source Mat. This will prevent false positives and infinite looping on subsequent matches.
-				Imgproc.rectangle(sourceMat, matchLocation, Point(matchLocation.x + clampedTemplateMat.cols(), matchLocation.y + clampedTemplateMat.rows()), Scalar(0.0, 0.0, 0.0), 20)
-
-				// Center the location coordinates and then save it.
-				matchLocation.x += (clampedTemplateMat.cols() / 2)
-				matchLocation.y += (clampedTemplateMat.rows() / 2)
-
-				// If a custom region was specified, readjust the coordinates to reflect the fullscreen source screenshot.
-				if (!region.contentEquals(intArrayOf(0, 0, 0, 0))) {
-					matchLocation.x = sourceBitmap.width - (sourceBitmap.width - (region[0] + matchLocation.x))
-					matchLocation.y = sourceBitmap.height - (sourceBitmap.height - (region[1] + matchLocation.y))
-				}
-
-				matchLocations.add(matchLocation)
-			} else if ((matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= setConfidence) {
-				matchLocation = mmr.maxLoc
-				matchCheck = true
-
-				// Draw a rectangle around the match on the source Mat. This will prevent false positives and infinite looping on subsequent matches.
-				Imgproc.rectangle(sourceMat, matchLocation, Point(matchLocation.x + clampedTemplateMat.cols(), matchLocation.y + clampedTemplateMat.rows()), Scalar(0.0, 0.0, 0.0), 20)
-
-				// Center the location coordinates and then save it.
-				matchLocation.x += (clampedTemplateMat.cols() / 2)
-				matchLocation.y += (clampedTemplateMat.rows() / 2)
-
-				// If a custom region was specified, readjust the coordinates to reflect the fullscreen source screenshot.
-				if (!region.contentEquals(intArrayOf(0, 0, 0, 0))) {
-					matchLocation.x = sourceBitmap.width - (sourceBitmap.width - (region[0] + matchLocation.x))
-					matchLocation.y = sourceBitmap.height - (sourceBitmap.height - (region[1] + matchLocation.y))
-				}
-
-				matchLocations.add(matchLocation)
-			}
-
-			if (!BotService.isRunning) {
-				throw InterruptedException()
-			}
-		}
-
-		// Loop until all other matches are found and break out when there are no more to be found.
-		while (matchCheck) {
-			// Now perform the matching and localize the result.
-			Imgproc.matchTemplate(sourceMat, clampedTemplateMat, resultMat, matchMethod)
-			val mmr: Core.MinMaxLocResult = Core.minMaxLoc(resultMat)
-
-			// Format minVal or maxVal.
-			val minVal: Double = decimalFormat.format(mmr.minVal).toDouble()
-			val maxVal: Double = decimalFormat.format(mmr.maxVal).toDouble()
-
-			if (clampedTemplateMat != null && (matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED) && mmr.minVal <= (1.0 - setConfidence)) {
-				val tempMatchLocation: Point = mmr.minLoc
-
-				// Draw a rectangle around the match on the source Mat. This will prevent false positives and infinite looping on subsequent matches.
-				Imgproc.rectangle(sourceMat, tempMatchLocation, Point(tempMatchLocation.x + clampedTemplateMat.cols(), tempMatchLocation.y + clampedTemplateMat.rows()), Scalar(0.0, 0.0, 0.0), 20)
-
-				if (debugMode) {
-					game.printToLog("[DEBUG] Match All found with $minVal <= ${1.0 - setConfidence} at Point $matchLocation with scale: $newScale.", tag = tag)
-					Imgcodecs.imwrite("$matchFilePath/matchAll.png", sourceMat)
-				}
-
-				// Center the location coordinates and then save it.
-				tempMatchLocation.x += (clampedTemplateMat.cols() / 2)
-				tempMatchLocation.y += (clampedTemplateMat.rows() / 2)
-
-				// If a custom region was specified, readjust the coordinates to reflect the fullscreen source screenshot.
-				if (!region.contentEquals(intArrayOf(0, 0, 0, 0))) {
-					tempMatchLocation.x = sourceBitmap.width - (sourceBitmap.width - (region[0] + tempMatchLocation.x))
-					tempMatchLocation.y = sourceBitmap.height - (sourceBitmap.height - (region[1] + tempMatchLocation.y))
-				}
-
-				if (!matchLocations.contains(tempMatchLocation) && !matchLocations.contains(Point(tempMatchLocation.x + 1.0, tempMatchLocation.y)) &&
-					!matchLocations.contains(Point(tempMatchLocation.x, tempMatchLocation.y + 1.0)) && !matchLocations.contains(Point(tempMatchLocation.x + 1.0, tempMatchLocation.y + 1.0))) {
-					matchLocations.add(tempMatchLocation)
-				}
-			} else if (clampedTemplateMat != null && (matchMethod != Imgproc.TM_SQDIFF && matchMethod != Imgproc.TM_SQDIFF_NORMED) && mmr.maxVal >= setConfidence) {
-				val tempMatchLocation: Point = mmr.maxLoc
-
-				// Draw a rectangle around the match on the source Mat. This will prevent false positives and infinite looping on subsequent matches.
-				Imgproc.rectangle(sourceMat, tempMatchLocation, Point(tempMatchLocation.x + clampedTemplateMat.cols(), tempMatchLocation.y + clampedTemplateMat.rows()), Scalar(0.0, 0.0, 0.0), 20)
-
-				if (debugMode) {
-					game.printToLog("[DEBUG] Match All found with $maxVal >= $setConfidence at Point $matchLocation with scale: $newScale.", tag = tag)
-					Imgcodecs.imwrite("$matchFilePath/matchAll.png", sourceMat)
-				}
-
-				// Center the location coordinates and then save it.
-				tempMatchLocation.x += (clampedTemplateMat.cols() / 2)
-				tempMatchLocation.y += (clampedTemplateMat.rows() / 2)
-
-				// If a custom region was specified, readjust the coordinates to reflect the fullscreen source screenshot.
-				if (!region.contentEquals(intArrayOf(0, 0, 0, 0))) {
-					tempMatchLocation.x = sourceBitmap.width - (sourceBitmap.width - (region[0] + tempMatchLocation.x))
-					tempMatchLocation.y = sourceBitmap.height - (sourceBitmap.height - (region[1] + tempMatchLocation.y))
-				}
-
-				if (!matchLocations.contains(tempMatchLocation) && !matchLocations.contains(Point(tempMatchLocation.x + 1.0, tempMatchLocation.y)) &&
-					!matchLocations.contains(Point(tempMatchLocation.x, tempMatchLocation.y + 1.0)) && !matchLocations.contains(Point(tempMatchLocation.x + 1.0, tempMatchLocation.y + 1.0))) {
-					matchLocations.add(tempMatchLocation)
-				}
-			} else {
-				break
-			}
-
-			if (!BotService.isRunning) {
-				throw InterruptedException()
-			}
-		}
-
-		sourceMat.release()
-		templateMat.release()
-		clampedTemplateMat?.release()
-		resultMat.release()
-
-		return matchLocations
-	}
-
-	/**
-	 * Convert absolute x-coordinate on 1080p to relative coordinate on different resolutions for the width.
-	 *
-	 * @param oldX The old absolute x-coordinate based off of the 1080p resolution.
-	 * @return The new relative x-coordinate based off of the current resolution.
-	 */
-	fun relWidth(oldX: Int): Int {
-		return if (isDefault) {
-			oldX
-		} else {
-			(oldX.toDouble() * (displayWidth.toDouble() / 1080.0)).toInt()
-		}
-	}
-
-	/**
-	 * Convert absolute y-coordinate on 1080p to relative coordinate on different resolutions for the height.
-	 *
-	 * @param oldY The old absolute y-coordinate based off of the 1080p resolution.
-	 * @return The new relative y-coordinate based off of the current resolution.
-	 */
-	fun relHeight(oldY: Int): Int {
-		return if (isDefault) {
-			oldY
-		} else {
-			(oldY.toDouble() * (displayHeight.toDouble() / 2340.0)).toInt()
-		}
-	}
-
-	/**
-	 * Helper function to calculate the x-coordinate with relative offset.
-	 *
-	 * @param baseX The base x-coordinate.
-	 * @param offset The offset to add/subtract from the base coordinate and to make relative to.
-	 * @return The calculated relative x-coordinate.
-	 */
-	fun relX(baseX: Double, offset: Int): Int {
-		return baseX.toInt() + relWidth(offset)
-	}
-
-	/**
-	 * Helper function to calculate relative y-coordinate with relative offset.
-	 *
-	 * @param baseY The base y-coordinate.
-	 * @param offset The offset to add/subtract from the base coordinate and to make relative to.
-	 * @return The calculated relative y-coordinate.
-	 */
-	fun relY(baseY: Double, offset: Int): Int {
-		return baseY.toInt() + relHeight(offset)
-	}
-
-	////////////////////////////////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////
-
-	/**
-	 * Open the source and template image files and return Bitmaps for them.
-	 *
-	 * @param templateName File name of the template image.
-	 * @return A Pair of source and template Bitmaps.
-	 */
-	fun getBitmaps(templateName: String): Pair<Bitmap, Bitmap?> {
-		var sourceBitmap: Bitmap? = null
-
-		while (sourceBitmap == null) {
-			sourceBitmap = MediaProjectionService.takeScreenshotNow(saveImage = debugMode)
-		}
-
-		var templateBitmap: Bitmap?
-
-		// Get the Bitmap from the template image file inside the specified folder.
-		myContext.assets?.open("images/$templateName.png").use { inputStream ->
-			// Get the Bitmap from the template image file and then start matching.
-			templateBitmap = BitmapFactory.decodeStream(inputStream)
-		}
-
-		return if (templateBitmap != null) {
-			Pair(sourceBitmap, templateBitmap)
-		} else {
-			if (debugMode) {
-				game.printToLog("[ERROR] The template Bitmap is null.", tag = tag, isError = true)
-			}
-
-			Pair(sourceBitmap, templateBitmap)
-		}
-	}
-
-	/**
-	 * Acquire the Bitmap for only the source screenshot.
-	 *
-	 * @return Bitmap of the source screenshot.
-	 */
-	private fun getSourceBitmap(): Bitmap {
-		var sourceBitmap: Bitmap? = null
-		while (sourceBitmap == null) {
-			sourceBitmap = MediaProjectionService.takeScreenshotNow(saveImage = debugMode)
-		}
-
-		return sourceBitmap
-	}
-
-	/**
-	 * Safely creates a bitmap with bounds checking to prevent IllegalArgumentException.
-	 * Clamps individual dimensions to source bitmap bounds if they exceed limits.
-	 *
-	 * @param sourceBitmap The source bitmap to crop from.
-	 * @param x The x coordinate for the crop.
-	 * @param y The y coordinate for the crop.
-	 * @param width The width of the crop.
-	 * @param height The height of the crop.
-	 * @param context String describing the context for error logging.
-	 * @return The cropped bitmap or null if bounds are still invalid after clamping.
-	 */
-	private fun createSafeBitmap(sourceBitmap: Bitmap, x: Int, y: Int, width: Int, height: Int, context: String): Bitmap? {
-		// Clamp individual dimensions to source bitmap bounds.
-		val clampedX = x.coerceIn(0, sourceBitmap.width)
-		val clampedY = y.coerceIn(0, sourceBitmap.height)
-		val clampedWidth = width.coerceIn(1, sourceBitmap.width - clampedX)
-		val clampedHeight = height.coerceIn(1, sourceBitmap.height - clampedY)
-
-		// Check if any dimensions were clamped and log a warning.
-		if (x != clampedX || y != clampedY || width != clampedWidth || height != clampedHeight) {
-			game.printToLog("[WARNING] Clamped bounds for $context: original(x=$x, y=$y, width=$width, height=$height) -> clamped(x=$clampedX, y=$clampedY, width=$clampedWidth, height=$clampedHeight), sourceBitmap=${sourceBitmap.width}x${sourceBitmap.height}", tag = tag)
-		}
-
-		// Final validation to ensure the clamped dimensions are still valid.
-		if (clampedX < 0 || clampedY < 0 || clampedWidth <= 0 || clampedHeight <= 0 ||
-			clampedX + clampedWidth > sourceBitmap.width || clampedY + clampedHeight > sourceBitmap.height) {
-			game.printToLog("[ERROR] Invalid bounds for $context after clamping: x=$clampedX, y=$clampedY, width=$clampedWidth, height=$clampedHeight, sourceBitmap=${sourceBitmap.width}x${sourceBitmap.height}", tag = tag, isError = true)
-			return null
-		}
-
-		return Bitmap.createBitmap(sourceBitmap, clampedX, clampedY, clampedWidth, clampedHeight)
-	}
-
-	/**
-	 * Finds the location of the specified image from the /images/ folder inside assets.
-	 *
-	 * @param templateName File name of the template image.
-	 * @param tries Number of tries before failing. Defaults to 5.
-	 * @param region Specify the region consisting of (x, y, width, height) of the source screenshot to template match. Defaults to (0, 0, 0, 0) which is equivalent to searching the full image.
-	 * @param suppressError Whether or not to suppress saving error messages to the log. Defaults to false.
-	 * @return Pair object consisting of the Point object containing the location of the match and the source screenshot. Can be null.
-	 */
-	fun findImage(templateName: String, tries: Int = 5, region: IntArray = intArrayOf(0, 0, 0, 0), suppressError: Boolean = false): Pair<Point?, Bitmap> {
-		var numberOfTries = tries
-
-		if (debugMode) {
-			game.printToLog("\n[DEBUG] Starting process to find the ${templateName.uppercase()} button image...", tag = tag)
-		}
-
-		var (sourceBitmap, templateBitmap) = getBitmaps(templateName)
-
-		while (numberOfTries > 0) {
-			if (templateBitmap != null) {
-				val (resultFlag, location) = match(sourceBitmap, templateBitmap, templateName, region)
-				if (!resultFlag) {
-					numberOfTries -= 1
-					if (numberOfTries <= 0) {
-						if (debugMode && !suppressError) {
-							game.printToLog("[WARNING] Failed to find the ${templateName.uppercase()} button.", tag = tag)
-						}
-
-						break
-					}
-
-					Log.d(tag, "Failed to find the ${templateName.uppercase()} button. Trying again...")
-					game.wait(0.1)
-					sourceBitmap = getSourceBitmap()
-				} else {
-					game.printToLog("[SUCCESS] Found the ${templateName.uppercase()} at $location.", tag = tag)
-					return Pair(location, sourceBitmap)
-				}
-			}
-		}
-
-		return Pair(null, sourceBitmap)
-	}
-
-	/**
-	 * Confirms whether or not the bot is at the specified location from the /headers/ folder inside assets.
-	 *
-	 * @param templateName File name of the template image.
-	 * @param tries Number of tries before failing. Defaults to 5.
-	 * @param region Specify the region consisting of (x, y, width, height) of the source screenshot to template match. Defaults to (0, 0, 0, 0) which is equivalent to searching the full image.
-	 * @param suppressError Whether or not to suppress saving error messages to the log.
-	 * @return True if the current location is at the specified location. False otherwise.
-	 */
-	fun confirmLocation(templateName: String, tries: Int = 5, region: IntArray = intArrayOf(0, 0, 0, 0), suppressError: Boolean = false): Boolean {
-		var numberOfTries = tries
-
-		if (debugMode) {
-			game.printToLog("\n[DEBUG] Starting process to find the ${templateName.uppercase()} header image...", tag = tag)
-		}
-
-		var (sourceBitmap, templateBitmap) = getBitmaps(templateName + "_header")
-
-		while (numberOfTries > 0) {
-			if (templateBitmap != null) {
-				val (resultFlag, _) = match(sourceBitmap, templateBitmap, templateName, region)
-				if (!resultFlag) {
-					numberOfTries -= 1
-					if (numberOfTries <= 0) {
-						break
-					}
-
-					game.wait(0.1)
-					sourceBitmap = getSourceBitmap()
-				} else {
-					game.printToLog("[SUCCESS] Current location confirmed to be at ${templateName.uppercase()}.", tag = tag)
-					return true
-				}
-			} else {
-				break
-			}
-		}
-
-		if (debugMode && !suppressError) {
-			game.printToLog("[WARNING] Failed to confirm the bot location at ${templateName.uppercase()}.", tag = tag)
-		}
-
-		return false
-	}
-
-	/**
-	 * Finds all occurrences of the specified image in the images folder.
-	 *
-	 * @param templateName File name of the template image.
-	 * @param region Specify the region consisting of (x, y, width, height) of the source screenshot to template match. Defaults to (0, 0, 0, 0) which is equivalent to searching the full image.
-	 * @return An ArrayList of Point objects containing all the occurrences of the specified image or null if not found.
-	 */
-	fun findAll(templateName: String, region: IntArray = intArrayOf(0, 0, 0, 0)): ArrayList<Point> {
-		val (sourceBitmap, templateBitmap) = getBitmaps(templateName)
-
-		if (templateBitmap != null) {
-			val matchLocations = matchAll(sourceBitmap, templateBitmap, region = region)
-			
-			// Sort the match locations by ascending x and y coordinates.
-			matchLocations.sortBy { it.x }
-			matchLocations.sortBy { it.y }
-
-			if (debugMode) {
-				game.printToLog("[DEBUG] Found match locations for $templateName: $matchLocations.", tag = tag)
-			} else {
-				Log.d(tag, "[DEBUG] Found match locations for $templateName: $matchLocations.")
-			}
-
-			return matchLocations
-		}
-		
-		return arrayListOf()
-	}
-
-	/**
 	 * Find all occurrences of the specified image in the images folder using a provided source bitmap. Useful for parallel processing to avoid exceeding the maxImages buffer.
 	 *
 	 * @param templateName File name of the template image.
@@ -855,7 +72,7 @@ class ImageUtils(context: Context, private val game: Game) {
 	 */
 	private fun findAllWithBitmap(templateName: String, sourceBitmap: Bitmap, region: IntArray = intArrayOf(0, 0, 0, 0)): ArrayList<Point> {
 		var templateBitmap: Bitmap?
-		myContext.assets?.open("images/$templateName.png").use { inputStream ->
+		context.assets?.open("images/$templateName.png").use { inputStream ->
 			templateBitmap = BitmapFactory.decodeStream(inputStream)
 		}
 
@@ -876,44 +93,6 @@ class ImageUtils(context: Context, private val game: Game) {
 		}
 		
 		return arrayListOf()
-	}
-
-	/**
-	 * Check if the color at the specified coordinates matches the given RGB value.
-	 *
-	 * @param x X coordinate to check.
-	 * @param y Y coordinate to check.
-	 * @param rgb Expected RGB values as red, blue and green (0-255).
-	 * @param tolerance Tolerance for color matching (0-255). Defaults to 0 for exact match.
-	 * @return True if the color at the coordinates matches the expected RGB values within tolerance, false otherwise.
-	 */
-	fun checkColorAtCoordinates(x: Int, y: Int, rgb: IntArray, tolerance: Int = 0): Boolean {
-		val sourceBitmap = getSourceBitmap()
-
-		// Check if coordinates are within bounds.
-		if (x < 0 || y < 0 || x >= sourceBitmap.width || y >= sourceBitmap.height) {
-			if (debugMode) game.printToLog("[WARNING] Coordinates ($x, $y) are out of bounds for bitmap size ${sourceBitmap.width}x${sourceBitmap.height}", tag = tag)
-			return false
-		}
-
-		// Get the pixel color at the specified coordinates.
-		val pixel = sourceBitmap[x, y]
-
-		// Extract RGB values from the pixel.
-		val actualRed = android.graphics.Color.red(pixel)
-		val actualGreen = android.graphics.Color.green(pixel)
-		val actualBlue = android.graphics.Color.blue(pixel)
-
-		// Check if the colors match within the specified tolerance.
-		val redMatch = kotlin.math.abs(actualRed - rgb[0]) <= tolerance
-		val greenMatch = kotlin.math.abs(actualGreen - rgb[1]) <= tolerance
-		val blueMatch = kotlin.math.abs(actualBlue - rgb[2]) <= tolerance
-
-		if (debugMode) {
-			game.printToLog("[DEBUG] Color check at ($x, $y): Expected RGB(${rgb[0]}, ${rgb[1]}, ${rgb[2]}), Actual RGB($actualRed, $actualGreen, $actualBlue), Match: ${redMatch && greenMatch && blueMatch}", tag = tag)
-		}
-
-		return redMatch && greenMatch && blueMatch
 	}
 
 	////////////////////////////////////////////////////////////////////
@@ -986,9 +165,6 @@ class ImageUtils(context: Context, private val game: Game) {
 		Utils.matToBitmap(bwImage, resultBitmap)
 		tessBaseAPI.setImage(resultBitmap)
 
-		// Set the Page Segmentation Mode to '--psm 7' or "Treat the image as a single text line" according to https://tesseract-ocr.github.io/tessdoc/ImproveQuality.html#page-segmentation-method
-		tessBaseAPI.pageSegMode = TessBaseAPI.PageSegMode.PSM_SINGLE_LINE
-
 		var result = "empty!"
 		try {
 			// Finally, detect text on the cropped region.
@@ -1054,7 +230,7 @@ class ImageUtils(context: Context, private val game: Game) {
 		var result = -1
 		var mlkitFailed = false
 
-		textRecognizer.process(inputImage)
+		googleTextRecognizer.process(inputImage)
 			.addOnSuccessListener { text ->
 				if (text.textBlocks.isNotEmpty()) {
 					for (block in text.textBlocks) {
@@ -1082,23 +258,22 @@ class ImageUtils(context: Context, private val game: Game) {
 
 		// Fallback to Tesseract if ML Kit failed or didn't find result.
 		if (mlkitFailed || result == -1) {
-			tessBaseAPI.setImage(resultBitmap)
-			tessBaseAPI.pageSegMode = TessBaseAPI.PageSegMode.PSM_SINGLE_LINE
+			tessDigitsBaseAPI.setImage(resultBitmap)
 
 			try {
-				val detectedText = tessBaseAPI.utF8Text.replace("%", "")
+				val detectedText = tessDigitsBaseAPI.utF8Text.replace("%", "")
 				game.printToLog("[INFO] Detected training failure chance with Tesseract: $detectedText", tag = tag)
 				val cleanedResult = detectedText.replace(Regex("[^0-9]"), "")
 				result = cleanedResult.toInt()
 			} catch (_: NumberFormatException) {
-				game.printToLog("[ERROR] Could not convert \"${tessBaseAPI.utF8Text.replace("%", "")}\" to integer.", tag = tag, isError = true)
+				game.printToLog("[ERROR] Could not convert \"${tessDigitsBaseAPI.utF8Text.replace("%", "")}\" to integer.", tag = tag, isError = true)
 				result = -1
 			} catch (e: Exception) {
 				game.printToLog("[ERROR] Cannot perform OCR using Tesseract: ${e.stackTraceToString()}", tag = tag, isError = true)
 				result = -1
 			}
 
-			tessBaseAPI.clear()
+			tessDigitsBaseAPI.clear()
 		}
 
 		if (debugMode) {
@@ -1123,7 +298,7 @@ class ImageUtils(context: Context, private val game: Game) {
 
 		if (energyTextLocation != null) {
 			// Crop the source screenshot to only contain the day number.
-			val croppedBitmap: Bitmap? = if (campaign == "Ao Haru") {
+			val croppedBitmap: Bitmap? = if (game.campaign == "Ao Haru") {
 				if (isTablet) {
 					createSafeBitmap(sourceBitmap, relX(energyTextLocation.x, -(260 * 1.32).toInt()), relY(energyTextLocation.y, -(140 * 1.32).toInt()), relWidth(135), relHeight(100), "determineDayForExtraRace Ao Haru tablet")
 				} else {
@@ -1164,7 +339,7 @@ class ImageUtils(context: Context, private val game: Game) {
 			val latch = CountDownLatch(1)
 			var mlkitFailed = false
 
-			textRecognizer.process(inputImage)
+			googleTextRecognizer.process(inputImage)
 				.addOnSuccessListener { text ->
 					if (text.textBlocks.isNotEmpty()) {
 						for (block in text.textBlocks) {
@@ -1192,23 +367,22 @@ class ImageUtils(context: Context, private val game: Game) {
 
 			// Fallback to Tesseract if ML Kit failed or didn't find result.
 			if (mlkitFailed || result == -1) {
-				tessBaseAPI.setImage(resultBitmap)
-				tessBaseAPI.pageSegMode = TessBaseAPI.PageSegMode.PSM_SINGLE_LINE
+				tessDigitsBaseAPI.setImage(resultBitmap)
 
 				try {
-					val detectedText = tessBaseAPI.utF8Text.replace("%", "")
+					val detectedText = tessDigitsBaseAPI.utF8Text.replace("%", "")
 					game.printToLog("[INFO] Detected day for extra racing with Tesseract: $detectedText", tag = tag)
 					val cleanedResult = detectedText.replace(Regex("[^0-9]"), "")
 					result = cleanedResult.toInt()
 				} catch (_: NumberFormatException) {
-					game.printToLog("[ERROR] Could not convert \"${tessBaseAPI.utF8Text.replace("%", "")}\" to integer.", tag = tag, isError = true)
+					game.printToLog("[ERROR] Could not convert \"${tessDigitsBaseAPI.utF8Text.replace("%", "")}\" to integer.", tag = tag, isError = true)
 					result = -1
 				} catch (e: Exception) {
 					game.printToLog("[ERROR] Cannot perform OCR using Tesseract: ${e.stackTraceToString()}", tag = tag, isError = true)
 					result = -1
 				}
 
-				tessBaseAPI.clear()
+				tessDigitsBaseAPI.clear()
 			}
 
 			cvImage.release()
@@ -1278,20 +452,17 @@ class ImageUtils(context: Context, private val game: Game) {
 
 			resultBitmap = createBitmap(bwImage.cols(), bwImage.rows())
 			Utils.matToBitmap(bwImage, resultBitmap)
-			tessBaseAPI.setImage(resultBitmap)
-
-			// Set the Page Segmentation Mode to '--psm 7' or "Treat the image as a single text line" according to https://tesseract-ocr.github.io/tessdoc/ImproveQuality.html#page-segmentation-method
-			tessBaseAPI.pageSegMode = TessBaseAPI.PageSegMode.PSM_SINGLE_LINE
+			tessDigitsBaseAPI.setImage(resultBitmap)
 
 			var result = "empty!"
 			try {
 				// Finally, detect text on the cropped region.
-				result = tessBaseAPI.utF8Text
+				result = tessDigitsBaseAPI.utF8Text
 			} catch (e: Exception) {
 				game.printToLog("[ERROR] Cannot perform OCR with Tesseract: ${e.stackTraceToString()}", tag = tag, isError = true)
 			}
 
-			tessBaseAPI.clear()
+			tessDigitsBaseAPI.clear()
 			cvImage.release()
 			bwImage.release()
 
@@ -1363,7 +534,7 @@ class ImageUtils(context: Context, private val game: Game) {
 			val latch = CountDownLatch(1)
 			var mlkitFailed = false
 
-			textRecognizer.process(inputImage)
+			googleTextRecognizer.process(inputImage)
 				.addOnSuccessListener { text ->
 					if (text.textBlocks.isNotEmpty()) {
 						for (block in text.textBlocks) {
@@ -1387,19 +558,16 @@ class ImageUtils(context: Context, private val game: Game) {
 			}
 
 			if (mlkitFailed || result == "") {
-				tessBaseAPI.setImage(resultBitmap)
-
-				// Set the Page Segmentation Mode to '--psm 7' or "Treat the image as a single text line" according to https://tesseract-ocr.github.io/tessdoc/ImproveQuality.html#page-segmentation-method
-				tessBaseAPI.pageSegMode = TessBaseAPI.PageSegMode.PSM_SINGLE_LINE
+				tessDigitsBaseAPI.setImage(resultBitmap)
 
 				try {
 					// Finally, detect text on the cropped region.
-					result = tessBaseAPI.utF8Text
+					result = tessDigitsBaseAPI.utF8Text
 				} catch (e: Exception) {
 					game.printToLog("[ERROR] Cannot perform OCR with Tesseract: ${e.stackTraceToString()}", tag = tag, isError = true)
 				}
 
-				tessBaseAPI.clear()
+				tessDigitsBaseAPI.clear()
 			}
 
 			cvImage.release()
@@ -1671,20 +839,17 @@ class ImageUtils(context: Context, private val game: Game) {
 
 				val resultBitmap = createBitmap(cvImage.cols(), cvImage.rows())
 				Utils.matToBitmap(cvImage, resultBitmap)
-				tessBaseAPI.setImage(resultBitmap)
-
-				// Set the Page Segmentation Mode to '--psm 7' or "Treat the image as a single text line" according to https://tesseract-ocr.github.io/tessdoc/ImproveQuality.html#page-segmentation-method
-				tessBaseAPI.pageSegMode = TessBaseAPI.PageSegMode.PSM_SINGLE_LINE
+				tessDigitsBaseAPI.setImage(resultBitmap)
 
 				var result = "empty!"
 				try {
 					// Finally, detect text on the cropped region.
-					result = tessBaseAPI.utF8Text
+					result = tessDigitsBaseAPI.utF8Text
 				} catch (e: Exception) {
 					game.printToLog("[ERROR] Cannot perform OCR with Tesseract: ${e.stackTraceToString()}", tag = tag, isError = true)
 				}
 
-				tessBaseAPI.clear()
+				tessDigitsBaseAPI.clear()
 				cvImage.release()
 
 				game.printToLog("[INFO] Detected number of stats for $statName from Tesseract before formatting: $result", tag = tag)
@@ -1738,7 +903,7 @@ class ImageUtils(context: Context, private val game: Game) {
 			val latch = CountDownLatch(1)
 			var mlkitFailed = false
 
-			textRecognizer.process(inputImage)
+			googleTextRecognizer.process(inputImage)
 				.addOnSuccessListener { text ->
 					if (text.textBlocks.isNotEmpty()) {
 						for (block in text.textBlocks) {
@@ -1763,18 +928,17 @@ class ImageUtils(context: Context, private val game: Game) {
 
 			// Fallback to Tesseract if ML Kit failed or didn't find result.
 			if (mlkitFailed || result == "") {
-				tessBaseAPI.setImage(resultBitmap)
-				tessBaseAPI.pageSegMode = TessBaseAPI.PageSegMode.PSM_SINGLE_LINE
+				tessDigitsBaseAPI.setImage(resultBitmap)
 
 				try {
-					result = tessBaseAPI.utF8Text
+					result = tessDigitsBaseAPI.utF8Text
 					game.printToLog("[INFO] Detected date with Tesseract: $result", tag = tag)
 				} catch (e: Exception) {
 					game.printToLog("[ERROR] Cannot perform OCR using Tesseract: ${e.stackTraceToString()}", tag = tag, isError = true)
 					result = ""
 				}
 
-				tessBaseAPI.clear()
+				tessDigitsBaseAPI.clear()
 			}
 
 			if (debugMode) {
@@ -1787,55 +951,6 @@ class ImageUtils(context: Context, private val game: Game) {
 		}
 
 		return result
-	}
-
-	/**
-	 * Initialize Tesseract for future OCR operations. Make sure to put your .traineddata inside the root of the /assets/ folder.
-	 */
-	private fun initTesseract() {
-		val externalFilesDir: File? = myContext.getExternalFilesDir(null)
-		val tempDirectory: String = externalFilesDir?.absolutePath + "/tesseract/tessdata/"
-		val newTempDirectory = File(tempDirectory)
-
-		// If the /files/temp/ folder does not exist, create it.
-		if (!newTempDirectory.exists()) {
-			val successfullyCreated: Boolean = newTempDirectory.mkdirs()
-
-			// If the folder was not able to be created for some reason, log the error and stop the MediaProjection Service.
-			if (!successfullyCreated) {
-				game.printToLog("[ERROR] Failed to create the /files/tesseract/tessdata/ folder.", tag = tag, isError = true)
-			} else {
-				game.printToLog("[INFO] Successfully created /files/tesseract/tessdata/ folder.", tag = tag)
-			}
-		} else {
-			game.printToLog("[INFO] /files/tesseract/tessdata/ folder already exists.", tag = tag)
-		}
-
-		// If the traineddata is not in the application folder, copy it there from assets.
-		tesseractLanguages.forEach { lang ->
-			val trainedDataPath = File(tempDirectory, "$lang.traineddata")
-			if (!trainedDataPath.exists()) {
-				try {
-					game.printToLog("[INFO] Starting Tesseract initialization.", tag = tag)
-					val input = myContext.assets.open("$lang.traineddata")
-
-					val output = FileOutputStream("$tempDirectory/$lang.traineddata")
-
-					val buffer = ByteArray(1024)
-					var read: Int
-					while (input.read(buffer).also { read = it } != -1) {
-						output.write(buffer, 0, read)
-					}
-
-					input.close()
-					output.flush()
-					output.close()
-					game.printToLog("[INFO] Finished Tesseract initialization.", tag = tag)
-				} catch (e: IOException) {
-					game.printToLog("[ERROR] IO EXCEPTION: ${e.stackTraceToString()}", tag = tag, isError = true)
-				}
-			}
-		}
 	}
 
 	/**
@@ -1876,7 +991,7 @@ class ImageUtils(context: Context, private val game: Game) {
 			// Pre-load all template bitmaps to avoid thread contention
 			val templateBitmaps = mutableMapOf<String, Bitmap?>()
 			for (templateName in templates) {
-				myContext.assets?.open("images/$templateName.png").use { inputStream ->
+				context.assets?.open("images/$templateName.png").use { inputStream ->
 					templateBitmaps[templateName] = BitmapFactory.decodeStream(inputStream)
 				}
 			}
