@@ -319,7 +319,12 @@ class Game(val myContext: Context) {
 	fun startTemplateMatchingTest() {
 		printToLog("\n[TEST] Now beginning basic template match test on the Home screen.")
 		printToLog("[TEST] Template match confidence setting will be overridden for the test.\n")
-		val results = imageUtils.startTemplateMatchingTest()
+		var results = mutableMapOf<String, MutableList<ScaleConfidenceResult>>(
+			"energy" to mutableListOf(),
+			"tazuna" to mutableListOf(),
+			"skill_points" to mutableListOf()
+		)
+		results = imageUtils.startTemplateMatchingTest(results)
 		printToLog("\n[TEST] Basic template match test complete.")
 
 		// Print all scale/confidence combinations that worked for each template.
