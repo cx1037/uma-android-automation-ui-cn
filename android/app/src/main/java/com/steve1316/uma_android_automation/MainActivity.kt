@@ -6,6 +6,8 @@ import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
 import com.facebook.react.defaults.DefaultReactActivityDelegate
+import com.github.javiersantos.appupdater.AppUpdater
+import com.github.javiersantos.appupdater.enums.UpdateFrom
 import org.opencv.android.OpenCVLoader
 import java.util.Locale
 
@@ -23,6 +25,12 @@ class MainActivity : ReactActivity() {
 		val locale = Locale("en")
 		Locale.setDefault(locale)
 		this.getResources().updateConfiguration(config, this.getResources().displayMetrics)
+
+		// Set up the app updater to check for the latest update from GitHub.
+		AppUpdater(this)
+			.setUpdateFrom(UpdateFrom.XML)
+			.setUpdateXML("https://raw.githubusercontent.com/steve1316/uma-android-automation/main/android/app/update.xml")
+			.start();
 
 		// Load OpenCV native library. This will throw a "E/OpenCV/StaticHelper: OpenCV error: Cannot load info library for OpenCV". It is safe to
 		// ignore this error. OpenCV functionality is not impacted by this error.
@@ -42,5 +50,4 @@ class MainActivity : ReactActivity() {
 	 * which allows you to enable New Architecture with a single boolean flags [com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled]
 	 */
 	override fun createReactActivityDelegate(): ReactActivityDelegate = DefaultReactActivityDelegate(this, mainComponentName, fabricEnabled)
-
 }
