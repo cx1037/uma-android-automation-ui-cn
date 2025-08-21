@@ -7,8 +7,6 @@ import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.preference.PreferenceManager
 import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.text.TextRecognition
-import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.steve1316.automation_library.utils.BotService
 import com.steve1316.automation_library.utils.ImageUtils
 import com.steve1316.automation_library.utils.MessageLog
@@ -18,12 +16,8 @@ import org.opencv.android.Utils
 import org.opencv.core.*
 import org.opencv.imgcodecs.Imgcodecs
 import org.opencv.imgproc.Imgproc
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
 import java.lang.Integer.max
 import androidx.core.graphics.scale
-import androidx.core.graphics.get
 import androidx.core.graphics.createBitmap
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
