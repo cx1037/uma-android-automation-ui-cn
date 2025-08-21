@@ -160,21 +160,21 @@ class StartModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
      * @return True if the accessibility permission has already been granted.
      */
     private fun checkForAccessibilityPermission(): Boolean {
-        val prefString = Settings.Secure.getString(myContext.contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES)
+        val prefString = Settings.Secure.getString(reactContext?.contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES)
 
         if (prefString != null && prefString.isNotEmpty()) {
             // Check the string of enabled accessibility services to see if this application's accessibility service is there.
-            val enabled = prefString.contains(myContext.packageName.toString() + "/" + MyAccessibilityService::class.java.name)
+            val enabled = prefString.contains(reactContext?.packageName.toString() + "/" + MyAccessibilityService::class.java.name)
 
             if (enabled) {
-                Log.d(logTag, "This application's Accessibility Service is currently turned on.")
+                Log.d(tag, "This application's Accessibility Service is currently turned on.")
                 return true
             }
         }
 
         // Shows a dialog explaining how to enable Accessibility Service when restricted settings are detected.
         // The dialog provides options to navigate to App Info or Accessibility Settings to complete the setup.
-        AlertDialog.Builder(myContext).apply {
+        AlertDialog.Builder(this.reactApplicationContext.currentActivity).apply {
             setTitle(R.string.accessibility_disabled)
             setMessage(
                 """
@@ -188,13 +188,13 @@ class StartModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
             )
             setPositiveButton("Go to App Info") { _, _ ->
                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                    data = "package:${myContext.packageName}".toUri()
+                    data = "package:${reactContext?.packageName}".toUri()
                 }
-                startActivity(intent)
+                this@StartModule.reactApplicationContext.currentActivity?.startActivity(intent)
             }
             setNeutralButton("Accessibility Settings") { _, _ ->
                 val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
-                startActivity(intent)
+                this@StartModule.reactApplicationContext.currentActivity?.startActivity(intent)
             }
             setNegativeButton(android.R.string.cancel, null)
         }.show()
