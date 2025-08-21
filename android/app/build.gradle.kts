@@ -172,3 +172,6 @@ android.applicationVariants.all {
     val variant = this
     variant.assembleProvider.get().dependsOn("generateBundle")
 }
+
+// Required for react-native-vector-icons usage to properly load in the icons in the app.
+apply(from = "../../node_modules/react-native-vector-icons/fonts.gradle")
