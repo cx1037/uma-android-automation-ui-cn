@@ -3,9 +3,8 @@ import DeviceInfo from "react-native-device-info"
 import MessageLog from "../../components/MessageLog"
 import { useContext, useEffect, useState } from "react"
 import { BotStateContext } from "../../context/BotStateContext"
-import { DeviceEventEmitter, StyleSheet, View } from "react-native"
+import { DeviceEventEmitter, StyleSheet, View, NativeModules } from "react-native"
 import { MessageLogContext } from "../../context/MessageLogContext"
-import { NativeModules } from "react-native"
 
 const styles = StyleSheet.create({
     root: {
