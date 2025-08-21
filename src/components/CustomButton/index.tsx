@@ -1,6 +1,6 @@
 import { FC } from "react"
 import { Alert, GestureResponderEvent, StyleSheet } from "react-native"
-import { Button } from "react-native-elements/dist/buttons/Button"
+import { Button } from "@rneui/themed"
 
 interface Props {
     title: string
