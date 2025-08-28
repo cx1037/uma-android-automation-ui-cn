@@ -1,5 +1,6 @@
 package com.steve1316.uma_android_automation
 
+import expo.modules.ReactActivityDelegateWrapper
 import android.content.res.Configuration
 import android.os.Bundle
 import com.facebook.react.ReactActivity
@@ -49,5 +50,5 @@ class MainActivity : ReactActivity() {
 	 * Returns the instance of the [com.facebook.react.ReactActivityDelegate]. We use [DefaultReactActivityDelegate]
 	 * which allows you to enable New Architecture with a single boolean flags [com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled]
 	 */
-	override fun createReactActivityDelegate(): ReactActivityDelegate = DefaultReactActivityDelegate(this, mainComponentName, fabricEnabled)
+	override fun createReactActivityDelegate(): ReactActivityDelegate = ReactActivityDelegateWrapper(this, BuildConfig.IS_NEW_ARCHITECTURE_ENABLED, DefaultReactActivityDelegate(this, mainComponentName, fabricEnabled))
 }

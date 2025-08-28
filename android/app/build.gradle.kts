@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("kotlin-android")
     id("com.facebook.react")
+    id("expo-autolinking")
 }
 
 android {
@@ -11,12 +12,8 @@ android {
 
     defaultConfig {
         applicationId = "com.steve1316.uma_android_automation"
-        minSdk {
-            version = release(libs.versions.app.minSdk.get().toInt())
-        }
-        targetSdk {
-            version = release(libs.versions.app.targetSdk.get().toInt())
-        }
+        minSdk = libs.versions.app.minSdk.get().toInt()
+        targetSdk = libs.versions.app.targetSdk.get().toInt()
         versionCode = libs.versions.app.versionCode.get().toInt()
         versionName = libs.versions.app.versionName.get()
     }
