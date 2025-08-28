@@ -3,11 +3,11 @@
     "version": "1.0.0",
     "private": true,
     "scripts": {
-        "start": "react-native start",
-        "android": "react-native run-android",
+        "start": "expo start",
+        "android": "expo start --android",
         "build": "cd android && ./gradlew assembleDebug",
         "build:clean": "cd android && ./gradlew clean && ./gradlew assembleDebug",
-        "lint": "eslint .",
+        "lint": "expo lint",
         "test": "jest",
         "update": "yarn install && yarn upgrade-interactive --latest"
     },
