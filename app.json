@@ -1,7 +1,8 @@
 {
-    "name": "Uma Android Automation",
-    "displayName": "Uma Android Automation",
     "expo": {
+        "name": "Uma Android Automation",
+        "slug": "uma-android-automation",
+        "platforms": ["android"],
         "web": {
             "bundler": "metro"
         }
