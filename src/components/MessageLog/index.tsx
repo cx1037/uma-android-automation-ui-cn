@@ -1,4 +1,5 @@
-import DeviceInfo from "react-native-device-info"
+import Constants from "expo-constants"
+import * as Application from "expo-application"
 import { useContext } from "react"
 import { MessageLogContext } from "../../context/MessageLogContext"
 import { ScrollView, StyleSheet, Text, View } from "react-native"
@@ -23,7 +24,10 @@ const styles = StyleSheet.create({
 const MessageLog = () => {
     const mlc = useContext(MessageLogContext)
 
-    const introMessage = `****************************************\nWelcome to ${DeviceInfo.getApplicationName()} v${DeviceInfo.getVersion()}\n****************************************\nInstructions\n----------------\nNote: The START button is disabled until the following steps are followed through.\n
+    const appName = Application.applicationName || Constants.expoConfig?.name || "Uma Android Automation"
+    const appVersion = Constants.expoConfig?.version || "1.0.0"
+    
+    const introMessage = `****************************************\nWelcome to ${appName} v${appVersion}\n****************************************\nInstructions\n----------------\nNote: The START button is disabled until the following steps are followed through.\n
     1. TODO\n****************************************\n`
 
     return (

@@ -1,5 +1,5 @@
 import CustomButton from "../../components/CustomButton"
-import DeviceInfo from "react-native-device-info"
+import Constants from "expo-constants"
 import MessageLog from "../../components/MessageLog"
 import { useContext, useEffect, useState } from "react"
 import { BotStateContext } from "../../context/BotStateContext"
@@ -41,8 +41,9 @@ const Home = () => {
 
     // Grab the program version.
     const getVersion = () => {
-        console.log("Android app version is ", DeviceInfo.getVersion())
-        bsc.setAppVersion(DeviceInfo.getVersion())
+        const version = Constants.expoConfig?.version || "1.0.0"
+        console.log("Android app version is ", version)
+        bsc.setAppVersion(version)
     }
 
     return (
