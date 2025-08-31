@@ -13,9 +13,10 @@ interface CustomSliderProps {
     labelUnit?: string
     showValue?: boolean
     showLabels?: boolean
+    description?: string
 }
 
-const CustomSlider: React.FC<CustomSliderProps> = ({ value, onValueChange, min, max, step, label, labelUnit = "", showValue = true, showLabels = true }) => {
+const CustomSlider: React.FC<CustomSliderProps> = ({ value, onValueChange, min, max, step, label, labelUnit = "", showValue = true, showLabels = true, description }) => {
     const { colors } = useTheme()
     const [isDragging, setIsDragging] = useState(false)
     const [sliderWidth, setSliderWidth] = useState(0)
@@ -52,6 +53,13 @@ const CustomSlider: React.FC<CustomSliderProps> = ({ value, onValueChange, min, 
         labelText: {
             fontSize: 12,
             color: colors.primary,
+        },
+        descriptionText: {
+            fontSize: 14,
+            color: colors.foreground,
+            opacity: 0.7,
+            marginBottom: 8,
+            marginTop: -4,
         },
         customThumb: {
             position: "absolute",
@@ -153,6 +161,7 @@ const CustomSlider: React.FC<CustomSliderProps> = ({ value, onValueChange, min, 
     return (
         <View style={styles.container}>
             {label && <Text style={styles.label}>{label}</Text>}
+            {description && <Text style={styles.descriptionText}>{description}</Text>}
 
             <View style={styles.sliderContainer} onLayout={handleLayout}>
                 {/* Custom tooltip */}
@@ -207,13 +216,6 @@ const CustomSlider: React.FC<CustomSliderProps> = ({ value, onValueChange, min, 
                     <Text style={styles.labelText}>{showLabels ? max + labelUnit : ""}</Text>
                 </View>
             )}
-
-            {/* {showLabels && (
-                <View style={styles.labelsContainer}>
-                    <Text style={styles.labelText}>{min}%</Text>
-                    <Text style={styles.labelText}>{max}%</Text>
-                </View>
-            )} */}
         </View>
     )
 }
