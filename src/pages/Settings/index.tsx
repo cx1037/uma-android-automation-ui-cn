@@ -7,6 +7,7 @@ import { useNavigation } from "@react-navigation/native"
 import ThemeToggle from "../../components/ThemeToggle"
 import { useTheme } from "../../context/ThemeContext"
 import CustomSelect from "../../components/CustomSelect"
+import NavigationLink from "../../components/NavigationLink"
 
 const Settings = () => {
     const [firstTime, setFirstTime] = useState<boolean>(true)
@@ -59,20 +60,16 @@ const Settings = () => {
     // Rendering
 
     const renderCampaignPicker = () => {
-        return (
-            <CustomSelect placeholder="Select a Scenario" width="100%" groupLabel="Scenarios" options={scenarios} setValue={setScenario} />
-        )
+        return <CustomSelect placeholder="Select a Scenario" width="100%" groupLabel="Scenarios" options={scenarios} setValue={setScenario} />
     }
 
-    const renderTrainingSettings = () => {
-        const navigation = useNavigation()
+    const renderTrainingLink = () => {
         return (
-            <View>
-                <TouchableOpacity onPress={() => navigation.navigate("TrainingSettings" as never)}>
-                    <Text style={{ fontSize: 20, fontWeight: "bold" }}>Training</Text>
-                    <Text style={{ color: "gray", marginTop: 4 }}>Customize the settings for Training</Text>
-                </TouchableOpacity>
-            </View>
+            <NavigationLink
+                title="Go to Training Settings"
+                description="Configure which stats to train, set priorities, and customize training behavior"
+                onPress={() => navigation.navigate("TrainingSettings" as never)}
+            />
         )
     }
 
@@ -89,10 +86,7 @@ const Settings = () => {
                     </View>
 
                     {renderCampaignPicker()}
-
-                    <TitleDivider title="Training Settings" />
-
-                    {renderTrainingSettings()}
+                    {renderTrainingLink()}
                 </View>
             </ScrollView>
 

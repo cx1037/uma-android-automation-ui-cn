@@ -10,7 +10,7 @@ import { MessageLogProvider } from "./context/MessageLogContext"
 import { ThemeProvider, useTheme } from "./context/ThemeContext"
 import Home from "./pages/Home"
 import Settings from "./pages/Settings"
-import Training from "./pages/Training"
+import TrainingSettings from "./pages/TrainingSettings"
 import { NAV_THEME } from "./lib/theme"
 
 export const Tag = "UAA"
@@ -22,7 +22,7 @@ function SettingsStack() {
     return (
         <Stack.Navigator>
             <Stack.Screen name="SettingsMain" component={Settings} options={{ headerShown: false }} />
-            <Stack.Screen name="Training" component={Training} options={{ headerShown: false }} />
+            <Stack.Screen name="TrainingSettings" component={TrainingSettings} options={{ headerShown: false }} />
         </Stack.Navigator>
     )
 }
