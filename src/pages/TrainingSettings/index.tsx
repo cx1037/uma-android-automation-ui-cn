@@ -277,6 +277,32 @@ const TrainingSettings = () => {
                             className="my-2"
                         />
                     </View>
+
+                    <View style={styles.section}>
+                        <CustomSlider
+                            value={maximumFailureChance}
+                            onValueChange={(value) => updateTrainingSetting("maximumFailureChance", value)}
+                            min={5}
+                            max={95}
+                            step={5}
+                            label="Set Maximum Failure Chance"
+                            labelUnit="%"
+                            showValue={true}
+                            showLabels={true}
+                            description="Set the maximum acceptable failure chance for training sessions. Training with higher failure rates will be avoided."
+                        />
+                    </View>
+
+                    <View style={styles.section}>
+                        <CustomCheckbox
+                            id="focus-on-spark-stat-targets"
+                            checked={focusOnSparkStatTarget}
+                            onCheckedChange={(checked) => updateTrainingSetting("focusOnSparkStatTarget", checked)}
+                            label="Focus on Sparks for Stat Targets"
+                            description="When enabled, the bot will prioritize training sessions that have a chance to trigger spark events for stats that are below their target values."
+                            className="my-2"
+                        />
+                    </View>
                 </View>
             </ScrollView>
         </View>
