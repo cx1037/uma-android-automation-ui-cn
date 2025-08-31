@@ -1,15 +1,7 @@
-import Checkbox from "../../components/CustomCheckbox"
-import CustomButton from "../../components/CustomButton"
-import CustomDropDownPicker from "../../components/CustomDropdownPicker"
-// import data from "../../data/data.json"
-import campaigns from "../../data/campaigns.json"
-import React, { useContext, useEffect, useState } from "react"
-import RNFS from "react-native-fs"
+import scenarios from "../../data/scenarios.json"
+import { useContext, useEffect, useState } from "react"
 import { BotStateContext } from "../../context/BotStateContext"
-import { Dimensions, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
-import { Divider } from "@rneui/themed"
-import TitleDivider from "../../components/TitleDivider"
-import { Picker } from "@react-native-picker/picker"
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { Snackbar } from "react-native-paper"
 import { useNavigation } from "@react-navigation/native"
 import ThemeToggle from "../../components/ThemeToggle"
@@ -33,33 +25,6 @@ const Settings = () => {
             justifyContent: "center",
             margin: 10,
             backgroundColor: colors.background,
-        },
-        farmingModePicker: {
-            marginTop: 10,
-            backgroundColor: campaign !== "" ? "azure" : "pink",
-        },
-        disabledPicker: {
-            backgroundColor: "#808080",
-            opacity: 0.7,
-        },
-        dropdown: {
-            marginTop: 20,
-        },
-        modal: {
-            flex: 1,
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: "rgba(80,80,80,0.3)",
-        },
-        outsideModal: {
-            position: "absolute",
-            height: "100%",
-            width: "100%",
-        },
-        componentContainer: {
-            width: Dimensions.get("window").width * 0.7,
-            height: Dimensions.get("window").height * 0.9,
         },
         header: {
             flexDirection: "row",
