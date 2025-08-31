@@ -12,6 +12,8 @@ import TitleDivider from "../../components/TitleDivider"
 import { Picker } from "@react-native-picker/picker"
 import { Snackbar } from "react-native-paper"
 import { useNavigation } from "@react-navigation/native"
+import ThemeToggle from "../../components/ThemeToggle"
+import { useTheme } from "../../context/ThemeContext"
 
 const Settings = () => {
     const [firstTime, setFirstTime] = useState<boolean>(true)
@@ -20,6 +22,8 @@ const Settings = () => {
     const [campaign, setCampaign] = useState<string>("")
 
     const bsc = useContext(BotStateContext)
+    const { colors } = useTheme()
+    const navigation = useNavigation()
 
     const styles = StyleSheet.create({
         root: {
@@ -27,6 +31,7 @@ const Settings = () => {
             flexDirection: "column",
             justifyContent: "center",
             margin: 10,
+            backgroundColor: colors.background,
         },
         farmingModePicker: {
             marginTop: 10,
@@ -54,6 +59,17 @@ const Settings = () => {
         componentContainer: {
             width: Dimensions.get("window").width * 0.7,
             height: Dimensions.get("window").height * 0.9,
+        },
+        header: {
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: 20,
+        },
+        title: {
+            fontSize: 24,
+            fontWeight: "bold",
+            color: colors.foreground,
         },
     })
 
@@ -102,7 +118,12 @@ const Settings = () => {
     return (
         <View style={styles.root}>
             <ScrollView nestedScrollEnabled={true} contentContainerStyle={{ flexGrow: 1 }}>
-                <View style={{ marginHorizontal: 20 }}>
+                <View className="m-1">
+                    <View style={styles.header}>
+                        <Text style={styles.title}>Settings</Text>
+                        <ThemeToggle />
+                    </View>
+
                     {renderCampaignPicker()}
 
                     <TitleDivider title="Training Settings" />

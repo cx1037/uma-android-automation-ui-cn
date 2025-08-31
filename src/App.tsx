@@ -1,13 +1,17 @@
-import { BotStateProvider } from "./context/BotStateContext"
-import { MessageLogProvider } from "./context/MessageLogContext"
 import { NavigationContainer } from "@react-navigation/native"
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
-import Ionicons from "react-native-vector-icons/Ionicons"
+import { createNativeStackNavigator } from "@react-navigation/native-stack"
+import { Home as HomeIcon, Settings as SettingsIcon } from "lucide-react-native"
 import { PortalHost } from "@rn-primitives/portal"
+import { StatusBar } from "expo-status-bar"
+import { SafeAreaView } from "react-native-safe-area-context"
+import { BotStateProvider } from "./context/BotStateContext"
+import { MessageLogProvider } from "./context/MessageLogContext"
+import { ThemeProvider, useTheme } from "./context/ThemeContext"
 import Home from "./pages/Home"
 import Settings from "./pages/Settings"
-import { createNativeStackNavigator } from "@react-navigation/native-stack"
-import TrainingSettings from "./pages/Settings/TrainingSettings"
+import Training from "./pages/Training"
+import { NAV_THEME } from "./lib/theme"
 
 export const Tag = "UAA"
 
@@ -18,40 +22,48 @@ function SettingsStack() {
     return (
         <Stack.Navigator>
             <Stack.Screen name="SettingsMain" component={Settings} options={{ headerShown: false }} />
-            <Stack.Screen name="TrainingSettings" component={TrainingSettings} options={{ title: "Training Settings" }} />
+            <Stack.Screen name="Training" component={Training} options={{ headerShown: false }} />
         </Stack.Navigator>
+    )
+}
+
+function AppContent() {
+    const { theme, colors } = useTheme()
+
+    return (
+        <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: colors.background }}>
+            <NavigationContainer theme={NAV_THEME[theme]}>
+                <StatusBar style={theme === "light" ? "dark" : "light"} />
+                <Tab.Navigator
+                    screenOptions={({ route }) => ({
+                        tabBarIcon: ({ size }: { size: number }) => {
+                            if (route.name === "Home") {
+                                return <HomeIcon size={size} color={colors.primary} />
+                            } else if (route.name === "Settings") {
+                                return <SettingsIcon size={size} color={colors.primary} />
+                            }
+                        },
+                        headerShown: false,
+                    })}
+                >
+                    <Tab.Screen name="Home" component={Home} />
+                    <Tab.Screen name="Settings" component={SettingsStack} />
+                </Tab.Navigator>
+                <PortalHost />
+            </NavigationContainer>
+        </SafeAreaView>
     )
 }
 
 function App() {
     return (
-        <BotStateProvider>
-            <MessageLogProvider>
-                <NavigationContainer>
-                    <Tab.Navigator
-                        screenOptions={({ route }) => ({
-                            tabBarIcon: ({ focused, color, size }: { focused: boolean; color: string; size: number }) => {
-                                let iconName = ""
-                                if (route.name === "Home") {
-                                    iconName = focused ? "home" : "home-outline"
-                                } else if (route.name === "Settings") {
-                                    iconName = focused ? "settings" : "settings-outline"
-                                }
-
-                                return <Ionicons name={iconName} size={size} color={color} />
-                            },
-                            tabBarActiveTintColor: "tomato",
-                            tabBarInactiveTintColor: "gray",
-                            headerShown: false
-                        })}
-                    >
-                        <Tab.Screen name="Home" component={Home} />
-                        <Tab.Screen name="Settings" component={SettingsStack} />
-                    </Tab.Navigator>
-                    <PortalHost />
-                </NavigationContainer>
-            </MessageLogProvider>
-        </BotStateProvider>
+        <ThemeProvider>
+            <BotStateProvider>
+                <MessageLogProvider>
+                    <AppContent />
+                </MessageLogProvider>
+            </BotStateProvider>
+        </ThemeProvider>
     )
 }
 
