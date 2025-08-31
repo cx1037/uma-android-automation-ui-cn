@@ -1898,6 +1898,13 @@
   dependencies:
     "@radix-ui/react-use-layout-effect" "1.1.1"
 
+"@radix-ui/react-label@^2.1.7":
+  version "2.1.7"
+  resolved "https://registry.yarnpkg.com/@radix-ui/react-label/-/react-label-2.1.7.tgz#ad959ff9c6e4968d533329eb95696e1ba8ad72ab"
+  integrity sha512-YT1GqPSL8kJn20djelMX7/cTRp/Y9w5IZHvfxQTVHrOqa2yMl7i/UfMqKRU5V7mEyKTrUVgJXhNQPVCG8PBLoQ==
+  dependencies:
+    "@radix-ui/react-primitive" "2.1.3"
+
 "@radix-ui/react-popper@1.2.8":
   version "1.2.8"
   resolved "https://registry.yarnpkg.com/@radix-ui/react-popper/-/react-popper-1.2.8.tgz#a79f39cdd2b09ab9fb50bf95250918422c4d9602"
@@ -2607,6 +2614,15 @@
   resolved "https://registry.yarnpkg.com/@rn-primitives/hooks/-/hooks-1.3.0.tgz#5e6ad5a96b520582b3a896581651064ea2292de8"
   integrity sha512-BR97reSu7uVDpyMeQdRJHT0w8KdS6jdYnOL6xQtqS2q3H6N7vXBlX4LFERqJZphD+aziJFIAJ3HJF1vtt6XlpQ==
   dependencies:
+    "@rn-primitives/types" "1.2.0"
+
+"@rn-primitives/label@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@rn-primitives/label/-/label-1.2.0.tgz#3b3e45c8def729c9e593cfddc64bcd15df288db0"
+  integrity sha512-eThBr6vn2jS81ZS4JNcg0+02TkEircH4bZmjF4IZUDl4XRpevwK95NyOkbfhGYmpVbAuisAVxDmvNOQ4OVjfug==
+  dependencies:
+    "@radix-ui/react-label" "^2.1.7"
+    "@rn-primitives/slot" "1.2.0"
     "@rn-primitives/types" "1.2.0"
 
 "@rn-primitives/portal@^1.3.0":
@@ -7704,6 +7720,11 @@ react-native-css-interop@0.1.22:
     debug "^4.3.7"
     lightningcss "^1.27.0"
     semver "^7.6.3"
+
+react-native-draglist@^3.9.9:
+  version "3.9.9"
+  resolved "https://registry.yarnpkg.com/react-native-draglist/-/react-native-draglist-3.9.9.tgz#ae7a53fd2d92ceb4ef80da990b7b19f57ecfb0ba"
+  integrity sha512-iWJhduA+9qgTQJaF+d4MLInjlORxlhw0uMeVDo1h8KVVlcsJztj2mx/A3kwxRCK+N14xECzDMHlkuAjjmYct/g==
 
 react-native-edge-to-edge@1.6.0:
   version "1.6.0"
