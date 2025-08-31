@@ -266,6 +266,17 @@ const TrainingSettings = () => {
                         "Select the priority order of the stats. The stats will be trained in the order they are selected.",
                         "priority"
                     )}
+
+                    <View style={styles.section}>
+                        <CustomCheckbox
+                            id="disable-training-on-maxed-stats"
+                            checked={disableTrainingOnMaxedStat}
+                            onCheckedChange={(checked) => updateTrainingSetting("disableTrainingOnMaxedStat", checked)}
+                            label="Disable Training on Maxed Stats"
+                            description="When enabled, training will be skipped for stats that have reached their maximum value."
+                            className="my-2"
+                        />
+                    </View>
                 </View>
             </ScrollView>
         </View>
