@@ -73,6 +73,16 @@ const Settings = () => {
         )
     }
 
+    const renderTrainingEventLink = () => {
+        return (
+            <NavigationLink
+                title="Go to Training Event Settings"
+                description="Configure training event preferences, energy management, and event selection behavior"
+                onPress={() => navigation.navigate("TrainingEventSettings" as never)}
+            />
+        )
+    }
+
     //////////////////////////////////////////////////
     //////////////////////////////////////////////////
 
@@ -87,6 +97,7 @@ const Settings = () => {
 
                     {renderCampaignPicker()}
                     {renderTrainingLink()}
+                    {renderTrainingEventLink()}
                 </View>
             </ScrollView>
 
