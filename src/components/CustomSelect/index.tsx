@@ -1,0 +1,62 @@
+import React, { useRef, useState } from "react"
+import { View, LayoutChangeEvent } from "react-native"
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select"
+
+interface SelectOption {
+    value: string
+    label: string
+    disabled?: boolean
+}
+
+interface CustomSelectProps {
+    placeholder?: string
+    options?: SelectOption[]
+    width?: string | number
+    groupLabel?: string
+    onValueChange?: (value: string | undefined) => void
+    setValue?: React.Dispatch<React.SetStateAction<string>>
+    defaultValue?: string
+    disabled?: boolean
+}
+
+const CustomSelect: React.FC<CustomSelectProps> = ({ placeholder = "Select an option", options = [], width = "100%", groupLabel, onValueChange, setValue, defaultValue, disabled = false }) => {
+    const [triggerWidth, setTriggerWidth] = useState<number>(0)
+    const triggerRef = useRef<View>(null)
+
+    const onTriggerLayout = (event: LayoutChangeEvent) => {
+        const { width: measuredWidth } = event.nativeEvent.layout
+        setTriggerWidth(measuredWidth)
+    }
+
+    const handleValueChange = (value: string | undefined) => {
+        if (onValueChange) {
+            onValueChange(value)
+        }
+        if (setValue) {
+            setValue(value || "")
+        }
+    }
+
+    return (
+        <Select onValueChange={handleValueChange as any} defaultValue={defaultValue as any} disabled={disabled}>
+            <View ref={triggerRef} style={{ width: width as any }} onLayout={onTriggerLayout}>
+                <SelectTrigger>
+                    <SelectValue placeholder={placeholder} />
+                </SelectTrigger>
+            </View>
+            <SelectContent style={{ width: triggerWidth }}>
+                <SelectGroup>
+                    {groupLabel && <SelectLabel>{groupLabel}</SelectLabel>}
+                    {options &&
+                        options.map((option) => (
+                            <SelectItem key={option.value} label={option.label} value={option.value} disabled={option.disabled}>
+                                {option.label}
+                            </SelectItem>
+                        ))}
+                </SelectGroup>
+            </SelectContent>
+        </Select>
+    )
+}
+
+export default CustomSelect
