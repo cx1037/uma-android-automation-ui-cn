@@ -3,6 +3,7 @@ import { MessageLogProvider } from "./context/MessageLogContext"
 import { NavigationContainer } from "@react-navigation/native"
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import Ionicons from "react-native-vector-icons/Ionicons"
+import { PortalHost } from "@rn-primitives/portal"
 import Home from "./pages/Home"
 import Settings from "./pages/Settings"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
@@ -47,6 +48,7 @@ function App() {
                         <Tab.Screen name="Home" component={Home} />
                         <Tab.Screen name="Settings" component={SettingsStack} />
                     </Tab.Navigator>
+                    <PortalHost />
                 </NavigationContainer>
             </MessageLogProvider>
         </BotStateProvider>
