@@ -3,7 +3,7 @@ import { createContext, useState } from "react"
 export interface Settings {
     // General settings
     general: {
-        campaign: string
+        scenario: string
         enableSkillPointCheck: boolean
         skillPointCheck: number
         enablePopupCheck: boolean
@@ -89,7 +89,7 @@ export interface Settings {
 // Set the default settings.
 export const defaultSettings: Settings = {
     general: {
-        campaign: "",
+        scenario: "",
         enableSkillPointCheck: false,
         skillPointCheck: 750,
         enablePopupCheck: false,
