@@ -2,9 +2,8 @@
     "expo": {
         "name": "Uma Android Automation",
         "slug": "uma-android-automation",
+        "version": "3.0.3",
         "platforms": ["android"],
-        "web": {
-            "bundler": "metro"
-        }
+        "userInterfaceStyle": "automatic"
     }
 }
