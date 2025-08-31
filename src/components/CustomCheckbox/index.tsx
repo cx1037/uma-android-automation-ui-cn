@@ -19,12 +19,16 @@ const CustomCheckbox: React.FC<CustomCheckboxProps> = ({ id = undefined, checked
 
     return (
         <View className={`flex flex-row items-start gap-3 ${className}`}>
-            <Checkbox id={id} checked={checked} onCheckedChange={onCheckedChange} />
+            <Checkbox id={id} checked={checked} onCheckedChange={onCheckedChange} className="dark:border-gray-400 dark:bg-gray-800" />
             <View className="flex-1 gap-2">
                 <Label style={{ color: colors.foreground }} className="text-foreground" onPress={() => onCheckedChange(!checked)}>
                     {label}
                 </Label>
-                {description && <Text style={{ color: colors.mutedForeground }} className="text-muted-foreground text-sm">{description}</Text>}
+                {description && (
+                    <Text style={{ color: colors.mutedForeground }} className="text-muted-foreground text-sm">
+                        {description}
+                    </Text>
+                )}
             </View>
         </View>
     )
