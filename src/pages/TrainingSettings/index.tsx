@@ -169,23 +169,11 @@ const TrainingSettings = () => {
                     <Text style={styles.pressableText}>{selectedStats.length === 0 ? "None" : selectedStats.join(", ")}</Text>
                 </TouchableOpacity>
             </View>
-            {description && (
-                <Text style={[styles.label, { fontSize: 14, color: colors.foreground, opacity: 0.7, marginTop: 4 }]}>
-                    {description}
-                </Text>
-            )}
+            {description && <Text style={[styles.label, { fontSize: 14, color: colors.foreground, opacity: 0.7, marginTop: 4 }]}>{description}</Text>}
 
             <Modal visible={modalVisible} transparent={true} animationType="fade" onRequestClose={() => setModalVisible(false)}>
-                <TouchableOpacity 
-                    style={styles.modal} 
-                    activeOpacity={1} 
-                    onPress={() => setModalVisible(false)}
-                >
-                    <TouchableOpacity 
-                        style={styles.modalContent} 
-                        activeOpacity={1} 
-                        onPress={(e) => e.stopPropagation()}
-                    >
+                <TouchableOpacity style={styles.modal} activeOpacity={1} onPress={() => setModalVisible(false)}>
+                    <TouchableOpacity style={styles.modalContent} activeOpacity={1} onPress={(e) => e.stopPropagation()}>
                         <View style={styles.modalHeader}>
                             <Text style={styles.modalTitle}>{title}</Text>
                             <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
@@ -195,10 +183,9 @@ const TrainingSettings = () => {
 
                         {mode === "priority" ? (
                             <DraggablePriorityList
-                                items={stats.map(stat => ({
+                                items={stats.map((stat) => ({
                                     id: stat,
                                     label: stat,
-
                                 }))}
                                 selectedItems={selectedStats}
                                 onSelectionChange={setSelectedStats}
@@ -246,10 +233,10 @@ const TrainingSettings = () => {
                     </View>
 
                     {renderStatSelector(
-                        "Blacklist", 
-                        trainingBlacklist, 
-                        (value) => updateTrainingSetting("trainingBlacklist", value), 
-                        blacklistModalVisible, 
+                        "Blacklist",
+                        trainingBlacklist,
+                        (value) => updateTrainingSetting("trainingBlacklist", value),
+                        blacklistModalVisible,
                         setBlacklistModalVisible,
                         undefined,
                         "Select which stats to exclude from training. These stats will be skipped during training sessions.",
