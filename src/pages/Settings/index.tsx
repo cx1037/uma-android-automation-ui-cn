@@ -14,12 +14,13 @@ import { Snackbar } from "react-native-paper"
 import { useNavigation } from "@react-navigation/native"
 import ThemeToggle from "../../components/ThemeToggle"
 import { useTheme } from "../../context/ThemeContext"
+import CustomSelect from "../../components/CustomSelect"
 
 const Settings = () => {
     const [firstTime, setFirstTime] = useState<boolean>(true)
     const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false)
 
-    const [campaign, setCampaign] = useState<string>("")
+    const [scenario, setScenario] = useState<string>("")
 
     const bsc = useContext(BotStateContext)
     const { colors } = useTheme()
@@ -94,9 +95,7 @@ const Settings = () => {
 
     const renderCampaignPicker = () => {
         return (
-            <View>
-                <CustomDropDownPicker containerStyle={styles.farmingModePicker} placeholder="Select Campaign" data={campaigns} value={bsc.settings.general.campaign} setValue={setCampaign} />
-            </View>
+            <CustomSelect placeholder="Select a Scenario" width="100%" groupLabel="Scenarios" options={scenarios} setValue={setScenario} />
         )
     }
 
