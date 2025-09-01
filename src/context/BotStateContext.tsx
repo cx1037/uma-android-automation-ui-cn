@@ -140,7 +140,7 @@ export const defaultSettings: Settings = {
     ocr: {
         ocrThreshold: 230,
         enableAutomaticOCRRetry: true,
-        ocrConfidence: 0.8,
+        ocrConfidence: 80,
     },
     debug: {
         enableDebugMode: false,
