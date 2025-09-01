@@ -30,7 +30,7 @@ export interface Settings {
         maximumFailureChance: number
         disableTrainingOnMaxedStat: boolean
         focusOnSparkStatTarget: boolean
-        character: string
+        characterList: string[]
         selectAllCharacters: boolean
         supportList: string[]
         selectAllSupportCards: boolean
@@ -110,7 +110,7 @@ export const defaultSettings: Settings = {
         maximumFailureChance: 20,
         disableTrainingOnMaxedStat: true,
         focusOnSparkStatTarget: false,
-        character: "",
+        characterList: [],
         selectAllCharacters: true,
         supportList: [],
         selectAllSupportCards: true,
