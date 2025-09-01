@@ -1,10 +1,15 @@
-import { useContext } from "react"
+import { useContext, useMemo } from "react"
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from "react-native"
 import { useNavigation } from "@react-navigation/native"
 import { useTheme } from "../../context/ThemeContext"
 import { BotStateContext } from "../../context/BotStateContext"
 import CustomCheckbox from "../../components/CustomCheckbox"
+import MultiSelector from "../../components/MultiSelector"
 import { ArrowLeft } from "lucide-react-native"
+
+// Import the data files
+import charactersData from "../../data/characters.json"
+import supportsData from "../../data/supports.json"
 
 const TrainingEventSettings = () => {
     const { colors } = useTheme()
@@ -14,6 +19,10 @@ const TrainingEventSettings = () => {
     // Get training event settings from global state
     const { settings, setSettings } = bsc
     const { enablePrioritizeEnergyOptions } = settings.trainingEvent
+
+    // Extract character and support names from the data
+    const characterNames = useMemo(() => Object.keys(charactersData), [])
+    const supportNames = useMemo(() => Object.keys(supportsData), [])
 
     // Helper function to update training event settings
     const updateTrainingEventSetting = (key: keyof typeof settings.trainingEvent, value: any) => {
@@ -93,6 +102,44 @@ const TrainingEventSettings = () => {
                             className="my-2"
                         />
                     </View>
+
+                    <MultiSelector
+                        title="Character Selection"
+                        description="Choose which characters you have in your current scenario. You can select all characters at once, or pick specific ones individually. When selecting individually, all rarity variants (R/SR/SSR) of the same character are grouped together."
+                        options={characterNames}
+                        selectedOptions={settings.training.characterList}
+                        onSelectionChange={(selectedOptions) => {
+                            setSettings({
+                                ...bsc.settings,
+                                training: {
+                                    ...bsc.settings.training,
+                                    characterList: selectedOptions,
+                                },
+                            })
+                        }}
+                        selectAllLabel="Select All Characters"
+                        selectAllDescription="Select all available characters for training events"
+                        selectIndividualLabel="Select Characters"
+                    />
+
+                    <MultiSelector
+                        title="Support Card Selection"
+                        description="Choose which support cards you have in your current scenario. Same selection behavior applies as above."
+                        options={supportNames}
+                        selectedOptions={settings.training.supportList}
+                        onSelectionChange={(selectedOptions) => {
+                            setSettings({
+                                ...bsc.settings,
+                                training: {
+                                    ...bsc.settings.training,
+                                    supportList: selectedOptions,
+                                },
+                            })
+                        }}
+                        selectAllLabel="Select All Support Cards"
+                        selectAllDescription="Select all available support cards for training events"
+                        selectIndividualLabel="Select Support Cards"
+                    />
                 </View>
             </ScrollView>
         </View>
