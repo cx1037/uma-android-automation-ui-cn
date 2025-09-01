@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react"
 import { View, Text, StyleSheet, Animated, LayoutChangeEvent } from "react-native"
 import Slider from "@react-native-community/slider"
 import { useTheme } from "../../context/ThemeContext"
+import { Input } from "../ui/input"
 
 interface CustomSliderProps {
     value: number
@@ -21,6 +22,7 @@ const CustomSlider: React.FC<CustomSliderProps> = ({ value, onValueChange, min, 
     const [isDragging, setIsDragging] = useState(false)
     const [sliderWidth, setSliderWidth] = useState(0)
     const [tooltipPosition, setTooltipPosition] = useState(0)
+    const [inputValue, setInputValue] = useState(value.toString())
     const thumbScale = useRef(new Animated.Value(1)).current
     const tooltipOpacity = useRef(new Animated.Value(0)).current
 
@@ -44,11 +46,6 @@ const CustomSlider: React.FC<CustomSliderProps> = ({ value, onValueChange, min, 
             flexDirection: "row",
             justifyContent: "space-between",
             marginHorizontal: 20,
-        },
-        valueText: {
-            fontSize: 18,
-            fontWeight: "600",
-            color: colors.foreground,
         },
         labelText: {
             fontSize: 12,
@@ -94,6 +91,24 @@ const CustomSlider: React.FC<CustomSliderProps> = ({ value, onValueChange, min, 
             fontWeight: "600",
             textAlign: "center",
         },
+        inputContainer: {
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+        },
+        input: {
+            width: 80,
+            textAlign: "center",
+            fontSize: 18,
+            fontWeight: "600",
+            color: colors.foreground,
+        },
+        unitText: {
+            fontSize: 18,
+            fontWeight: "600",
+            color: colors.foreground,
+            marginLeft: 4,
+        },
     })
 
     const calculateTooltipPosition = (currentValue: number) => {
@@ -109,6 +124,11 @@ const CustomSlider: React.FC<CustomSliderProps> = ({ value, onValueChange, min, 
             setTooltipPosition(position)
         }
     }, [sliderWidth, value, min, max])
+
+    // Update input value when external value changes
+    useEffect(() => {
+        setInputValue(value.toString())
+    }, [value])
 
     const handleSlidingStart = (sliderValue: number) => {
         setIsDragging(true)
@@ -147,9 +167,34 @@ const CustomSlider: React.FC<CustomSliderProps> = ({ value, onValueChange, min, 
 
     const handleValueChange = (sliderValue: number) => {
         onValueChange(sliderValue)
+        setInputValue(sliderValue.toString())
         if (isDragging) {
             const position = calculateTooltipPosition(sliderValue)
             setTooltipPosition(position)
+        }
+    }
+
+    const handleInputChange = (text: string) => {
+        setInputValue(text)
+        const numValue = parseFloat(text)
+        if (!isNaN(numValue) && numValue >= min && numValue <= max) {
+            // Round to nearest step
+            const roundedValue = Math.round(numValue / step) * step
+            onValueChange(roundedValue)
+        }
+    }
+
+    const handleInputSubmit = () => {
+        const numValue = parseFloat(inputValue)
+        if (!isNaN(numValue)) {
+            // Clamp value to min/max and round to nearest step
+            const clampedValue = Math.max(min, Math.min(max, numValue))
+            const roundedValue = Math.round(clampedValue / step) * step
+            onValueChange(roundedValue)
+            setInputValue(roundedValue.toString())
+        } else {
+            // Reset to current value if invalid
+            setInputValue(value.toString())
         }
     }
 
@@ -175,7 +220,10 @@ const CustomSlider: React.FC<CustomSliderProps> = ({ value, onValueChange, min, 
                     ]}
                     pointerEvents="none"
                 >
-                    <Text style={styles.tooltipText}>{value}%</Text>
+                    <Text style={styles.tooltipText}>
+                        {value}
+                        {labelUnit}
+                    </Text>
                 </Animated.View>
 
                 {/* Custom thumb overlay for scaling effect */}
@@ -209,10 +257,18 @@ const CustomSlider: React.FC<CustomSliderProps> = ({ value, onValueChange, min, 
             {showValue && (
                 <View style={styles.valueContainer}>
                     <Text style={styles.labelText}>{showLabels ? min + labelUnit : ""}</Text>
-                    <Text style={styles.valueText}>
-                        {value}
-                        {labelUnit}
-                    </Text>
+                    <View style={styles.inputContainer}>
+                        <Input
+                            value={inputValue}
+                            onChangeText={handleInputChange}
+                            onEndEditing={handleInputSubmit}
+                            onBlur={handleInputSubmit}
+                            keyboardType="numeric"
+                            style={styles.input}
+                            placeholder={value.toString()}
+                        />
+                        {labelUnit && <Text style={styles.unitText}>{labelUnit}</Text>}
+                    </View>
                     <Text style={styles.labelText}>{showLabels ? max + labelUnit : ""}</Text>
                 </View>
             )}
