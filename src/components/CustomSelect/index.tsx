@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react"
 import { View, LayoutChangeEvent } from "react-native"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select"
+import { useTheme } from "../../context/ThemeContext"
 
 interface SelectOption {
     value: string
@@ -20,6 +21,8 @@ interface CustomSelectProps {
 }
 
 const CustomSelect: React.FC<CustomSelectProps> = ({ placeholder = "Select an option", options = [], width = "100%", groupLabel, onValueChange, setValue, defaultValue, disabled = false }) => {
+    const { colors } = useTheme()
+    
     const [triggerWidth, setTriggerWidth] = useState<number>(0)
     const triggerRef = useRef<View>(null)
 
@@ -41,7 +44,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ placeholder = "Select an op
         <Select onValueChange={handleValueChange as any} defaultValue={defaultValue as any} disabled={disabled}>
             <View ref={triggerRef} style={{ width: width as any }} onLayout={onTriggerLayout}>
                 <SelectTrigger>
-                    <SelectValue placeholder={placeholder} />
+                    <SelectValue placeholder={placeholder} style={{ color: colors.foreground }} />
                 </SelectTrigger>
             </View>
             <SelectContent style={{ width: triggerWidth }}>
