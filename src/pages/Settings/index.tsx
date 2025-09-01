@@ -93,6 +93,16 @@ const Settings = () => {
         )
     }
 
+    const renderRacingLink = () => {
+        return (
+            <NavigationLink
+                title="Go to Racing Settings"
+                description="Configure racing behavior, fan farming, retry settings, and mandatory race handling"
+                onPress={() => navigation.navigate("RacingSettings" as never)}
+            />
+        )
+    }
+
     //////////////////////////////////////////////////
     //////////////////////////////////////////////////
 
@@ -109,6 +119,7 @@ const Settings = () => {
                     {renderTrainingLink()}
                     {renderTrainingEventLink()}
                     {renderOCRLink()}
+                    {renderRacingLink()}
                 </View>
             </ScrollView>
 
