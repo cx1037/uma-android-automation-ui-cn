@@ -12,6 +12,7 @@ import Home from "./pages/Home"
 import Settings from "./pages/Settings"
 import TrainingSettings from "./pages/TrainingSettings"
 import TrainingEventSettings from "./pages/TrainingEventSettings"
+import OCRSettings from "./pages/OCRSettings"
 import { NAV_THEME } from "./lib/theme"
 
 export const Tag = "UAA"
@@ -25,6 +26,7 @@ function SettingsStack() {
             <Stack.Screen name="SettingsMain" component={Settings} options={{ headerShown: false }} />
             <Stack.Screen name="TrainingSettings" component={TrainingSettings} options={{ headerShown: false }} />
             <Stack.Screen name="TrainingEventSettings" component={TrainingEventSettings} options={{ headerShown: false }} />
+            <Stack.Screen name="OCRSettings" component={OCRSettings} options={{ headerShown: false }} />
         </Stack.Navigator>
     )
 }

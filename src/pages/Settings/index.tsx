@@ -83,6 +83,16 @@ const Settings = () => {
         )
     }
 
+    const renderOCRLink = () => {
+        return (
+            <NavigationLink
+                title="Go to OCR Settings"
+                description="Configure OCR text detection parameters, threshold settings, and retry behavior"
+                onPress={() => navigation.navigate("OCRSettings" as never)}
+            />
+        )
+    }
+
     //////////////////////////////////////////////////
     //////////////////////////////////////////////////
 
@@ -98,6 +108,7 @@ const Settings = () => {
                     {renderCampaignPicker()}
                     {renderTrainingLink()}
                     {renderTrainingEventLink()}
+                    {renderOCRLink()}
                 </View>
             </ScrollView>
 
