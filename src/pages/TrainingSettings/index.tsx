@@ -6,6 +6,7 @@ import { BotStateContext } from "../../context/BotStateContext"
 import { Button } from "../../components/ui/button"
 import CustomSlider from "../../components/CustomSlider"
 import CustomCheckbox from "../../components/CustomCheckbox"
+import CustomTitle from "../../components/CustomTitle"
 import DraggablePriorityList from "../../components/DraggablePriorityList"
 import CustomAccordion from "../../components/CustomAccordion"
 import { ArrowLeft } from "lucide-react-native"
@@ -75,12 +76,7 @@ const TrainingSettings = () => {
         section: {
             marginBottom: 24,
         },
-        sectionTitle: {
-            fontSize: 18,
-            fontWeight: "600",
-            color: colors.foreground,
-            marginBottom: 12,
-        },
+
         row: {
             flexDirection: "row",
             justifyContent: "space-between",
@@ -305,10 +301,10 @@ const TrainingSettings = () => {
 
                     {/* Stat Target Settings */}
                     <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>Stat Targets by Distance</Text>
-                        <Text style={[styles.label, { fontSize: 14, color: colors.foreground, opacity: 0.7, marginBottom: 16 }]}>
-                            Set target values for each stat based on race distance. The bot will prioritize training stats that are below these targets.
-                        </Text>
+                        <CustomTitle
+                            title="Stat Targets by Distance"
+                            description="Set target values for each stat based on race distance. The bot will prioritize training stats that are below these targets."
+                        />
                     </View>
 
                     {/* Distance Stat Targets Accordion */}

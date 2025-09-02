@@ -4,6 +4,7 @@ import { useNavigation } from "@react-navigation/native"
 import { useTheme } from "../../context/ThemeContext"
 import { BotStateContext } from "../../context/BotStateContext"
 import CustomCheckbox from "../../components/CustomCheckbox"
+import CustomTitle from "../../components/CustomTitle"
 import MultiSelector from "../../components/MultiSelector"
 import { ArrowLeft } from "lucide-react-native"
 
@@ -60,19 +61,6 @@ const TrainingEventSettings = () => {
         section: {
             marginBottom: 24,
         },
-        sectionTitle: {
-            fontSize: 18,
-            fontWeight: "600",
-            color: colors.foreground,
-            marginBottom: 12,
-        },
-        description: {
-            fontSize: 14,
-            color: colors.foreground,
-            opacity: 0.7,
-            marginBottom: 16,
-            lineHeight: 20,
-        },
     })
 
     return (
@@ -87,11 +75,10 @@ const TrainingEventSettings = () => {
                     </View>
 
                     <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>Energy Management</Text>
-                        <Text style={styles.description}>
-                            Configure how the bot handles energy-related choices during training events. These settings affect the bot's decision-making when presented with energy recovery or
-                            consumption options.
-                        </Text>
+                        <CustomTitle
+                            title="Energy Management"
+                            description="Configure how the bot handles energy-related choices during training events. These settings affect the bot's decision-making when presented with energy recovery or consumption options."
+                        />
 
                         <CustomCheckbox
                             id="prioritize-energy-options"
