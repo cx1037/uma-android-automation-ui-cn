@@ -144,8 +144,8 @@ export const defaultSettings: Settings = {
     },
     debug: {
         enableDebugMode: false,
-        templateMatchConfidence: 0.8,
-        templateMatchCustomScale: 1.0,
+        templateMatchConfidence: 80,
+        templateMatchCustomScale: 100,
         debugMode_startTemplateMatchingTest: false,
         debugMode_startSingleTrainingFailureOCRTest: false,
         debugMode_startComprehensiveTrainingFailureOCRTest: false,
