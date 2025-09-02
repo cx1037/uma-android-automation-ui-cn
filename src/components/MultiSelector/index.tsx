@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react"
-import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, ScrollView } from "react-native"
+import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, ScrollView, ViewStyle } from "react-native"
 import { useTheme } from "../../context/ThemeContext"
 import CustomCheckbox from "../CustomCheckbox"
 import { Button } from "../ui/button"
@@ -14,6 +14,7 @@ interface MultiSelectorProps {
     selectAllLabel?: string
     selectAllDescription?: string
     selectIndividualLabel?: string
+    style?: ViewStyle
 }
 
 const MultiSelector: React.FC<MultiSelectorProps> = ({
@@ -25,6 +26,7 @@ const MultiSelector: React.FC<MultiSelectorProps> = ({
     selectAllLabel = "Select All",
     selectAllDescription = "Select all available options",
     selectIndividualLabel = "Select Individual Items",
+    style,
 }) => {
     const { colors } = useTheme()
     const [selectAll, setSelectAll] = useState(false)
@@ -334,7 +336,7 @@ const MultiSelector: React.FC<MultiSelectorProps> = ({
     })
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, style]}>
             <Text style={styles.title}>{title}</Text>
             <Text style={styles.description}>{description}</Text>
 

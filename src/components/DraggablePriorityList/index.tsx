@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react"
-import { View, Text, TouchableOpacity, LayoutChangeEvent } from "react-native"
+import { View, Text, TouchableOpacity, LayoutChangeEvent, ViewStyle } from "react-native"
 import DragList, { DragListRenderItemInfo } from "react-native-draglist"
 import { Checkbox } from "../ui/checkbox"
 import { Label } from "../ui/label"
@@ -19,9 +19,10 @@ interface DraggablePriorityListProps {
     onSelectionChange: (selectedItems: string[]) => void
     onOrderChange: (orderedItems: string[]) => void
     className?: string
+    style?: ViewStyle
 }
 
-const DraggablePriorityList: React.FC<DraggablePriorityListProps> = ({ items, selectedItems, onSelectionChange, onOrderChange, className = "" }) => {
+const DraggablePriorityList: React.FC<DraggablePriorityListProps> = ({ items, selectedItems, onSelectionChange, onOrderChange, className = "", style }) => {
     const { colors } = useTheme()
 
     const [orderedItems, setOrderedItems] = useState<string[]>(items.map(item => item.id))
@@ -152,7 +153,7 @@ const DraggablePriorityList: React.FC<DraggablePriorityListProps> = ({ items, se
     }
 
     return (
-        <View>
+        <View style={style}>
             <Text className="text-sm text-muted-foreground mb-3">Drag items to reorder. Top to bottom = highest to lowest priority.</Text>
 
             {/* Always show the DragList, regardless of selection state */}

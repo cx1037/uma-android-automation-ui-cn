@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react"
-import { View, LayoutChangeEvent } from "react-native"
+import { View, LayoutChangeEvent, ViewStyle } from "react-native"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select"
 import { useTheme } from "../../context/ThemeContext"
 
@@ -18,9 +18,10 @@ interface CustomSelectProps {
     setValue?: React.Dispatch<React.SetStateAction<string>>
     defaultValue?: string
     disabled?: boolean
+    style?: ViewStyle
 }
 
-const CustomSelect: React.FC<CustomSelectProps> = ({ placeholder = "Select an option", options = [], width = "100%", groupLabel, onValueChange, setValue, defaultValue, disabled = false }) => {
+const CustomSelect: React.FC<CustomSelectProps> = ({ placeholder = "Select an option", options = [], width = "100%", groupLabel, onValueChange, setValue, defaultValue, disabled = false, style }) => {
     const { colors } = useTheme()
     
     const [triggerWidth, setTriggerWidth] = useState<number>(0)
@@ -42,7 +43,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ placeholder = "Select an op
 
     return (
         <Select onValueChange={handleValueChange as any} defaultValue={defaultValue as any} disabled={disabled}>
-            <View ref={triggerRef} style={{ width: width as any }} onLayout={onTriggerLayout}>
+            <View ref={triggerRef} style={[{ width: width as any }, style]} onLayout={onTriggerLayout}>
                 <SelectTrigger>
                     <SelectValue placeholder={placeholder} style={{ color: colors.foreground }} />
                 </SelectTrigger>

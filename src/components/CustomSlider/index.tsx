@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react"
-import { View, Text, StyleSheet, Animated, LayoutChangeEvent } from "react-native"
+import { View, Text, StyleSheet, Animated, LayoutChangeEvent, ViewStyle } from "react-native"
 import Slider from "@react-native-community/slider"
 import { useTheme } from "../../context/ThemeContext"
 import { Input } from "../ui/input"
@@ -15,9 +15,10 @@ interface CustomSliderProps {
     showValue?: boolean
     showLabels?: boolean
     description?: string
+    style?: ViewStyle
 }
 
-const CustomSlider: React.FC<CustomSliderProps> = ({ value, onValueChange, min, max, step, label, labelUnit = "", showValue = true, showLabels = true, description }) => {
+const CustomSlider: React.FC<CustomSliderProps> = ({ value, onValueChange, min, max, step, label, labelUnit = "", showValue = true, showLabels = true, description, style }) => {
     const { colors } = useTheme()
     const [isDragging, setIsDragging] = useState(false)
     const [sliderWidth, setSliderWidth] = useState(0)
@@ -204,7 +205,7 @@ const CustomSlider: React.FC<CustomSliderProps> = ({ value, onValueChange, min, 
     }
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, style]}>
             {label && <Text style={styles.label}>{label}</Text>}
             {description && <Text style={styles.descriptionText}>{description}</Text>}
 

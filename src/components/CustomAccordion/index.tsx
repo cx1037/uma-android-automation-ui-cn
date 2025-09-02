@@ -1,5 +1,5 @@
 import React from "react"
-import { Text, StyleSheet } from "react-native"
+import { Text, StyleSheet, ViewStyle } from "react-native"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion"
 import { useTheme } from "../../context/ThemeContext"
 
@@ -14,9 +14,10 @@ interface CustomAccordionProps {
     type?: "single" | "multiple"
     defaultValue?: string[]
     className?: string
+    style?: ViewStyle
 }
 
-const CustomAccordion: React.FC<CustomAccordionProps> = ({ sections, type = "single", defaultValue = [], className }) => {
+const CustomAccordion: React.FC<CustomAccordionProps> = ({ sections, type = "single", defaultValue = [], className, style }) => {
     const { colors } = useTheme()
 
     const styles = StyleSheet.create({
@@ -29,7 +30,7 @@ const CustomAccordion: React.FC<CustomAccordionProps> = ({ sections, type = "sin
     })
 
     return (
-        <Accordion type={type} defaultValue={defaultValue} className={className}>
+        <Accordion type={type} defaultValue={defaultValue} className={className} style={style}>
             {sections.map((section) => (
                 <AccordionItem key={section.value} value={section.value}>
                     <AccordionTrigger>

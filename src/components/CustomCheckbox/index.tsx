@@ -1,5 +1,5 @@
 import React from "react"
-import { View } from "react-native"
+import { View, ViewStyle } from "react-native"
 import { Checkbox } from "../ui/checkbox"
 import { Label } from "../ui/label"
 import { Text } from "../ui/text"
@@ -12,13 +12,14 @@ interface CustomCheckboxProps {
     label: string
     description?: string | null
     className?: string
+    style?: ViewStyle
 }
 
-const CustomCheckbox: React.FC<CustomCheckboxProps> = ({ id = undefined, checked, onCheckedChange, label, description, className = "" }) => {
+const CustomCheckbox: React.FC<CustomCheckboxProps> = ({ id = undefined, checked, onCheckedChange, label, description, className = "", style }) => {
     const { colors } = useTheme()
 
     return (
-        <View className={`flex flex-row items-start gap-3 ${className}`}>
+        <View className={`flex flex-row items-start gap-3 ${className}`} style={style}>
             <Checkbox id={id} checked={checked} onCheckedChange={onCheckedChange} className="dark:border-gray-400 dark:bg-gray-800" />
             <View className="flex-1 gap-2">
                 <Label style={{ color: colors.foreground }} className="text-foreground" onPress={() => onCheckedChange(!checked)}>

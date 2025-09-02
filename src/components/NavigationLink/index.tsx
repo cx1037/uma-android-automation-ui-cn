@@ -1,5 +1,5 @@
 import React from "react"
-import { View, Text, TouchableOpacity } from "react-native"
+import { View, Text, TouchableOpacity, ViewStyle } from "react-native"
 import { useThemeClasses } from "../../hooks/useThemeClasses"
 
 interface NavigationLinkProps {
@@ -7,13 +7,14 @@ interface NavigationLinkProps {
     description: string
     onPress: () => void
     className?: string
+    style?: ViewStyle
 }
 
-const NavigationLink: React.FC<NavigationLinkProps> = ({ title, description, onPress, className = "" }) => {
+const NavigationLink: React.FC<NavigationLinkProps> = ({ title, description, onPress, className = "", style }) => {
     const themeClasses = useThemeClasses()
 
     return (
-        <View className={`mt-5 p-4 rounded-lg border ${themeClasses.bgCard} ${themeClasses.border} ${className}`}>
+        <View className={`mt-5 p-4 rounded-lg border ${themeClasses.bgCard} ${themeClasses.border} ${className}`} style={style}>
             <TouchableOpacity onPress={onPress}>
                 <Text className={`text-lg font-semibold ${themeClasses.text}`}>{title}</Text>
                 <Text className={`mt-2 ${themeClasses.textSecondary}`}>{description}</Text>
