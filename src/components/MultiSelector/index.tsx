@@ -164,9 +164,6 @@ const MultiSelector: React.FC<MultiSelectorProps> = ({
         },
         selectAllContainer: {
             marginBottom: 16,
-            paddingBottom: 16,
-            borderBottomWidth: 1,
-            borderBottomColor: colors.border,
         },
         multiSelectorContainer: {
             flexDirection: "row",
