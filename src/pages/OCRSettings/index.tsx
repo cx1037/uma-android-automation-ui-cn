@@ -111,6 +111,21 @@ const OCRSettings = () => {
                             description="Set the minimum confidence level required for OCR text detection. Higher values ensure more accurate text recognition but may miss some text."
                         />
                     </View>
+
+                    <View style={styles.section}>
+                        <CustomCheckbox
+                            checked={bsc.settings.debug.enableHideOCRComparisonResults}
+                            onCheckedChange={(checked) => {
+                                bsc.setSettings({
+                                    ...bsc.settings,
+                                    debug: { ...bsc.settings.debug, enableHideOCRComparisonResults: checked },
+                                })
+                            }}
+                            label="Hide OCR String Comparison Results during Training Event detection"
+                            description="Hides the log messages involved in the string comparison process during training event detection."
+                            style={{ marginTop: 10 }}
+                        />
+                    </View>
                 </View>
             </ScrollView>
         </View>
