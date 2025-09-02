@@ -75,11 +75,6 @@ const TrainingEventSettings = () => {
                     </View>
 
                     <View style={styles.section}>
-                        <CustomTitle
-                            title="Energy Management"
-                            description="Configure how the bot handles energy-related choices during training events. These settings affect the bot's decision-making when presented with energy recovery or consumption options."
-                        />
-
                         <CustomCheckbox
                             id="prioritize-energy-options"
                             checked={enablePrioritizeEnergyOptions}
