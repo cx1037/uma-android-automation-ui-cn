@@ -1,7 +1,7 @@
 import scenarios from "../../data/scenarios.json"
 import { useContext, useEffect, useState } from "react"
 import { BotStateContext } from "../../context/BotStateContext"
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { ScrollView, StyleSheet, Text, View } from "react-native"
 import { Snackbar } from "react-native-paper"
 import { useNavigation } from "@react-navigation/native"
 import ThemeToggle from "../../components/ThemeToggle"
@@ -12,8 +12,6 @@ import NavigationLink from "../../components/NavigationLink"
 const Settings = () => {
     const [firstTime, setFirstTime] = useState<boolean>(true)
     const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false)
-
-    const [scenario, setScenario] = useState<string>("")
 
     const bsc = useContext(BotStateContext)
     const { colors } = useTheme()
@@ -38,6 +36,19 @@ const Settings = () => {
             fontWeight: "bold",
             color: colors.foreground,
         },
+        errorContainer: {
+            backgroundColor: "#FFF3CD",
+            borderLeftWidth: 4,
+            borderLeftColor: "#FFA500",
+            padding: 12,
+            marginTop: 12,
+            borderRadius: 8,
+        },
+        errorText: {
+            fontSize: 14,
+            color: "#856404",
+            lineHeight: 20,
+        },
     })
 
     //////////////////////////////////////////////////
@@ -60,7 +71,24 @@ const Settings = () => {
     // Rendering
 
     const renderCampaignPicker = () => {
-        return <CustomSelect placeholder="Select a Scenario" width="100%" groupLabel="Scenarios" options={scenarios} setValue={setScenario} />
+        return (
+            <View>
+                <CustomSelect
+                    placeholder="Select a Scenario"
+                    width="100%"
+                    groupLabel="Scenarios"
+                    options={scenarios}
+                    onValueChange={(value) => {
+                        bsc.setSettings({ ...bsc.settings, general: { ...bsc.settings.general, scenario: value || "" } })
+                    }}
+                />
+                {!bsc.settings.general.scenario && (
+                    <View style={styles.errorContainer}>
+                        <Text style={styles.errorText}>⚠️ A scenario must be selected before starting the bot.</Text>
+                    </View>
+                )}
+            </View>
+        )
     }
 
     const renderTrainingLink = () => {
