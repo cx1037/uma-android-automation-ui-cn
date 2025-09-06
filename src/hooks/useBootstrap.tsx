@@ -66,9 +66,8 @@ export const useBootstrap = () => {
 
     // Determine whether the program is ready to start.
     const handleReady = () => {
-        // TODO: Implement ready state logic.
-        let ready = true
-        bsc.setReadyStatus(ready)
+        const scenario = bsc.settings.general.scenario
+        bsc.setReadyStatus(scenario !== "")
     }
 
     return {
