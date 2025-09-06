@@ -61,7 +61,7 @@ const Settings = () => {
     useEffect(() => {
         // Manually set this flag to false as the snackbar autohiding does not set this to false automatically.
         setSnackbarOpen(true)
-        setTimeout(() => setSnackbarOpen(false), 1500)
+        setTimeout(() => setSnackbarOpen(false), 2500)
     }, [bsc.readyStatus])
 
     //////////////////////////////////////////////////
