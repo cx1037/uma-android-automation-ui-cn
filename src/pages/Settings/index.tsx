@@ -14,7 +14,6 @@ import CustomTitle from "../../components/CustomTitle"
 import { Separator } from "../../components/ui/separator"
 
 const Settings = () => {
-    const [firstTime, setFirstTime] = useState<boolean>(true)
     const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false)
 
     const bsc = useContext(BotStateContext)
@@ -58,11 +57,6 @@ const Settings = () => {
     //////////////////////////////////////////////////
     //////////////////////////////////////////////////
     // Callbacks
-
-    // Load some specific states from context to local.
-    useEffect(() => {
-        setFirstTime(false)
-    }, [])
 
     useEffect(() => {
         // Manually set this flag to false as the snackbar autohiding does not set this to false automatically.
