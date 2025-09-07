@@ -1,5 +1,7 @@
 import { useState } from "react"
 import * as FileSystem from "expo-file-system"
+import * as Sharing from "expo-sharing"
+import { startActivityAsync } from "expo-intent-launcher"
 import { defaultSettings, Settings, BotStateProviderProps } from "../context/BotStateContext"
 import { MessageLogProviderProps } from "../context/MessageLogContext"
 
@@ -113,9 +115,67 @@ export const useSettingsManager = (bsc: BotStateProviderProps, mlc: MessageLogPr
         return null
     }
 
+    // Open the app's data directory using Storage Access Framework.
+    const openDataDirectory = async () => {
+        // Get the app's package name from the document directory path.
+        const packageName = "com.steve1316.uma_android_automation"
+
+        try {
+            // Try Storage Access Framework first (recommended for Android 11+).
+            try {
+                await startActivityAsync("android.intent.action.OPEN_DOCUMENT_TREE", {
+                    data: `content://com.android.externalstorage.documents/tree/primary%3AAndroid%2Fdata%2F${packageName}/files`,
+                    flags: 1, // FLAG_GRANT_READ_URI_PERMISSION
+                })
+
+                mlc.setMessageLog([...mlc.messageLog, `\n[SUCCESS] Opened Android data directory for package: ${packageName}`])
+                return
+            } catch (safError) {
+                console.warn("SAF approach failed, trying fallback:", safError)
+            }
+
+            // Fallback: Try to open the data folder with the android.intent.action.VIEW Intent.
+            try {
+                await startActivityAsync("android.intent.action.VIEW", {
+                    data: `/storage/emulated/0/Android/data/${packageName}/files`,
+                    type: "resource/folder",
+                })
+
+                mlc.setMessageLog([...mlc.messageLog, `\n[SUCCESS] Opened app data directory: /storage/emulated/0/Android/data/${packageName}/files`])
+                return
+            } catch (folderError) {
+                console.warn("Folder approach failed, trying file sharing:", folderError)
+            }
+
+            // Final fallback: Share the settings file directly.
+            const settingsPath = FileSystem.documentDirectory + "settings.json"
+            const fileInfo = await FileSystem.getInfoAsync(settingsPath)
+
+            if (fileInfo.exists) {
+                const isAvailable = await Sharing.isAvailableAsync()
+                if (isAvailable) {
+                    await Sharing.shareAsync(settingsPath, {
+                        mimeType: "application/json",
+                        dialogTitle: "Share Settings File",
+                    })
+                    mlc.setMessageLog([...mlc.messageLog, `\n[SUCCESS] Shared settings file as fallback: ${settingsPath}`])
+                } else {
+                    throw new Error("Sharing not available")
+                }
+            } else {
+                throw new Error("Settings file not found")
+            }
+        } catch (error) {
+            console.error(`Error opening app data directory: ${error}`)
+            mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Could not open app data directory. Error: ${error}`])
+            mlc.setMessageLog([...mlc.messageLog, `\n[INFO] Manual path: /storage/emulated/0/Android/data/${packageName}/files`])
+        }
+    }
+
     return {
         saveSettings,
         loadSettings,
-        isSaving
+        openDataDirectory,
+        isSaving,
     }
 }
