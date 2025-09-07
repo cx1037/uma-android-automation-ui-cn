@@ -1,5 +1,5 @@
 import { useState } from "react"
-import RNFS from "react-native-fs"
+import * as FileSystem from "expo-file-system"
 import { defaultSettings, Settings, BotStateProviderProps } from "../context/BotStateContext"
 import { MessageLogProviderProps } from "../context/MessageLogContext"
 import { Tag } from "../App"
@@ -15,23 +15,23 @@ export const useSettingsManager = (bsc: BotStateProviderProps, mlc: MessageLogPr
     // Save settings to local storage with corruption prevention.
     const saveSettings = async (newSettings?: Settings) => {
         setIsSaving(true)
-        
+
         try {
             const localSettings: Settings = newSettings ? newSettings : bsc.settings
-            const path = RNFS.ExternalDirectoryPath + "/settings.json"
+            const path = FileSystem.documentDirectory + "settings.json"
             const toSave = JSON.stringify(localSettings, null, 4)
 
             // Delete existing file first to avoid corruption.
             try {
-                await RNFS.unlink(path)
+                await FileSystem.deleteAsync(path)
                 console.log("settings.json file successfully deleted.")
             } catch {
                 console.log("settings.json file does not exist so no need to delete it before saving current settings.")
             }
 
-            await RNFS.writeFile(path, toSave)
+            await FileSystem.writeAsStringAsync(path, toSave)
             console.log("Settings saved to ", path)
-            
+
             mlc.setAsyncMessages([])
             mlc.setMessageLog([`\n[SUCCESS] Settings saved to ${path}`])
         } catch (error) {
@@ -44,13 +44,13 @@ export const useSettingsManager = (bsc: BotStateProviderProps, mlc: MessageLogPr
 
     // Load settings from local storage with automatic corruption recovery.
     const loadSettings = async () => {
-        const path = RNFS.ExternalDirectoryPath + "/settings.json"
+        const path = FileSystem.documentDirectory + "settings.json"
         let newSettings: Settings = defaultSettings
 
         try {
-            const data = await RNFS.readFile(path)
+            const data = await FileSystem.readAsStringAsync(path)
             console.log(`Loaded settings from settings.json file.`)
-            
+
             const parsed: Settings = JSON.parse(data)
             const fixedSettings: Settings = fixSettings(parsed)
             newSettings = fixedSettings
@@ -96,9 +96,9 @@ export const useSettingsManager = (bsc: BotStateProviderProps, mlc: MessageLogPr
     // Attempt to recover corrupted settings by progressively truncating the file.
     const attemptCorruptionFix = async (path: string): Promise<Settings | null> => {
         try {
-            const data = await RNFS.readFile(path)
+            const data = await FileSystem.readAsStringAsync(path)
             let fixedData = data
-            
+
             while (fixedData.length > 0) {
                 try {
                     const parsed: Settings = JSON.parse(fixedData)
@@ -110,7 +110,7 @@ export const useSettingsManager = (bsc: BotStateProviderProps, mlc: MessageLogPr
         } catch {
             // Ignore errors during corruption fix attempt.
         }
-        
+
         return null
     }
 
