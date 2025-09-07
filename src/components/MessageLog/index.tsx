@@ -296,7 +296,7 @@ Hide String Comparison Results: ${settings.debug.enableHideOCRComparisonResults 
             const allText = introMessage + "\n" + mlc.messageLog.join("\n")
             await Clipboard.setStringAsync(allText)
         } catch (error) {
-            Alert.alert("Error", "Failed to copy to clipboard")
+            Alert.alert("Error", "Failed to copy to clipboard", [{ text: "OK" }], { cancelable: true })
         }
     }, [mlc.messageLog, introMessage])
 
@@ -305,7 +305,7 @@ Hide String Comparison Results: ${settings.debug.enableHideOCRComparisonResults 
         try {
             await Clipboard.setStringAsync(message)
         } catch (error) {
-            Alert.alert("Error", "Failed to copy message")
+            Alert.alert("Error", "Failed to copy message", [{ text: "OK" }], { cancelable: true })
         }
     }, [])
 
