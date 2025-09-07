@@ -23,6 +23,11 @@ export interface Settings {
         enablePrioritizeEnergyOptions: boolean
     }
 
+    // Misc settings
+    misc: {
+        enableSettingsDisplay: boolean
+    }
+
     // Training settings
     training: {
         trainingBlacklist: string[]
@@ -103,6 +108,9 @@ export const defaultSettings: Settings = {
     },
     trainingEvent: {
         enablePrioritizeEnergyOptions: false,
+    },
+    misc: {
+        enableSettingsDisplay: false,
     },
     training: {
         trainingBlacklist: [],
