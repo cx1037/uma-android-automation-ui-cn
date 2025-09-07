@@ -8,6 +8,7 @@ import { SafeAreaView } from "react-native-safe-area-context"
 import { BotStateProvider } from "./context/BotStateContext"
 import { MessageLogProvider } from "./context/MessageLogContext"
 import { ThemeProvider, useTheme } from "./context/ThemeContext"
+import { useBootstrap } from "./hooks/useBootstrap"
 import Home from "./pages/Home"
 import Settings from "./pages/Settings"
 import TrainingSettings from "./pages/TrainingSettings"
@@ -35,6 +36,9 @@ function SettingsStack() {
 
 function AppContent() {
     const { theme, colors } = useTheme()
+    
+    // Initialize app with bootstrap logic
+    const { isReady } = useBootstrap()
 
     return (
         <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: colors.background }}>
