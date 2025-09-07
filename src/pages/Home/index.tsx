@@ -2,11 +2,12 @@ import Constants from "expo-constants"
 import MessageLog from "../../components/MessageLog"
 import { useContext, useEffect, useState } from "react"
 import { BotStateContext } from "../../context/BotStateContext"
-import { DeviceEventEmitter, StyleSheet, View, NativeModules, Alert, ActivityIndicator } from "react-native"
+import { DeviceEventEmitter, StyleSheet, View, NativeModules, ActivityIndicator } from "react-native"
 import { MessageLogContext } from "../../context/MessageLogContext"
 import { useTheme } from "../../context/ThemeContext"
 import { Button } from "@/src/components/ui/button"
 import { Text } from "@/src/components/ui/text"
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/src/components/ui/alert-dialog"
 
 const styles = StyleSheet.create({
     root: {
@@ -35,6 +36,7 @@ const Home = () => {
 
     const { isDark } = useTheme()
     const [isRunning, setIsRunning] = useState<boolean>(false)
+    const [showNotReadyDialog, setShowNotReadyDialog] = useState<boolean>(false)
 
     const bsc = useContext(BotStateContext)
     const mlc = useContext(MessageLogContext)
@@ -67,7 +69,7 @@ const Home = () => {
         } else if (bsc.readyStatus) {
             StartModule.start()
         } else {
-            Alert.alert("Not Ready", "A scenario must be selected before starting the bot. Please go to Settings to select a scenario.", [{ text: "OK" }], { cancelable: true })
+            setShowNotReadyDialog(true)
         }
     }
 
@@ -83,6 +85,20 @@ const Home = () => {
             <View style={styles.contentContainer}>
                 <MessageLog />
             </View>
+
+            <AlertDialog open={showNotReadyDialog} onOpenChange={setShowNotReadyDialog}>
+                <AlertDialogContent onDismiss={() => setShowNotReadyDialog(false)}>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Not Ready</AlertDialogTitle>
+                        <AlertDialogDescription>A scenario must be selected before starting the bot. Please go to Settings to select a scenario.</AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogAction onPress={() => setShowNotReadyDialog(false)}>
+                            <Text>OK</Text>
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </View>
     )
 }
