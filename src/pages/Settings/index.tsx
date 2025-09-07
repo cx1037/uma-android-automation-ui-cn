@@ -1,6 +1,7 @@
 import scenarios from "../../data/scenarios.json"
 import { useContext, useEffect, useState } from "react"
 import { BotStateContext } from "../../context/BotStateContext"
+import { MessageLogContext } from "../../context/MessageLogContext"
 import { ScrollView, StyleSheet, Text, View } from "react-native"
 import { Snackbar } from "react-native-paper"
 import { useNavigation } from "@react-navigation/native"
@@ -11,14 +12,20 @@ import NavigationLink from "../../components/NavigationLink"
 import CustomCheckbox from "../../components/CustomCheckbox"
 import CustomSlider from "../../components/CustomSlider"
 import CustomTitle from "../../components/CustomTitle"
+import { Button } from "../../components/ui/button"
 import { Separator } from "../../components/ui/separator"
+import { useSettingsManager } from "../../hooks/useSettingsManager"
 
 const Settings = () => {
     const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false)
 
     const bsc = useContext(BotStateContext)
-    const { colors } = useTheme()
+    const mlc = useContext(MessageLogContext)
+    const { colors, isDark } = useTheme()
     const navigation = useNavigation()
+
+    // Get the settings manager hook
+    const { openDataDirectory } = useSettingsManager(bsc, mlc)
 
     const styles = StyleSheet.create({
         root: {
@@ -195,6 +202,21 @@ const Settings = () => {
                     description="Shows current bot configuration settings at the top of the message log."
                     className="mt-4"
                 />
+
+                <Separator style={{ marginVertical: 16 }} />
+
+                <CustomTitle title="Settings File" description="Open the app's data directory to access settings.json and other app files." />
+
+                <View style={[styles.errorContainer, { marginTop: 8, marginBottom: 8 }]}>
+                    <Text style={styles.errorText}>
+                        ⚠️ <Text style={{ fontWeight: "bold" }}>Compatible File Explorer App Required:</Text> You need a file explorer app that can access the /Android/data folder (like CX File
+                        Explorer). Standard file managers will not work.
+                    </Text>
+                </View>
+
+                <Button onPress={openDataDirectory} variant="default" style={{ backgroundColor: isDark ? colors.muted : colors.input }} className="mt-4">
+                    <Text style={{ color: colors.foreground }}>📁 Open App Data Directory</Text>
+                </Button>
             </View>
         )
     }
