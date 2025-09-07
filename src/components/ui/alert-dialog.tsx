@@ -4,7 +4,7 @@ import { TextClassContext } from "@/src/components/ui/text"
 import { cn } from "@/src/lib/utils"
 import * as AlertDialogPrimitive from "@rn-primitives/alert-dialog"
 import * as React from "react"
-import { Platform, View, type ViewProps } from "react-native"
+import { Platform, Pressable, View, type ViewProps } from "react-native"
 import { FadeIn, FadeOut } from "react-native-reanimated"
 import { FullWindowOverlay as RNFullWindowOverlay } from "react-native-screens"
 
@@ -19,10 +19,12 @@ const FullWindowOverlay = Platform.OS === "ios" ? RNFullWindowOverlay : React.Fr
 function AlertDialogOverlay({
     className,
     children,
+    onDismiss,
     ...props
 }: Omit<AlertDialogPrimitive.OverlayProps, "asChild"> &
     React.RefAttributes<AlertDialogPrimitive.OverlayRef> & {
         children?: React.ReactNode
+        onDismiss?: () => void
     }) {
     return (
         <FullWindowOverlay>
@@ -36,9 +38,26 @@ function AlertDialogOverlay({
                 )}
                 {...props}
             >
-                <NativeOnlyAnimatedView entering={FadeIn.duration(200).delay(50)} exiting={FadeOut.duration(150)}>
-                    <>{children}</>
-                </NativeOnlyAnimatedView>
+                <Pressable
+                    style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+                    onPress={() => {
+                        // Close the dialog when background is tapped.
+                        if (onDismiss) {
+                            onDismiss()
+                        }
+                    }}
+                >
+                    <NativeOnlyAnimatedView entering={FadeIn.duration(200).delay(50)} exiting={FadeOut.duration(150)}>
+                        <Pressable
+                            onPress={(e) => {
+                                // Prevent the dialog content from closing when tapped.
+                                e.stopPropagation()
+                            }}
+                        >
+                            {children}
+                        </Pressable>
+                    </NativeOnlyAnimatedView>
+                </Pressable>
             </AlertDialogPrimitive.Overlay>
         </FullWindowOverlay>
     )
@@ -47,14 +66,16 @@ function AlertDialogOverlay({
 function AlertDialogContent({
     className,
     portalHost,
+    onDismiss,
     ...props
 }: AlertDialogPrimitive.ContentProps &
     React.RefAttributes<AlertDialogPrimitive.ContentRef> & {
         portalHost?: string
+        onDismiss?: () => void
     }) {
     return (
         <AlertDialogPortal hostName={portalHost}>
-            <AlertDialogOverlay>
+            <AlertDialogOverlay onDismiss={onDismiss}>
                 <AlertDialogPrimitive.Content
                     className={cn(
                         "bg-background border-border z-50 flex w-full max-w-[calc(100%-2rem)] flex-col gap-4 rounded-lg border p-6 shadow-lg shadow-black/5 sm:max-w-lg",
