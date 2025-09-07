@@ -21,6 +21,10 @@ export interface Settings {
     // Training Event settings
     trainingEvent: {
         enablePrioritizeEnergyOptions: boolean
+        selectAllCharacters: boolean
+        selectAllSupportCards: boolean
+        characterEventData: Record<string, Record<string, string[]>>
+        supportEventData: Record<string, Record<string, string[]>>
     }
 
     // Misc settings
@@ -34,11 +38,7 @@ export interface Settings {
         statPrioritization: string[]
         maximumFailureChance: number
         disableTrainingOnMaxedStat: boolean
-        focusOnSparkStatTarget: boolean
-        characterList: string[]
-        selectAllCharacters: boolean
-        supportList: string[]
-        selectAllSupportCards: boolean
+        focusOnSparkStatTarget: boolean 
     }
 
     // Training Stat Target settings
@@ -108,6 +108,10 @@ export const defaultSettings: Settings = {
     },
     trainingEvent: {
         enablePrioritizeEnergyOptions: false,
+        selectAllCharacters: true,
+        selectAllSupportCards: true,
+        characterEventData: {},
+        supportEventData: {},
     },
     misc: {
         enableSettingsDisplay: false,
@@ -118,10 +122,7 @@ export const defaultSettings: Settings = {
         maximumFailureChance: 20,
         disableTrainingOnMaxedStat: true,
         focusOnSparkStatTarget: false,
-        characterList: [],
-        selectAllCharacters: true,
-        supportList: [],
-        selectAllSupportCards: true,
+
     },
     trainingStatTarget: {
         trainingSprintStatTarget_speedStatTarget: 900,
