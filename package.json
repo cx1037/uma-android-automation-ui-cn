@@ -86,7 +86,6 @@
         "autolinking": {
             "exclude": [
                 "expo-asset",
-                "expo-file-system",
                 "expo-font",
                 "expo-keep-awake"
             ]
