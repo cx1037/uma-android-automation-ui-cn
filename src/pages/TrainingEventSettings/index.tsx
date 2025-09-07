@@ -4,7 +4,6 @@ import { useNavigation } from "@react-navigation/native"
 import { useTheme } from "../../context/ThemeContext"
 import { BotStateContext } from "../../context/BotStateContext"
 import CustomCheckbox from "../../components/CustomCheckbox"
-import CustomTitle from "../../components/CustomTitle"
 import MultiSelector from "../../components/MultiSelector"
 import { ArrowLeft } from "lucide-react-native"
 
@@ -89,13 +88,22 @@ const TrainingEventSettings = () => {
                         title="Character Selection"
                         description="Choose which characters you have in your current scenario. You can select all characters at once, or pick specific ones individually. When selecting individually, all rarity variants (R/SR/SSR) of the same character are grouped together."
                         options={characterNames}
-                        selectedOptions={settings.training.characterList}
+                        selectedOptions={Object.keys(settings.trainingEvent.characterEventData)}
                         onSelectionChange={(selectedOptions) => {
+                            // Create character event data for selected characters.
+                            const characterEventData: Record<string, Record<string, string[]>> = {}
+                            selectedOptions.forEach((characterName) => {
+                                if (charactersData[characterName as keyof typeof charactersData]) {
+                                    characterEventData[characterName] = charactersData[characterName as keyof typeof charactersData]
+                                }
+                            })
+
                             setSettings({
                                 ...bsc.settings,
-                                training: {
-                                    ...bsc.settings.training,
-                                    characterList: selectedOptions,
+                                trainingEvent: {
+                                    ...bsc.settings.trainingEvent,
+                                    characterEventData,
+                                    selectAllCharacters: selectedOptions.length === characterNames.length,
                                 },
                             })
                         }}
@@ -108,13 +116,22 @@ const TrainingEventSettings = () => {
                         title="Support Card Selection"
                         description="Choose which support cards you have in your current scenario. Same selection behavior applies as above."
                         options={supportNames}
-                        selectedOptions={settings.training.supportList}
+                        selectedOptions={Object.keys(settings.trainingEvent.supportEventData)}
                         onSelectionChange={(selectedOptions) => {
+                            // Create support event data for selected supports.
+                            const supportEventData: Record<string, Record<string, string[]>> = {}
+                            selectedOptions.forEach((supportName) => {
+                                if (supportsData[supportName as keyof typeof supportsData]) {
+                                    supportEventData[supportName] = supportsData[supportName as keyof typeof supportsData]
+                                }
+                            })
+
                             setSettings({
                                 ...bsc.settings,
-                                training: {
-                                    ...bsc.settings.training,
-                                    supportList: selectedOptions,
+                                trainingEvent: {
+                                    ...bsc.settings.trainingEvent,
+                                    supportEventData,
+                                    selectAllSupportCards: selectedOptions.length === supportNames.length,
                                 },
                             })
                         }}
