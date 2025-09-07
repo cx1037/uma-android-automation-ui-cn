@@ -100,7 +100,7 @@ function AlertDialogHeader({ className, ...props }: ViewProps) {
 }
 
 function AlertDialogFooter({ className, ...props }: ViewProps) {
-    return <View className={cn("flex flex-col-reverse gap-2 sm:flex-row sm:justify-end", className)} {...props} />
+    return <View className={cn("flex flex-row justify-end gap-2", className)} {...props} />
 }
 
 function AlertDialogTitle({ className, ...props }: AlertDialogPrimitive.TitleProps & React.RefAttributes<AlertDialogPrimitive.TitleRef>) {
