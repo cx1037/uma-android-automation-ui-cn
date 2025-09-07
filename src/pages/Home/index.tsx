@@ -2,22 +2,28 @@ import Constants from "expo-constants"
 import MessageLog from "../../components/MessageLog"
 import { useContext, useEffect, useState } from "react"
 import { BotStateContext } from "../../context/BotStateContext"
-import { DeviceEventEmitter, StyleSheet, View, NativeModules, Platform } from "react-native"
+import { DeviceEventEmitter, StyleSheet, View, NativeModules } from "react-native"
 import { MessageLogContext } from "../../context/MessageLogContext"
 
 import { Button } from "@/src/components/ui/button"
 import { Text } from "@/src/components/ui/text"
-import { Icon } from "@/src/components/ui/icon"
-import { Loader2 } from "lucide-react-native"
-import ExampleThemedComponent from "../../components/ExampleThemedComponent"
 
 const styles = StyleSheet.create({
     root: {
         flex: 1,
         flexDirection: "column",
         alignItems: "center",
-        justifyContent: "center",
-        marginHorizontal: 10,
+        paddingHorizontal: 10,
+        paddingVertical: 10,
+    },
+    contentContainer: {
+        flex: 1,
+        width: "100%",
+        flexDirection: "column",
+    },
+    buttonContainer: {
+        alignItems: "center",
+        marginBottom: 10,
     },
 })
 
@@ -53,38 +59,21 @@ const Home = () => {
 
     return (
         <View style={styles.root}>
-            {/* {isRunning ? (
-                <Button variant="destructive" onPress={() => StartModule.stop()} style={{ width: 200, borderRadius: 20 }}>
-                    <Text>Stop</Text>
-                </Button>
-            ) : (
-                <Button disabled={!bsc.readyStatus} onPress={() => StartModule.start()} style={{ width: 200, borderRadius: 20 }}>
-                    <Text>{bsc.readyStatus ? "Start" : "Not Ready"}</Text>
-                </Button>
-            )} */}
+            <View style={styles.buttonContainer}>
+                {isRunning ? (
+                    <Button variant="destructive" onPress={() => StartModule.stop()}>
+                        <Text>Stop</Text>
+                    </Button>
+                ) : (
+                    <Button>
+                        <Text>{bsc.readyStatus ? "Start" : "Not Ready"}</Text>
+                    </Button>
+                )}
+            </View>
 
-            <Button>
-                <Text>Button</Text>
-            </Button>
-
-            <Button variant="secondary">
-                <Text>Secondary</Text>
-            </Button>
-
-            <Button variant="destructive">
-                <Text>Destructive</Text>
-            </Button>
-
-            <Button disabled>
-                <View className="pointer-events-none animate-spin">
-                    <Icon as={Loader2} className="text-primary-foreground" />
-                </View>
-                <Text>Please wait</Text>
-            </Button>
-
-            {/* <MessageLog /> */}
-
-            <ExampleThemedComponent />
+            <View style={styles.contentContainer}>
+                <MessageLog />
+            </View>
         </View>
     )
 }
