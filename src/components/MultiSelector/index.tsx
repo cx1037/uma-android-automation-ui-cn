@@ -28,7 +28,7 @@ const MultiSelector: React.FC<MultiSelectorProps> = ({
     selectIndividualLabel = "Select Individual Items",
     style,
 }) => {
-    const { colors } = useTheme()
+    const { colors, isDark } = useTheme()
     const [selectAll, setSelectAll] = useState(false)
     const [modalVisible, setModalVisible] = useState(false)
     const [searchQuery, setSearchQuery] = useState("")
@@ -331,10 +331,10 @@ const MultiSelector: React.FC<MultiSelectorProps> = ({
                         </ScrollView>
 
                         <View style={styles.buttonRow}>
-                            <Button onPress={() => clearAll()}>
+                            <Button onPress={() => clearAll()} style={{ backgroundColor: colors.destructive }}>
                                 <Text>Clear All</Text>
                             </Button>
-                            <Button onPress={() => handleSelectAll(true)}>
+                            <Button onPress={() => handleSelectAll(true)} style={{ backgroundColor: isDark ? colors.primary : colors.border }}>
                                 <Text>Select All</Text>
                             </Button>
                         </View>
