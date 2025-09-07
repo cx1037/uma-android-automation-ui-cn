@@ -33,13 +33,9 @@ const MultiSelector: React.FC<MultiSelectorProps> = ({
     const [modalVisible, setModalVisible] = useState(false)
     const [searchQuery, setSearchQuery] = useState("")
     const scrollViewRef = useRef<ScrollView | null>(null)
-    const selectedItemsScrollViewRef = useRef<ScrollView | null>(null)
     const lastTouchY = useRef(0)
     const currentScrollY = useRef(0)
     const isScrolling = useRef(false)
-    const selectedItemsLastTouchY = useRef(0)
-    const selectedItemsCurrentScrollY = useRef(0)
-    const selectedItemsIsScrolling = useRef(false)
 
     // Update selectAll state when selectedOptions changes
     useEffect(() => {
@@ -107,39 +103,6 @@ const MultiSelector: React.FC<MultiSelectorProps> = ({
 
     const handleTouchEnd = () => {
         isScrolling.current = false
-    }
-
-    const handleSelectedItemsTouchStart = (event: any) => {
-        const touch = event.nativeEvent.touches[0]
-        selectedItemsLastTouchY.current = touch.pageY
-        selectedItemsIsScrolling.current = false
-    }
-
-    const handleSelectedItemsTouchMove = (event: any) => {
-        if (!selectedItemsScrollViewRef.current) return
-
-        const touch = event.nativeEvent.touches[0]
-        const currentY = touch.pageY
-        const deltaY = selectedItemsLastTouchY.current - currentY
-
-        // Only scroll if there's significant movement
-        if (Math.abs(deltaY) > 1) {
-            selectedItemsIsScrolling.current = true
-            // Use a balanced scroll factor for smooth but responsive movement
-            const scrollFactor = 2.0
-            const newScrollY = Math.max(0, selectedItemsCurrentScrollY.current + deltaY * scrollFactor)
-            selectedItemsCurrentScrollY.current = newScrollY
-
-            selectedItemsScrollViewRef.current.scrollTo({
-                y: newScrollY,
-                animated: false,
-            })
-            selectedItemsLastTouchY.current = currentY
-        }
-    }
-
-    const handleSelectedItemsTouchEnd = () => {
-        selectedItemsIsScrolling.current = false
     }
 
     // Filter options based on search query
@@ -284,43 +247,6 @@ const MultiSelector: React.FC<MultiSelectorProps> = ({
             opacity: 0.6,
             padding: 20,
         },
-        selectedItemsContainer: {
-            marginBottom: 20,
-            paddingBottom: 16,
-            borderBottomWidth: 1,
-            borderBottomColor: colors.border,
-            maxHeight: 140,
-            width: "100%",
-        },
-        selectedItemsTitle: {
-            fontSize: 16,
-            fontWeight: "bold",
-            color: colors.foreground,
-            marginBottom: 8,
-        },
-        selectedItemsList: {
-            maxHeight: 120,
-            width: "100%",
-        },
-        selectedItemChip: {
-            flexDirection: "row",
-            alignItems: "center",
-            backgroundColor: colors.muted || colors.border,
-            borderRadius: 12,
-            paddingHorizontal: 8,
-            paddingVertical: 4,
-            marginRight: 6,
-            marginBottom: 6,
-        },
-        selectedItemText: {
-            color: colors.foreground,
-            fontSize: 12,
-            fontWeight: "600",
-            marginRight: 6,
-        },
-        removeButton: {
-            padding: 2,
-        },
         buttonRow: {
             flexDirection: "row",
             justifyContent: "space-between",
@@ -383,39 +309,6 @@ const MultiSelector: React.FC<MultiSelectorProps> = ({
                                 </TouchableOpacity>
                             )}
                         </View>
-
-                        {/* Selected Items List */}
-                        {selectedOptions.length > 0 && (
-                            <View style={styles.selectedItemsContainer}>
-                                <Text style={styles.selectedItemsTitle}>Selected Items:</Text>
-                                <ScrollView
-                                    style={styles.selectedItemsList}
-                                    showsVerticalScrollIndicator={false}
-                                    nestedScrollEnabled={false}
-                                    scrollEnabled={true}
-                                    bounces={true}
-                                    onTouchStart={handleSelectedItemsTouchStart}
-                                    onTouchMove={handleSelectedItemsTouchMove}
-                                    onTouchEnd={handleSelectedItemsTouchEnd}
-                                    ref={selectedItemsScrollViewRef}
-                                    onScroll={(event) => {
-                                        const offsetY = event.nativeEvent.contentOffset.y
-                                        selectedItemsCurrentScrollY.current = offsetY
-                                    }}
-                                >
-                                    <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-                                        {selectedOptions.map((option) => (
-                                            <View key={option} style={styles.selectedItemChip}>
-                                                <Text style={styles.selectedItemText}>{option}</Text>
-                                                <TouchableOpacity style={styles.removeButton} onPress={() => handleOptionToggle(option, false)}>
-                                                    <X size={14} color={colors.foreground} />
-                                                </TouchableOpacity>
-                                            </View>
-                                        ))}
-                                    </View>
-                                </ScrollView>
-                            </View>
-                        )}
 
                         <ScrollView
                             style={styles.optionsList}
