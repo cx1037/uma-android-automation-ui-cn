@@ -2,7 +2,6 @@ import { useState } from "react"
 import * as FileSystem from "expo-file-system"
 import { defaultSettings, Settings, BotStateProviderProps } from "../context/BotStateContext"
 import { MessageLogProviderProps } from "../context/MessageLogContext"
-import { Tag } from "../App"
 
 /**
  * Manages settings persistence to/from local storage.
@@ -66,7 +65,7 @@ export const useSettingsManager = (bsc: BotStateProviderProps, mlc: MessageLogPr
                     mlc.setMessageLog([
                         ...mlc.messageLog,
                         `\n[ERROR] Error reading settings: \n${error}`,
-                        `\nNote that ${Tag} sometimes corrupts the settings.json when saving. Automatic fix was not successful.`,
+                        `\nNote that the app sometimes corrupts the settings.json when saving. Automatic fix was not successful.`,
                     ])
                 }
             } else if (!error.message.includes("No such file or directory")) {
