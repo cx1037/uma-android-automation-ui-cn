@@ -165,16 +165,6 @@ const MultiSelector: React.FC<MultiSelectorProps> = ({
             fontWeight: "600",
             marginLeft: 8,
         },
-        clearButton: {
-            backgroundColor: colors.destructive || "#ef4444",
-            paddingHorizontal: 16,
-            paddingVertical: 12,
-            borderRadius: 8,
-        },
-        clearButtonText: {
-            color: colors.background,
-            fontWeight: "600",
-        },
         selectedCount: {
             fontSize: 12,
             color: colors.foreground,
