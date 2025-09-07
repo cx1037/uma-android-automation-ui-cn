@@ -2,10 +2,11 @@ import Constants from "expo-constants"
 import { useContext, useState, useMemo, useCallback } from "react"
 import { MessageLogContext } from "../../context/MessageLogContext"
 import { BotStateContext } from "../../context/BotStateContext"
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, FlatList } from "react-native"
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, FlatList } from "react-native"
 import * as Clipboard from "expo-clipboard"
 import { Copy, Plus, Minus, Type, X } from "lucide-react-native"
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "../ui/alert-dialog"
 
 const styles = StyleSheet.create({
     logInnerContainer: {
@@ -111,9 +112,16 @@ const MessageLog = () => {
     const bsc = useContext(BotStateContext)
     const [searchQuery, setSearchQuery] = useState("")
     const [fontSize, setFontSize] = useState(8)
+    const [showErrorDialog, setShowErrorDialog] = useState(false)
+    const [errorMessage, setErrorMessage] = useState("")
 
     const appName = Constants.expoConfig?.name || "App"
     const appVersion = Constants.expoConfig?.version || "1.0.0"
+
+    const showError = useCallback((message: string) => {
+        setErrorMessage(message)
+        setShowErrorDialog(true)
+    }, [])
 
     const formatSettings = useCallback(() => {
         const settings = bsc.settings
@@ -296,18 +304,21 @@ Hide String Comparison Results: ${settings.debug.enableHideOCRComparisonResults 
             const allText = introMessage + "\n" + mlc.messageLog.join("\n")
             await Clipboard.setStringAsync(allText)
         } catch (error) {
-            Alert.alert("Error", "Failed to copy to clipboard", [{ text: "OK" }], { cancelable: true })
+            showError("Failed to copy to clipboard")
         }
-    }, [mlc.messageLog, introMessage])
+    }, [mlc.messageLog, introMessage, showError])
 
     // Copy individual message on long press.
-    const handleLongPress = useCallback(async (message: string) => {
-        try {
-            await Clipboard.setStringAsync(message)
-        } catch (error) {
-            Alert.alert("Error", "Failed to copy message", [{ text: "OK" }], { cancelable: true })
-        }
-    }, [])
+    const handleLongPress = useCallback(
+        async (message: string) => {
+            try {
+                await Clipboard.setStringAsync(message)
+            } catch (error) {
+                showError("Failed to copy message")
+            }
+        },
+        [showError]
+    )
 
     // Render individual log item.
     const renderLogItem = useCallback(
@@ -385,6 +396,21 @@ Hide String Comparison Results: ${settings.debug.enableHideOCRComparisonResults 
                     })}
                 />
             </View>
+
+            {/* Error Dialog */}
+            <AlertDialog open={showErrorDialog} onOpenChange={setShowErrorDialog}>
+                <AlertDialogContent onDismiss={() => setShowErrorDialog(false)}>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Error</AlertDialogTitle>
+                        <AlertDialogDescription>{errorMessage}</AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogAction onPress={() => setShowErrorDialog(false)}>
+                            <Text>OK</Text>
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </View>
     )
 }
