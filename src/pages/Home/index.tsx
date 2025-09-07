@@ -2,9 +2,9 @@ import Constants from "expo-constants"
 import MessageLog from "../../components/MessageLog"
 import { useContext, useEffect, useState } from "react"
 import { BotStateContext } from "../../context/BotStateContext"
-import { DeviceEventEmitter, StyleSheet, View, NativeModules } from "react-native"
+import { DeviceEventEmitter, StyleSheet, View, NativeModules, Alert, ActivityIndicator } from "react-native"
 import { MessageLogContext } from "../../context/MessageLogContext"
-
+import { useTheme } from "../../context/ThemeContext"
 import { Button } from "@/src/components/ui/button"
 import { Text } from "@/src/components/ui/text"
 
@@ -25,11 +25,15 @@ const styles = StyleSheet.create({
         alignItems: "center",
         marginBottom: 10,
     },
+    button: {
+        width: 100,
+    },
 })
 
 const Home = () => {
     const { StartModule } = NativeModules
 
+    const { isDark } = useTheme()
     const [isRunning, setIsRunning] = useState<boolean>(false)
 
     const bsc = useContext(BotStateContext)
@@ -57,18 +61,23 @@ const Home = () => {
         bsc.setAppVersion(version)
     }
 
+    const handleButtonPress = () => {
+        if (isRunning) {
+            StartModule.stop()
+        } else if (bsc.readyStatus) {
+            StartModule.start()
+        } else {
+            Alert.alert("Not Ready", "A scenario must be selected before starting the bot. Please go to Settings to select a scenario.", [{ text: "OK" }], { cancelable: true })
+        }
+    }
+
     return (
         <View style={styles.root}>
             <View style={styles.buttonContainer}>
-                {isRunning ? (
-                    <Button variant="destructive" onPress={() => StartModule.stop()}>
-                        <Text>Stop</Text>
-                    </Button>
-                ) : (
-                    <Button>
-                        <Text>{bsc.readyStatus ? "Start" : "Not Ready"}</Text>
-                    </Button>
-                )}
+                <Button variant={isRunning ? "destructive" : isDark ? "default" : "secondary"} onPress={handleButtonPress} style={styles.button}>
+                    {isRunning && <ActivityIndicator size="small" color="#ffffff" />}
+                    <Text>{isRunning ? "Stop" : bsc.readyStatus ? "Start" : "Not Ready"}</Text>
+                </Button>
             </View>
 
             <View style={styles.contentContainer}>
