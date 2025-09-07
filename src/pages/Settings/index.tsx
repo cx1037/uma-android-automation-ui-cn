@@ -182,6 +182,19 @@ const Settings = () => {
                     description="Enables check for warning popups like lack of fans or lack of trophies gained. Stops the bot if detected for the user to deal with them manually."
                     className="mt-4"
                 />
+
+                <CustomCheckbox
+                    checked={bsc.settings.misc.enableSettingsDisplay}
+                    onCheckedChange={(checked) => {
+                        bsc.setSettings({
+                            ...bsc.settings,
+                            misc: { ...bsc.settings.misc, enableSettingsDisplay: checked },
+                        })
+                    }}
+                    label="Enable Settings Display in Message Log"
+                    description="Shows current bot configuration settings at the top of the message log."
+                    className="mt-4"
+                />
             </View>
         )
     }
