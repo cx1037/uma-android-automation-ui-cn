@@ -130,17 +130,17 @@ const MessageLog = () => {
         const campaignString = settings.general.scenario !== "" ? `🎯 ${settings.general.scenario}` : "⚠️ Please select one in the Select Campaign option"
 
         // Character selection.
-        const characterString = settings.training.selectAllCharacters
+        const characterString = settings.trainingEvent.selectAllCharacters
             ? "👥 All Characters Selected"
-            : settings.training.characterList.length > 0
-            ? `👤 ${settings.training.characterList.join(", ")}`
+            : Object.keys(settings.trainingEvent.characterEventData).length > 0
+            ? `👤 ${Object.keys(settings.trainingEvent.characterEventData).length} Characters Selected`
             : "⚠️ Please select one in the Training Event Settings"
 
         // Support card selection.
-        const supportCardListString = settings.training.selectAllSupportCards
+        const supportCardListString = settings.trainingEvent.selectAllSupportCards
             ? "🃏 All Support Cards Selected"
-            : settings.training.supportList.length > 0
-            ? `🃏 ${settings.training.supportList.join(", ")}`
+            : Object.keys(settings.trainingEvent.supportEventData).length > 0
+            ? `🃏 ${Object.keys(settings.trainingEvent.supportEventData).length} Support Cards Selected`
             : "⚠️ None Selected"
 
         // Training blacklist.
