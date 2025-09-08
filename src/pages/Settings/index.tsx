@@ -14,18 +14,21 @@ import CustomSlider from "../../components/CustomSlider"
 import CustomTitle from "../../components/CustomTitle"
 import { Button } from "../../components/ui/button"
 import { Separator } from "../../components/ui/separator"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "../../components/ui/alert-dialog"
 import { useSettingsManager } from "../../hooks/useSettingsManager"
+import { useSettingsFileManager } from "../../hooks/useSettingsFileManager"
 
 const Settings = () => {
     const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false)
+    const [showResetDialog, setShowResetDialog] = useState<boolean>(false)
 
     const bsc = useContext(BotStateContext)
     const mlc = useContext(MessageLogContext)
     const { colors, isDark } = useTheme()
     const navigation = useNavigation()
 
-    // Get the settings manager hook
-    const { openDataDirectory } = useSettingsManager(bsc, mlc)
+    const { openDataDirectory, resetSettings } = useSettingsManager(bsc, mlc)
+    const { handleImportSettings, handleExportSettings, showRestartDialog, setShowRestartDialog, restartApp } = useSettingsFileManager(bsc, mlc)
 
     const styles = StyleSheet.create({
         root: {
@@ -70,6 +73,15 @@ const Settings = () => {
         setSnackbarOpen(true)
         setTimeout(() => setSnackbarOpen(false), 2500)
     }, [bsc.readyStatus])
+
+    const handleResetSettings = async () => {
+        const success = await resetSettings()
+        if (success) {
+            setShowResetDialog(false)
+            setSnackbarOpen(true)
+            setTimeout(() => setSnackbarOpen(false), 2500)
+        }
+    }
 
     //////////////////////////////////////////////////
     //////////////////////////////////////////////////
@@ -206,18 +218,34 @@ const Settings = () => {
 
                 <Separator style={{ marginVertical: 16 }} />
 
-                <CustomTitle title="Settings File" description="Open the app's data directory to access settings.json and other app files." />
+                <CustomTitle title="Settings Management" description="Import and export settings from JSON file or access the app's data directory." />
 
-                <View style={[styles.errorContainer, { marginTop: 8, marginBottom: 8 }]}>
+                <View style={{ flexDirection: "row", gap: 12 }}>
+                    <Button onPress={handleImportSettings} variant="default" style={{ flex: 1, backgroundColor: isDark ? colors.muted : colors.input }}>
+                        <Text style={{ color: colors.foreground }}>📥 Import Settings</Text>
+                    </Button>
+
+                    <Button onPress={handleExportSettings} variant="default" style={{ flex: 1, backgroundColor: isDark ? colors.muted : colors.input }}>
+                        <Text style={{ color: colors.foreground }}>📤 Export Settings</Text>
+                    </Button>
+                </View>
+
+                <View style={{ flexDirection: "row", gap: 12, marginTop: 16 }}>
+                    <Button onPress={openDataDirectory} variant="default" style={{ flex: 1, backgroundColor: isDark ? colors.muted : colors.input }}>
+                        <Text style={{ color: colors.foreground }}>📁 Open Data Directory</Text>
+                    </Button>
+
+                    <Button onPress={() => setShowResetDialog(true)} variant="default" style={{ flex: 1, backgroundColor: "#dc2626" }}>
+                        <Text style={{ color: "white" }}>🔄 Reset Settings</Text>
+                    </Button>
+                </View>
+
+                <View style={styles.errorContainer}>
                     <Text style={styles.errorText}>
-                        ⚠️ <Text style={{ fontWeight: "bold" }}>Compatible File Explorer App Required:</Text> You need a file explorer app that can access the /Android/data folder (like CX File
+                        ⚠️ <Text style={{ fontWeight: "bold" }}>File Explorer Note:</Text> To manually access files, you need a file explorer app that can access the /Android/data folder (like CX File
                         Explorer). Standard file managers will not work.
                     </Text>
                 </View>
-
-                <Button onPress={openDataDirectory} variant="default" style={{ backgroundColor: isDark ? colors.muted : colors.input }} className="mt-4">
-                    <Text style={{ color: colors.foreground }}>📁 Open App Data Directory</Text>
-                </Button>
             </View>
         )
     }
@@ -409,6 +437,50 @@ const Settings = () => {
             >
                 {bsc.readyStatus ? "Bot is ready!" : "Bot is not ready!"}
             </Snackbar>
+
+            {/* Restart Dialog */}
+            <AlertDialog open={showRestartDialog} onOpenChange={setShowRestartDialog}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>
+                            <Text>Settings Imported</Text>
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                            <Text>Settings have been imported successfully. It is recommended to restart the app to finalize changes.</Text>
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>
+                            <Text style={{ color: "white" }}>Cancel</Text>
+                        </AlertDialogCancel>
+                        <AlertDialogAction onPress={restartApp}>
+                            <Text>Restart</Text>
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+
+            {/* Reset Settings Dialog */}
+            <AlertDialog open={showResetDialog} onOpenChange={setShowResetDialog}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>
+                            <Text>Reset Settings to Default</Text>
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                            <Text>Are you sure you want to reset all settings to their default values? This action cannot be undone and will overwrite your current configuration.</Text>
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel onPress={() => setShowResetDialog(false)}>
+                            <Text style={{ color: "white" }}>Cancel</Text>
+                        </AlertDialogCancel>
+                        <AlertDialogAction onPress={handleResetSettings} style={{ backgroundColor: "#dc2626" }}>
+                            <Text style={{ color: "white" }}>Reset</Text>
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </View>
     )
 }
