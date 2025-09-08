@@ -1,83 +1,80 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import * as FileSystem from "expo-file-system"
 import * as Sharing from "expo-sharing"
 import { startActivityAsync } from "expo-intent-launcher"
 import { defaultSettings, Settings, BotStateProviderProps } from "../context/BotStateContext"
 import { MessageLogProviderProps } from "../context/MessageLogContext"
+import { useSQLiteSettings } from "./useSQLiteSettings"
 
 /**
- * Manages settings persistence to/from local storage.
- * Handles file corruption recovery and settings validation.
+ * Manages settings persistence using SQLite database.
  */
 export const useSettingsManager = (bsc: BotStateProviderProps, mlc: MessageLogProviderProps) => {
     // Track whether settings are currently being saved.
     const [isSaving, setIsSaving] = useState(false)
+    const [migrationCompleted, setMigrationCompleted] = useState(false)
 
-    // Save settings to local storage with corruption prevention.
+    const { isInitialized, isLoading, isSaving: sqliteIsSaving, loadSettings: loadSQLiteSettings, saveSettings: saveSQLiteSettings } = useSQLiteSettings(mlc)
+
+    // Save settings to SQLite database.
     const saveSettings = async (newSettings?: Settings) => {
         setIsSaving(true)
 
         try {
             const localSettings: Settings = newSettings ? newSettings : bsc.settings
-            const path = FileSystem.documentDirectory + "settings.json"
-            const toSave = JSON.stringify(localSettings, null, 4)
-
-            // Delete existing file first to avoid corruption.
-            try {
-                await FileSystem.deleteAsync(path)
-                console.log("settings.json file successfully deleted.")
-            } catch {
-                console.log("settings.json file does not exist so no need to delete it before saving current settings.")
-            }
-
-            await FileSystem.writeAsStringAsync(path, toSave)
-            console.log("Settings saved to ", path)
+            await saveSQLiteSettings(localSettings)
 
             mlc.setAsyncMessages([])
-            mlc.setMessageLog([`\n[SUCCESS] Settings saved to ${path}`])
         } catch (error) {
-            console.error(`Error writing settings: ${error}`)
-            mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Error writing settings: \n${error}`])
+            console.error(`Error saving settings: ${error}`)
+            mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Error saving settings: \n${error}`])
         } finally {
             setIsSaving(false)
         }
     }
 
-    // Load settings from local storage with automatic corruption recovery.
+    // Load settings from SQLite database.
     const loadSettings = async () => {
-        const path = FileSystem.documentDirectory + "settings.json"
-        let newSettings: Settings = defaultSettings
-
         try {
-            const data = await FileSystem.readAsStringAsync(path)
-            console.log(`Loaded settings from settings.json file.`)
+            // Wait for SQLite to be initialized.
+            if (!isInitialized) {
+                console.log("[SettingsManager] Waiting for SQLite initialization...")
+                return
+            }
 
+            // Load from SQLite database.
+            let newSettings: Settings = defaultSettings
+            try {
+                newSettings = await loadSQLiteSettings()
+                console.log("[SettingsManager] Settings loaded from SQLite database.")
+            } catch (sqliteError) {
+                console.warn("[SettingsManager] Failed to load from SQLite, using defaults:", sqliteError)
+                newSettings = defaultSettings
+            }
+
+            bsc.setSettings(newSettings)
+            console.log("[SettingsManager] Settings loaded and applied to context.")
+        } catch (error) {
+            console.error("[SettingsManager] Error loading settings:", error)
+            mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Error loading settings: \n${error}`])
+            bsc.setSettings(defaultSettings)
+        }
+    }
+
+    // Import settings from a JSON file.
+    const loadFromJSONFile = async (fileUri: string): Promise<Settings> => {
+        try {
+            const data = await FileSystem.readAsStringAsync(fileUri)
             const parsed: Settings = JSON.parse(data)
             const fixedSettings: Settings = fixSettings(parsed)
-            newSettings = fixedSettings
-        } catch (error: any) {
-            if (error.name === "SyntaxError") {
-                // Handle corruption by attempting to fix.
-                const fixedSettings = await attemptCorruptionFix(path)
-                if (fixedSettings) {
-                    newSettings = fixedSettings
-                    console.log("Automatic corruption fix was successful!")
-                } else {
-                    console.error(`Error reading settings: ${error.name}`)
-                    mlc.setMessageLog([
-                        ...mlc.messageLog,
-                        `\n[ERROR] Error reading settings: \n${error}`,
-                        `\nNote that the app sometimes corrupts the settings.json when saving. Automatic fix was not successful.`,
-                    ])
-                }
-            } else if (!error.message.includes("No such file or directory")) {
-                console.error(`Error reading settings: ${error.name}`)
-                mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Error reading settings: \n${error}`])
-            }
-        }
 
-        console.log("Read: " + JSON.stringify(newSettings, null, 4))
-        bsc.setSettings(newSettings)
+            console.log("Settings imported from JSON file successfully.")
+            return fixedSettings
+        } catch (error: any) {
+            console.error(`Error reading settings from JSON file: ${error}`)
+            mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Error reading settings from JSON file: \n${error}`])
+            throw error
+        }
     }
 
     // Ensure all required settings fields exist by filling missing ones with defaults.
@@ -94,25 +91,58 @@ export const useSettingsManager = (bsc: BotStateProviderProps, mlc: MessageLogPr
         return newSettings
     }
 
-    // Attempt to recover corrupted settings by progressively truncating the file.
-    const attemptCorruptionFix = async (path: string): Promise<Settings | null> => {
+    // Import settings from a JSON file and save to SQLite.
+    const importSettings = async (fileUri: string): Promise<boolean> => {
         try {
-            const data = await FileSystem.readAsStringAsync(path)
-            let fixedData = data
+            setIsSaving(true)
 
-            while (fixedData.length > 0) {
-                try {
-                    const parsed: Settings = JSON.parse(fixedData)
-                    return fixSettings(parsed)
-                } catch {
-                    fixedData = fixedData.substring(0, fixedData.length - 1)
-                }
+            // Ensure database is initialized before saving.
+            console.log("Ensuring database is initialized before saving...")
+            if (!isInitialized) {
+                console.log("Database not initialized, triggering initialization...")
+                await loadSQLiteSettings()
             }
-        } catch {
-            // Ignore errors during corruption fix attempt.
-        }
 
-        return null
+            // Save to SQLite database.
+            const importedSettings = await loadFromJSONFile(fileUri)
+            await saveSQLiteSettings(importedSettings)
+            bsc.setSettings(importedSettings)
+
+            console.log("Settings imported successfully.")
+            mlc.setMessageLog([...mlc.messageLog, `\n[SUCCESS] Settings imported successfully from JSON file.`])
+
+            return true
+        } catch (error) {
+            console.error("Error importing settings:", error)
+            mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Error importing settings: \n${error}`])
+            return false
+        } finally {
+            setIsSaving(false)
+        }
+    }
+
+    // Export current settings to a JSON file.
+    const exportSettings = async (): Promise<string | null> => {
+        try {
+            const jsonString = JSON.stringify(bsc.settings, null, 4)
+
+            // Create a temporary file name with timestamp.
+            const timestamp = new Date().toISOString().replace(/[:.]/g, "-")
+            const fileName = `UAA-settings-${timestamp}.json`
+            const fileUri = FileSystem.documentDirectory + fileName
+
+            // Write the settings to file.
+            await FileSystem.writeAsStringAsync(fileUri, jsonString)
+
+            console.log("Settings exported successfully to:", fileUri)
+            mlc.setMessageLog([...mlc.messageLog, `\n[SUCCESS] Settings exported successfully to: ${fileName}`])
+
+            return fileUri
+        } catch (error) {
+            console.error("Error exporting settings:", error)
+            mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Error exporting settings: \n${error}`])
+            return null
+        }
     }
 
     // Open the app's data directory using Storage Access Framework.
@@ -128,7 +158,7 @@ export const useSettingsManager = (bsc: BotStateProviderProps, mlc: MessageLogPr
                     flags: 1, // FLAG_GRANT_READ_URI_PERMISSION
                 })
 
-                mlc.setMessageLog([...mlc.messageLog, `\n[SUCCESS] Opened Android data directory for package: ${packageName}`])
+                mlc.setMessageLog([...mlc.messageLog, `\n[SUCCESS] Opened Android data directory for package via SAF: ${packageName}.`])
                 return
             } catch (safError) {
                 console.warn("SAF approach failed, trying fallback:", safError)
@@ -141,7 +171,7 @@ export const useSettingsManager = (bsc: BotStateProviderProps, mlc: MessageLogPr
                     type: "resource/folder",
                 })
 
-                mlc.setMessageLog([...mlc.messageLog, `\n[SUCCESS] Opened app data directory: /storage/emulated/0/Android/data/${packageName}/files`])
+                mlc.setMessageLog([...mlc.messageLog, `\n[SUCCESS] Opened app data directory via VIEW Intent: /storage/emulated/0/Android/data/${packageName}/files.`])
                 return
             } catch (folderError) {
                 console.warn("Folder approach failed, trying file sharing:", folderError)
@@ -167,15 +197,60 @@ export const useSettingsManager = (bsc: BotStateProviderProps, mlc: MessageLogPr
             }
         } catch (error) {
             console.error(`Error opening app data directory: ${error}`)
-            mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Could not open app data directory. Error: ${error}`])
-            mlc.setMessageLog([...mlc.messageLog, `\n[INFO] Manual path: /storage/emulated/0/Android/data/${packageName}/files`])
+            mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Could not open app data directory. Error: \n${error}`])
+            mlc.setMessageLog([...mlc.messageLog, `\n[INFO] Manual path: /storage/emulated/0/Android/data/${packageName}/files.`])
         }
     }
+
+    // Reset settings to default values.
+    const resetSettings = async (): Promise<boolean> => {
+        try {
+            setIsSaving(true)
+
+            // Ensure database is initialized before saving.
+            console.log("Ensuring database is initialized before resetting...")
+            if (!isInitialized) {
+                console.log("Database not initialized, triggering initialization...")
+                await loadSQLiteSettings()
+            }
+
+            console.log("Resetting settings to default values...")
+            // Save default settings to SQLite database.
+            await saveSQLiteSettings(defaultSettings)
+
+            // Update the current settings in context.
+            bsc.setSettings(defaultSettings)
+
+            console.log("Settings reset to defaults successfully.")
+            mlc.setMessageLog([...mlc.messageLog, `\n[SUCCESS] Settings have been reset to default values.`])
+
+            return true
+        } catch (error) {
+            console.error("Error resetting settings:", error)
+            mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Error resetting settings: \n${error}`])
+            return false
+        } finally {
+            setIsSaving(false)
+        }
+    }
+
+    // Auto-load settings when SQLite is initialized.
+    useEffect(() => {
+        if (isInitialized && !migrationCompleted) {
+            loadSettings()
+            setMigrationCompleted(true)
+        }
+    }, [isInitialized, migrationCompleted, loadSettings])
 
     return {
         saveSettings,
         loadSettings,
+        importSettings,
+        exportSettings,
+        resetSettings,
         openDataDirectory,
-        isSaving,
+        isSaving: isSaving || sqliteIsSaving,
+        isLoading,
+        isInitialized,
     }
 }

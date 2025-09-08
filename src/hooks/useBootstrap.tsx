@@ -1,5 +1,5 @@
-import { useContext, useEffect, useState } from "react"
-import { DeviceEventEmitter } from "react-native"
+import { useContext, useEffect, useState, useRef } from "react"
+import { DeviceEventEmitter, AppState } from "react-native"
 import { BotStateContext, BotStateProviderProps } from "../context/BotStateContext"
 import { MessageLogContext, MessageLogProviderProps } from "../context/MessageLogContext"
 import { useSettingsManager } from "./useSettingsManager"
@@ -11,22 +11,30 @@ import { useSettingsManager } from "./useSettingsManager"
 export const useBootstrap = () => {
     const [firstTime, setFirstTime] = useState<boolean>(true)
     const [isReady, setIsReady] = useState<boolean>(false)
-    
+    const isSavingRef = useRef<boolean>(false)
+
     const bsc = useContext(BotStateContext) as BotStateProviderProps
     const mlc = useContext(MessageLogContext) as MessageLogProviderProps
-    
+
     // Hook for managing settings persistence.
-    const { loadSettings, saveSettings } = useSettingsManager(bsc, mlc)
+    const { loadSettings, saveSettings, isLoading, isInitialized } = useSettingsManager(bsc, mlc)
 
     // Initialize app on mount: load settings, set up message listener.
     useEffect(() => {
         const initializeApp = async () => {
-            await loadSettings()
-            setFirstTime(false)
-            setIsReady(true)
+            // Wait for SQLite to be initialized before loading settings.
+            if (isInitialized) {
+                console.log("[Bootstrap] SQLite initialized, loading settings...")
+                await loadSettings()
+                setIsReady(true)
+                console.log("[Bootstrap] App initialization complete")
+            }
         }
 
-        initializeApp()
+        if (isInitialized) {
+            console.log("[Bootstrap] Starting app initialization...")
+            initializeApp()
+        }
 
         // Listen for messages from the Android automation service.
         const messageListener = (data: any) => {
@@ -40,14 +48,25 @@ export const useBootstrap = () => {
         return () => {
             DeviceEventEmitter.removeAllListeners("MessageLog")
         }
-    }, [])
+    }, [isInitialized])
 
     // Auto-save settings when they change (skip first load).
     useEffect(() => {
-        if (!firstTime) {
-            saveSettings()
+        if (!firstTime && isReady && !isSavingRef.current) {
+            console.log("[Bootstrap] Settings changed, auto-saving...")
+            isSavingRef.current = true
+
+            // Add a small delay to prevent rapid successive saves.
+            setTimeout(() => {
+                saveSettings().finally(() => {
+                    isSavingRef.current = false
+                })
+            }, 100)
+        } else if (isReady && firstTime) {
+            console.log("[Bootstrap] First load complete, enabling auto-save")
+            setFirstTime(false)
         }
-    }, [bsc.settings])
+    }, [bsc.settings, firstTime, isReady])
 
     // Process async messages and add them to the message log.
     useEffect(() => {
@@ -56,6 +75,24 @@ export const useBootstrap = () => {
             mlc.setMessageLog(newLog)
         }
     }, [mlc.asyncMessages])
+
+    // Save settings when app goes to background or is about to close.
+    useEffect(() => {
+        const handleAppStateChange = (nextAppState: string) => {
+            if (nextAppState === "background" || nextAppState === "inactive") {
+                console.log(`[Bootstrap] App state changed to ${nextAppState}, saving settings...`)
+                if (!isSavingRef.current) {
+                    isSavingRef.current = true
+                    saveSettings().finally(() => {
+                        isSavingRef.current = false
+                    })
+                }
+            }
+        }
+
+        const subscription = AppState.addEventListener("change", handleAppStateChange)
+        return () => subscription?.remove()
+    }, [saveSettings])
 
     // Finalize app ready state after initialization.
     useEffect(() => {
@@ -71,7 +108,9 @@ export const useBootstrap = () => {
     }
 
     return {
-        isReady,
-        firstTime
+        isReady: isReady && isInitialized,
+        firstTime,
+        isLoading,
+        isInitialized,
     }
 }
