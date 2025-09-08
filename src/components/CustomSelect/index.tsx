@@ -17,11 +17,12 @@ interface CustomSelectProps {
     onValueChange?: (value: string | undefined) => void
     setValue?: React.Dispatch<React.SetStateAction<string>>
     defaultValue?: string
+    value?: string
     disabled?: boolean
     style?: ViewStyle
 }
 
-const CustomSelect: React.FC<CustomSelectProps> = ({ placeholder = "Select an option", options = [], width = "100%", groupLabel, onValueChange, setValue, defaultValue, disabled = false, style }) => {
+const CustomSelect: React.FC<CustomSelectProps> = ({ placeholder = "Select an option", options = [], width = "100%", groupLabel, onValueChange, setValue, defaultValue, value, disabled = false, style }) => {
     const { colors } = useTheme()
     
     const [triggerWidth, setTriggerWidth] = useState<number>(0)
@@ -42,7 +43,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ placeholder = "Select an op
     }
 
     return (
-        <Select onValueChange={handleValueChange as any} defaultValue={defaultValue as any} disabled={disabled}>
+        <Select onValueChange={handleValueChange} value={value as any} defaultValue={defaultValue as any} disabled={disabled}>
             <View ref={triggerRef} style={[{ width: width as any }, style]} onLayout={onTriggerLayout}>
                 <SelectTrigger>
                     <SelectValue placeholder={placeholder} style={{ color: colors.foreground }} />
