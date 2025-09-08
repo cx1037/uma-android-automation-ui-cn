@@ -83,6 +83,7 @@ const Settings = () => {
                     width="100%"
                     groupLabel="Scenarios"
                     options={scenarios}
+                    value={bsc.settings.general.scenario}
                     onValueChange={(value) => {
                         bsc.setReadyStatus(true)
                         bsc.setSettings({ ...bsc.settings, general: { ...bsc.settings.general, scenario: value || "" } })
