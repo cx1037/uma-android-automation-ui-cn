@@ -15,6 +15,7 @@ interface MultiSelectorProps {
     selectAllDescription?: string
     selectIndividualLabel?: string
     style?: ViewStyle
+    selectAll?: boolean
 }
 
 const MultiSelector: React.FC<MultiSelectorProps> = ({
@@ -27,6 +28,7 @@ const MultiSelector: React.FC<MultiSelectorProps> = ({
     selectAllDescription = "Select all available options",
     selectIndividualLabel = "Select Individual Items",
     style,
+    selectAll: propSelectAll,
 }) => {
     const { colors, isDark } = useTheme()
     const [selectAll, setSelectAll] = useState(false)
@@ -37,10 +39,14 @@ const MultiSelector: React.FC<MultiSelectorProps> = ({
     const currentScrollY = useRef(0)
     const isScrolling = useRef(false)
 
-    // Update selectAll state when selectedOptions changes
+    // Update selectAll state when selectedOptions changes or prop changes
     useEffect(() => {
-        setSelectAll(selectedOptions.length === options.length && options.length > 0)
-    }, [selectedOptions, options])
+        if (propSelectAll !== undefined) {
+            setSelectAll(propSelectAll)
+        } else {
+            setSelectAll(selectedOptions.length === options.length && options.length > 0)
+        }
+    }, [selectedOptions, options, propSelectAll])
 
     // Close modal when selectAll is checked
     useEffect(() => {
