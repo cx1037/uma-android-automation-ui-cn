@@ -43,13 +43,12 @@ export const useSettingsManager = (bsc: BotStateProviderProps, mlc: MessageLogPr
             }
 
             // Load from SQLite database.
-            let newSettings: Settings = defaultSettings
+            let newSettings: Settings = JSON.parse(JSON.stringify(defaultSettings))
             try {
                 newSettings = await loadSQLiteSettings()
                 console.log("[SettingsManager] Settings loaded from SQLite database.")
             } catch (sqliteError) {
                 console.warn("[SettingsManager] Failed to load from SQLite, using defaults:", sqliteError)
-                newSettings = defaultSettings
             }
 
             bsc.setSettings(newSettings)
@@ -57,7 +56,8 @@ export const useSettingsManager = (bsc: BotStateProviderProps, mlc: MessageLogPr
         } catch (error) {
             console.error("[SettingsManager] Error loading settings:", error)
             mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Error loading settings: \n${error}`])
-            bsc.setSettings(defaultSettings)
+            bsc.setSettings(JSON.parse(JSON.stringify(defaultSettings)))
+            bsc.setReadyStatus(false)
         }
     }
 
@@ -214,12 +214,15 @@ export const useSettingsManager = (bsc: BotStateProviderProps, mlc: MessageLogPr
                 await loadSQLiteSettings()
             }
 
-            console.log("Resetting settings to default values...")
+            // Create a deep copy of default settings to avoid reference issues.
+            const defaultSettingsCopy = JSON.parse(JSON.stringify(defaultSettings))
+
             // Save default settings to SQLite database.
-            await saveSQLiteSettings(defaultSettings)
+            await saveSQLiteSettings(defaultSettingsCopy)
 
             // Update the current settings in context.
-            bsc.setSettings(defaultSettings)
+            bsc.setSettings(defaultSettingsCopy)
+            bsc.setReadyStatus(false)
 
             console.log("Settings reset to defaults successfully.")
             mlc.setMessageLog([...mlc.messageLog, `\n[SUCCESS] Settings have been reset to default values.`])

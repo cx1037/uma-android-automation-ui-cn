@@ -48,10 +48,8 @@ export const useSQLiteSettings = (mlc: MessageLogProviderProps) => {
             setIsLoading(true)
             const dbSettings = await databaseManager.loadAllSettings()
 
-            // Merge with default settings to ensure all fields exist.
-            const mergedSettings: Settings = { ...defaultSettings }
-
             // Apply loaded settings from database.
+            const mergedSettings: Settings = JSON.parse(JSON.stringify(defaultSettings))
             Object.keys(dbSettings).forEach((category) => {
                 if (mergedSettings[category as keyof Settings]) {
                     Object.assign(mergedSettings[category as keyof Settings], dbSettings[category])
@@ -63,7 +61,7 @@ export const useSQLiteSettings = (mlc: MessageLogProviderProps) => {
         } catch (error) {
             console.error("Failed to load settings from database:", error)
             mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Failed to load settings from database: ${error}`])
-            return defaultSettings
+            return JSON.parse(JSON.stringify(defaultSettings))
         } finally {
             setIsLoading(false)
         }
@@ -190,7 +188,7 @@ export const useSQLiteSettings = (mlc: MessageLogProviderProps) => {
             } catch (error) {
                 console.error(`Failed to load ${category} settings from database:`, error)
                 mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Failed to load ${category} settings from database: ${error}`])
-                return defaultSettings[category]
+                return JSON.parse(JSON.stringify(defaultSettings[category]))
             }
         },
         [isInitialized, initializeDatabase, mlc]

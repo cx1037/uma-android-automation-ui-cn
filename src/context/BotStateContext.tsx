@@ -38,7 +38,7 @@ export interface Settings {
         statPrioritization: string[]
         maximumFailureChance: number
         disableTrainingOnMaxedStat: boolean
-        focusOnSparkStatTarget: boolean 
+        focusOnSparkStatTarget: boolean
     }
 
     // Training Stat Target settings
@@ -189,7 +189,8 @@ export const BotStateProvider = ({ children }: any): React.ReactElement => {
     const [refreshAlert, setRefreshAlert] = useState<boolean>(false)
     const [appVersion, setAppVersion] = useState<string>("")
 
-    const [settings, setSettings] = useState<Settings>(defaultSettings)
+    // Create a deep copy of default settings to avoid reference issues.
+    const [settings, setSettings] = useState<Settings>(() => JSON.parse(JSON.stringify(defaultSettings)))
 
     const providerValues: BotStateProviderProps = {
         readyStatus,
