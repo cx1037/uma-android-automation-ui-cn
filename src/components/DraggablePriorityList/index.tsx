@@ -25,52 +25,50 @@ interface DraggablePriorityListProps {
 const DraggablePriorityList: React.FC<DraggablePriorityListProps> = ({ items, selectedItems, onSelectionChange, onOrderChange, className = "", style }) => {
     const { colors } = useTheme()
 
-    const [orderedItems, setOrderedItems] = useState<string[]>(items.map(item => item.id))
+    const [orderedItems, setOrderedItems] = useState<string[]>(items.map((item) => item.id))
     const dragOrderRef = useRef<string[]>([]) // Track drag order separately
     const dragListRef = useRef<any>(null)
 
-    // Add these state variables
-    const [contentHeight, setContentHeight] = useState(0);
-    const [containerHeight, setContainerHeight] = useState(0);
+    const [contentHeight, setContentHeight] = useState(0)
+    const [containerHeight, setContainerHeight] = useState(0)
 
-    // Add these handlers
     const handleContainerLayout = (event: LayoutChangeEvent) => {
-        setContainerHeight(event.nativeEvent.layout.height);
-    };
+        setContainerHeight(event.nativeEvent.layout.height)
+    }
 
     const handleContentSizeChange = (width: number, height: number) => {
-        setContentHeight(height);
-    };
+        setContentHeight(height)
+    }
 
-    // Sync orderedItems with selectedItems when selection changes
+    // Sync orderedItems with selectedItems when selection changes.
     useEffect(() => {
         if (selectedItems.length === 0) {
-            setOrderedItems(items.map(item => item.id))
+            setOrderedItems(items.map((item) => item.id))
             dragOrderRef.current = [] // Clear drag order
             return
         }
 
-        // Always preserve existing order when possible
+        // Always preserve existing order when possible.
         if (orderedItems.length > 0) {
-            // Get items that are currently in the list and are still selected
-            const existingSelectedInOrder = orderedItems.filter(id => selectedItems.includes(id))
-            
-            // Get newly selected items that weren't in the current list
-            const newlySelected = selectedItems.filter(id => !orderedItems.includes(id))
-            
-            // Get deselected items that should remain visible
-            const deselectedItems = items.map(item => item.id).filter(id => !selectedItems.includes(id))
-            
-            // Combine: existing selected items in their current order + newly selected + deselected
+            // Get items that are currently in the list and are still selected.
+            const existingSelectedInOrder = orderedItems.filter((id) => selectedItems.includes(id))
+
+            // Get newly selected items that weren't in the current list.
+            const newlySelected = selectedItems.filter((id) => !orderedItems.includes(id))
+
+            // Get deselected items that should remain visible.
+            const deselectedItems = items.map((item) => item.id).filter((id) => !selectedItems.includes(id))
+
+            // Combine: existing selected items in their current order + newly selected + deselected.
             const finalOrdered = [...existingSelectedInOrder, ...newlySelected, ...deselectedItems]
             setOrderedItems(finalOrdered)
-            
-            // Update drag order ref with the selected items in their new order
-            const selectedInNewOrder = finalOrdered.filter(id => selectedItems.includes(id))
+
+            // Update drag order ref with the selected items in their new order.
+            const selectedInNewOrder = finalOrdered.filter((id) => selectedItems.includes(id))
             dragOrderRef.current = selectedInNewOrder
         } else {
-            // No existing order, create default order
-            const deselectedItems = items.map(item => item.id).filter(id => !selectedItems.includes(id))
+            // No existing order, create default order.
+            const deselectedItems = items.map((item) => item.id).filter((id) => !selectedItems.includes(id))
             const finalOrdered = [...selectedItems, ...deselectedItems]
             setOrderedItems(finalOrdered)
             dragOrderRef.current = selectedItems
@@ -83,11 +81,11 @@ const DraggablePriorityList: React.FC<DraggablePriorityListProps> = ({ items, se
         copy.splice(toIndex, 0, removed)
 
         setOrderedItems(copy)
-        
-        // Update the drag order ref with only the selected items in their new order
-        const selectedInNewOrder = copy.filter(id => selectedItems.includes(id))
+
+        // Update the drag order ref with only the selected items in their new order.
+        const selectedInNewOrder = copy.filter((id) => selectedItems.includes(id))
         dragOrderRef.current = selectedInNewOrder
-        
+
         onOrderChange(selectedInNewOrder)
     }
 
@@ -117,10 +115,10 @@ const DraggablePriorityList: React.FC<DraggablePriorityListProps> = ({ items, se
 
         return (
             <View key={item.id} className={`mb-2 ${className}`}>
-                <TouchableOpacity 
-                    className="flex flex-row items-center gap-2 border border-border rounded-lg p-2" 
-                    onPressIn={isSelected ? onDragStart : undefined} 
-                    onPressOut={isSelected ? onDragEnd : undefined} 
+                <TouchableOpacity
+                    className="flex flex-row items-center gap-2 border border-border rounded-lg p-2"
+                    onPressIn={isSelected ? onDragStart : undefined}
+                    onPressOut={isSelected ? onDragEnd : undefined}
                     activeOpacity={0.7}
                 >
                     {/* Priority Number - smaller size */}
@@ -174,19 +172,21 @@ const DraggablePriorityList: React.FC<DraggablePriorityListProps> = ({ items, se
                 {contentHeight > containerHeight && (
                     <View className="flex-row justify-center gap-2 mt-2">
                         <TouchableOpacity style={{ borderColor: colors.primary }} className="px-3 py-1 border rounded" onPress={scrollToTop}>
-                            <Text style={{ color: colors.foreground }} className="text-xs">↑ Scroll Up</Text>
+                            <Text style={{ color: colors.foreground }} className="text-xs">
+                                ↑ Scroll Up
+                            </Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={{ borderColor: colors.primary }} className="px-3 py-1 border rounded" onPress={scrollToBottom}>
-                            <Text style={{ color: colors.foreground }} className="text-xs">↓ Scroll Down</Text>
+                            <Text style={{ color: colors.foreground }} className="text-xs">
+                                ↓ Scroll Down
+                            </Text>
                         </TouchableOpacity>
                     </View>
                 )}
             </View>
 
             {/* Show message below the list when no items are selected */}
-            {selectedItems.length === 0 && (
-                <Text className="text-center text-muted-foreground py-4">No stats selected. Select stats to set priority order.</Text>
-            )}
+            {selectedItems.length === 0 && <Text className="text-center text-muted-foreground py-4">No stats selected. Select stats to set priority order.</Text>}
         </View>
     )
 }

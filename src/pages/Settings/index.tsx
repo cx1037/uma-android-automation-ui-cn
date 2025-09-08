@@ -297,7 +297,7 @@ const Settings = () => {
                     checked={bsc.settings.debug.debugMode_startTemplateMatchingTest}
                     onCheckedChange={(checked) => {
                         if (checked) {
-                            // Disable other tests when enabling this one
+                            // Disable other tests when enabling this one.
                             bsc.setSettings({
                                 ...bsc.settings,
                                 debug: {
@@ -323,7 +323,7 @@ const Settings = () => {
                     checked={bsc.settings.debug.debugMode_startSingleTrainingFailureOCRTest}
                     onCheckedChange={(checked) => {
                         if (checked) {
-                            // Disable other tests when enabling this one
+                            // Disable other tests when enabling this one.
                             bsc.setSettings({
                                 ...bsc.settings,
                                 debug: {
@@ -349,7 +349,7 @@ const Settings = () => {
                     checked={bsc.settings.debug.debugMode_startComprehensiveTrainingFailureOCRTest}
                     onCheckedChange={(checked) => {
                         if (checked) {
-                            // Disable other tests when enabling this one
+                            // Disable other tests when enabling this one.
                             bsc.setSettings({
                                 ...bsc.settings,
                                 debug: {

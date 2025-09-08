@@ -30,7 +30,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     const systemColorScheme = useColorScheme()
     const [theme, setTheme] = useState<Theme>("light")
 
-    // Initialize theme based on system preference
+    // Initialize theme based on system preference.
     useEffect(() => {
         if (systemColorScheme) {
             setTheme(systemColorScheme)

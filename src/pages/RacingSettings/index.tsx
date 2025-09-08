@@ -12,11 +12,9 @@ const RacingSettings = () => {
     const navigation = useNavigation()
     const bsc = useContext(BotStateContext)
 
-    // Get racing settings from global state
     const { settings, setSettings } = bsc
     const { enableFarmingFans, daysToRunExtraRaces, disableRaceRetries, enableStopOnMandatoryRaces, enableForceRacing } = settings.racing
 
-    // Helper function to update racing settings
     const updateRacingSetting = (key: keyof typeof settings.racing, value: any) => {
         setSettings({
             ...bsc.settings,

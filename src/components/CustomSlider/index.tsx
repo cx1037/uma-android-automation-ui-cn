@@ -118,7 +118,7 @@ const CustomSlider: React.FC<CustomSliderProps> = ({ value, onValueChange, min, 
         return percentage * sliderWidth
     }
 
-    // Initialize tooltip position when component mounts or value changes
+    // Initialize tooltip position when component mounts or value changes.
     useEffect(() => {
         if (sliderWidth > 0) {
             const position = calculateTooltipPosition(value)
@@ -126,7 +126,7 @@ const CustomSlider: React.FC<CustomSliderProps> = ({ value, onValueChange, min, 
         }
     }, [sliderWidth, value, min, max])
 
-    // Update input value when external value changes
+    // Update input value when external value changes.
     useEffect(() => {
         setInputValue(value.toString())
     }, [value])
@@ -179,7 +179,7 @@ const CustomSlider: React.FC<CustomSliderProps> = ({ value, onValueChange, min, 
         setInputValue(text)
         const numValue = parseFloat(text)
         if (!isNaN(numValue) && numValue >= min && numValue <= max) {
-            // Round to nearest step
+            // Round to nearest step.
             const roundedValue = Math.round(numValue / step) * step
             onValueChange(roundedValue)
         }
@@ -188,13 +188,13 @@ const CustomSlider: React.FC<CustomSliderProps> = ({ value, onValueChange, min, 
     const handleInputSubmit = () => {
         const numValue = parseFloat(inputValue)
         if (!isNaN(numValue)) {
-            // Clamp value to min/max and round to nearest step
+            // Clamp value to min/max and round to nearest step.
             const clampedValue = Math.max(min, Math.min(max, numValue))
             const roundedValue = Math.round(clampedValue / step) * step
             onValueChange(roundedValue)
             setInputValue(roundedValue.toString())
         } else {
-            // Reset to current value if invalid
+            // Reset to current value if invalid.
             setInputValue(value.toString())
         }
     }

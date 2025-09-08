@@ -39,7 +39,7 @@ const MultiSelector: React.FC<MultiSelectorProps> = ({
     const currentScrollY = useRef(0)
     const isScrolling = useRef(false)
 
-    // Update selectAll state when selectedOptions changes or prop changes
+    // Update selectAll state when selectedOptions changes or prop changes.
     useEffect(() => {
         if (propSelectAll !== undefined) {
             setSelectAll(propSelectAll)
@@ -48,7 +48,7 @@ const MultiSelector: React.FC<MultiSelectorProps> = ({
         }
     }, [selectedOptions, options, propSelectAll])
 
-    // Close modal when selectAll is checked
+    // Close modal when selectAll is checked.
     useEffect(() => {
         if (selectAll && modalVisible) {
             setModalVisible(false)
@@ -91,10 +91,10 @@ const MultiSelector: React.FC<MultiSelectorProps> = ({
         const currentY = touch.pageY
         const deltaY = lastTouchY.current - currentY
 
-        // Only scroll if there's significant movement
+        // Only scroll if there's significant movement.
         if (Math.abs(deltaY) > 1) {
             isScrolling.current = true
-            // Use a balanced scroll factor for smooth but responsive movement
+            // Use a balanced scroll factor for smooth but responsive movement.
             const scrollFactor = 2.0
             const newScrollY = Math.max(0, currentScrollY.current + deltaY * scrollFactor)
             currentScrollY.current = newScrollY
@@ -111,7 +111,7 @@ const MultiSelector: React.FC<MultiSelectorProps> = ({
         isScrolling.current = false
     }
 
-    // Filter options based on search query
+    // Filter options based on search query.
     const filteredOptions = options.filter((option) => option.toLowerCase().includes(searchQuery.toLowerCase()))
 
     const styles = StyleSheet.create({
@@ -182,7 +182,6 @@ const MultiSelector: React.FC<MultiSelectorProps> = ({
             opacity: 0.5,
             fontStyle: "italic",
         },
-        // Modal styles
         modalOverlay: {
             flex: 1,
             backgroundColor: "rgba(0, 0, 0, 0.5)",

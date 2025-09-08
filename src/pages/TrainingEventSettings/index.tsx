@@ -7,7 +7,7 @@ import CustomCheckbox from "../../components/CustomCheckbox"
 import MultiSelector from "../../components/MultiSelector"
 import { ArrowLeft } from "lucide-react-native"
 
-// Import the data files
+// Import the data files.
 import charactersData from "../../data/characters.json"
 import supportsData from "../../data/supports.json"
 
@@ -16,15 +16,13 @@ const TrainingEventSettings = () => {
     const navigation = useNavigation()
     const bsc = useContext(BotStateContext)
 
-    // Get training event settings from global state
     const { settings, setSettings } = bsc
     const { enablePrioritizeEnergyOptions } = settings.trainingEvent
 
-    // Extract character and support names from the data
+    // Extract character and support names from the data.
     const characterNames = useMemo(() => Object.keys(charactersData), [])
     const supportNames = useMemo(() => Object.keys(supportsData), [])
 
-    // Helper function to update training event settings
     const updateTrainingEventSetting = (key: keyof typeof settings.trainingEvent, value: any) => {
         setSettings({
             ...bsc.settings,

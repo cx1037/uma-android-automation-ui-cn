@@ -12,11 +12,9 @@ const OCRSettings = () => {
     const navigation = useNavigation()
     const bsc = useContext(BotStateContext)
 
-    // Get OCR settings from global state
     const { settings, setSettings } = bsc
     const { ocrThreshold, enableAutomaticOCRRetry, ocrConfidence } = settings.ocr
 
-    // Helper function to update OCR settings
     const updateOCRSetting = (key: keyof typeof settings.ocr, value: any) => {
         setSettings({
             ...bsc.settings,

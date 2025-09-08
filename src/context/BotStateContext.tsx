@@ -122,7 +122,6 @@ export const defaultSettings: Settings = {
         maximumFailureChance: 20,
         disableTrainingOnMaxedStat: true,
         focusOnSparkStatTarget: false,
-
     },
     trainingStatTarget: {
         trainingSprintStatTarget_speedStatTarget: 900,

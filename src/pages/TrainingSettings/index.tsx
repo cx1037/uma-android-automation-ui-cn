@@ -18,13 +18,11 @@ const TrainingSettings = () => {
     const [blacklistModalVisible, setBlacklistModalVisible] = useState(false)
     const [prioritizationModalVisible, setPrioritizationModalVisible] = useState(false)
 
-    // Get training settings from global state
     const { settings, setSettings } = bsc
     const { trainingBlacklist, statPrioritization, maximumFailureChance, disableTrainingOnMaxedStat, focusOnSparkStatTarget } = settings.training
 
     const stats = ["Speed", "Stamina", "Power", "Guts", "Wit"]
 
-    // Helper function to update training settings
     const updateTrainingSetting = (key: keyof typeof settings.training, value: any) => {
         setSettings({
             ...bsc.settings,
@@ -35,7 +33,6 @@ const TrainingSettings = () => {
         })
     }
 
-    // Helper function to update training stat target settings
     const updateTrainingStatTarget = (key: keyof typeof settings.trainingStatTarget, value: any) => {
         setSettings({
             ...bsc.settings,
@@ -198,7 +195,7 @@ const TrainingSettings = () => {
                                 selectedItems={selectedStats}
                                 onSelectionChange={setSelectedStats}
                                 onOrderChange={(orderedItems) => {
-                                    // Update the order when items are reordered
+                                    // Update the order when items are reordered.
                                     setSelectedStats(orderedItems)
                                 }}
                             />
