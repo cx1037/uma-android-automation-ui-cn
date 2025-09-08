@@ -22,9 +22,20 @@ interface CustomSelectProps {
     style?: ViewStyle
 }
 
-const CustomSelect: React.FC<CustomSelectProps> = ({ placeholder = "Select an option", options = [], width = "100%", groupLabel, onValueChange, setValue, defaultValue, value, disabled = false, style }) => {
+const CustomSelect: React.FC<CustomSelectProps> = ({
+    placeholder = "Select an option",
+    options = [],
+    width = "100%",
+    groupLabel,
+    onValueChange,
+    setValue,
+    defaultValue,
+    value,
+    disabled = false,
+    style,
+}) => {
     const { colors } = useTheme()
-    
+
     const [triggerWidth, setTriggerWidth] = useState<number>(0)
     const triggerRef = useRef<View>(null)
 
