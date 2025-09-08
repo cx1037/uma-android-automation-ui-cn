@@ -110,6 +110,7 @@ const TrainingEventSettings = () => {
                         selectAllLabel="Select All Characters"
                         selectAllDescription="Select all available characters for training events"
                         selectIndividualLabel="Select Characters"
+                        selectAll={settings.trainingEvent.selectAllCharacters}
                     />
 
                     <MultiSelector
@@ -138,6 +139,7 @@ const TrainingEventSettings = () => {
                         selectAllLabel="Select All Support Cards"
                         selectAllDescription="Select all available support cards for training events"
                         selectIndividualLabel="Select Support Cards"
+                        selectAll={settings.trainingEvent.selectAllSupportCards}
                     />
                 </View>
             </ScrollView>
