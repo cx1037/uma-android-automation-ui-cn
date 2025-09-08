@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react"
 import { View, LayoutChangeEvent, ViewStyle } from "react-native"
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select"
+import { Option, Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select"
 import { useTheme } from "../../context/ThemeContext"
 
 interface SelectOption {
@@ -32,12 +32,12 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ placeholder = "Select an op
         setTriggerWidth(measuredWidth)
     }
 
-    const handleValueChange = (value: string | undefined) => {
+    const handleValueChange = (option: Option) => {
         if (onValueChange) {
-            onValueChange(value)
+            onValueChange(option?.value || "")
         }
         if (setValue) {
-            setValue(value || "")
+            setValue(option?.value || "")
         }
     }
 
