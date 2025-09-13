@@ -5,9 +5,9 @@ import { BotStateContext } from "../../context/BotStateContext"
 import { DeviceEventEmitter, StyleSheet, View, NativeModules, ActivityIndicator } from "react-native"
 import { MessageLogContext } from "../../context/MessageLogContext"
 import { useTheme } from "../../context/ThemeContext"
-import { Button } from "@/src/components/ui/button"
-import { Text } from "@/src/components/ui/text"
-import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/src/components/ui/alert-dialog"
+import { Button } from "../../components/ui/button"
+import { Text } from "../../components/ui/text"
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "../../components/ui/alert-dialog"
 
 const styles = StyleSheet.create({
     root: {
