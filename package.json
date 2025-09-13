@@ -6,7 +6,7 @@
         "start": "expo start",
         "android": "expo run:android",
         "build": "cd android && ./gradlew assembleDebug",
-        "build:clean": "cd android && ./gradlew clean && ./gradlew assembleDebug",
+        "build:clean": "cd android && ./gradlew clean assembleDebug --stacktrace",
         "lint": "expo lint",
         "test": "jest",
         "update": "yarn install && yarn upgrade-interactive --latest"
