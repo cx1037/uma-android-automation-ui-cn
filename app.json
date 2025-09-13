@@ -3,7 +3,6 @@
         "name": "Uma Android Automation",
         "slug": "uma-android-automation",
         "version": "3.0.3",
-        "platforms": ["android"],
-        "userInterfaceStyle": "automatic"
+        "platforms": ["android"]
     }
 }
