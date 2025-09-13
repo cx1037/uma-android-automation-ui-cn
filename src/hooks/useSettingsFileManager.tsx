@@ -10,6 +10,7 @@ import { MessageLogProviderProps } from "../context/MessageLogContext"
  */
 export const useSettingsFileManager = (bsc: BotStateProviderProps, mlc: MessageLogProviderProps) => {
     const [showImportDialog, setShowImportDialog] = useState(false)
+    const [showResetDialog, setShowResetDialog] = useState(false)
 
     const { importSettings, exportSettings } = useSettingsManager(bsc, mlc)
 
@@ -70,5 +71,7 @@ export const useSettingsFileManager = (bsc: BotStateProviderProps, mlc: MessageL
         handleExportSettings,
         showImportDialog,
         setShowImportDialog,
+        showResetDialog,
+        setShowResetDialog,
     }
 }

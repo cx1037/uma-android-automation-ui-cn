@@ -20,7 +20,6 @@ import { useSettingsFileManager } from "../../hooks/useSettingsFileManager"
 
 const Settings = () => {
     const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false)
-    const [showResetDialog, setShowResetDialog] = useState<boolean>(false)
 
     const bsc = useContext(BotStateContext)
     const mlc = useContext(MessageLogContext)
@@ -28,7 +27,7 @@ const Settings = () => {
     const navigation = useNavigation()
 
     const { openDataDirectory, resetSettings } = useSettingsManager(bsc, mlc)
-    const { handleImportSettings, handleExportSettings, showImportDialog, setShowImportDialog } = useSettingsFileManager(bsc, mlc)
+    const { handleImportSettings, handleExportSettings, showImportDialog, setShowImportDialog, showResetDialog, setShowResetDialog } = useSettingsFileManager(bsc, mlc)
 
     const styles = StyleSheet.create({
         root: {
@@ -77,7 +76,6 @@ const Settings = () => {
     const handleResetSettings = async () => {
         const success = await resetSettings()
         if (success) {
-            setShowResetDialog(false)
             setSnackbarOpen(true)
             setTimeout(() => setSnackbarOpen(false), 2500)
         }
