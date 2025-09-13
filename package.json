@@ -89,11 +89,7 @@
     },
     "expo": {
         "autolinking": {
-            "exclude": [
-                "expo-asset",
-                "expo-font",
-                "expo-keep-awake"
-            ]
+            "exclude": []
         }
     }
 }
