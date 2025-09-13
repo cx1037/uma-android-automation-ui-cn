@@ -1,7 +1,6 @@
 import { useState } from "react"
 import * as DocumentPicker from "expo-document-picker"
 import * as Sharing from "expo-sharing"
-import * as Updates from "expo-updates"
 import { useSettingsManager } from "./useSettingsManager"
 import { BotStateProviderProps } from "../context/BotStateContext"
 import { MessageLogProviderProps } from "../context/MessageLogContext"
@@ -10,21 +9,9 @@ import { MessageLogProviderProps } from "../context/MessageLogContext"
  * Hook for managing settings file operations (import/export) with file picker and restart prompts.
  */
 export const useSettingsFileManager = (bsc: BotStateProviderProps, mlc: MessageLogProviderProps) => {
-    const [showRestartDialog, setShowRestartDialog] = useState(false)
+    const [showImportDialog, setShowImportDialog] = useState(false)
 
     const { importSettings, exportSettings } = useSettingsManager(bsc, mlc)
-
-    /**
-     * Restart the app using expo-updates.
-     */
-    const restartApp = async () => {
-        try {
-            await Updates.reloadAsync()
-        } catch (error) {
-            console.error("Failed to reload app:", error)
-            mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Failed to restart app: ${error}`])
-        }
-    }
 
     /**
      * Import settings from a JSON file using document picker.
@@ -48,7 +35,7 @@ export const useSettingsFileManager = (bsc: BotStateProviderProps, mlc: MessageL
             // Import the settings.
             const success = await importSettings(result.assets[0].uri)
             if (success) {
-                setShowRestartDialog(true)
+                setShowImportDialog(true)
             }
         } catch (error) {
             console.error("Error importing settings:", error)
@@ -81,8 +68,7 @@ export const useSettingsFileManager = (bsc: BotStateProviderProps, mlc: MessageL
     return {
         handleImportSettings,
         handleExportSettings,
-        showRestartDialog,
-        setShowRestartDialog,
-        restartApp,
+        showImportDialog,
+        setShowImportDialog,
     }
 }

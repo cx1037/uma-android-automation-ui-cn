@@ -28,7 +28,7 @@ const Settings = () => {
     const navigation = useNavigation()
 
     const { openDataDirectory, resetSettings } = useSettingsManager(bsc, mlc)
-    const { handleImportSettings, handleExportSettings, showRestartDialog, setShowRestartDialog, restartApp } = useSettingsFileManager(bsc, mlc)
+    const { handleImportSettings, handleExportSettings, showImportDialog, setShowImportDialog } = useSettingsFileManager(bsc, mlc)
 
     const styles = StyleSheet.create({
         root: {
@@ -439,22 +439,19 @@ const Settings = () => {
             </Snackbar>
 
             {/* Restart Dialog */}
-            <AlertDialog open={showRestartDialog} onOpenChange={setShowRestartDialog}>
+            <AlertDialog open={showImportDialog} onOpenChange={setShowImportDialog}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
                         <AlertDialogTitle>
                             <Text>Settings Imported</Text>
                         </AlertDialogTitle>
                         <AlertDialogDescription>
-                            <Text>Settings have been imported successfully. It is recommended to restart the app to finalize changes.</Text>
+                            <Text>Settings have been imported successfully.</Text>
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel>
-                            <Text style={{ color: "white" }}>Cancel</Text>
-                        </AlertDialogCancel>
-                        <AlertDialogAction onPress={restartApp}>
-                            <Text>Restart</Text>
+                        <AlertDialogAction>
+                            <Text>OK</Text>
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>

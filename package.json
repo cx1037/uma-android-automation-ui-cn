@@ -43,7 +43,6 @@
         "expo-sharing": "^13.1.5",
         "expo-sqlite": "^15.2.14",
         "expo-status-bar": "^2.2.3",
-        "expo-updates": "^0.28.17",
         "lucide-react-native": "^0.542.0",
         "nativewind": "^4.1.23",
         "react": "19.0.0",
