@@ -5,11 +5,10 @@
     "scripts": {
         "start": "expo start",
         "android": "expo run:android",
-        "build": "cd android && ./gradlew assembleDebug",
-        "build:clean": "cd android && ./gradlew clean assembleDebug --stacktrace",
+        "build": "cd android && ./gradlew assembleDebug --stacktrace",
+        "clean": "cd android && ./gradlew clean --stacktrace",
         "build:clean": "cd android && ./gradlew clean && ./gradlew assembleDebug",
         "lint": "expo lint",
-        "test": "jest",
         "update": "yarn install && yarn upgrade-interactive --latest"
     },
     "dependencies": {
