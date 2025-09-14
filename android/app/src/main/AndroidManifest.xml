@@ -29,7 +29,6 @@
         android:usesCleartextTraffic="true">
 
         <!-- cleartext traffic required for React Native to communicate with Metro via HTTP -->
-        <!-- extractNativeLibs required to resolve the com.facebook.soloader.SoLoaderDSONotFoundError: couldn't find DSO to load: libreactnative.so -->
 
         <!--Users will first be directed to MainActivity and then to HomeFragment.-->
         <activity
