@@ -154,15 +154,6 @@ android {
             output.outputFileName = "v${versionName}-UmaAndroidAutomation-${architecture}-${type}.apk"
         }
     }
-
-   // applicationVariants are e.g. debug, release
-   applicationVariants.all { variant ->
-       variant.outputs.all { output ->
-           def versionName = defaultConfig.versionName
-           def architecture = output.filters[0].identifier
-           outputFileName = "v${versionName}-UmaAndroidAutomation-${architecture}.apk"
-       }
-   }
 }
 
 // Apply static values from `gradle.properties` to the `android.packagingOptions`
@@ -193,24 +184,6 @@ dependencies {
     implementation(libs.react.android)
     implementation(libs.hermes.android)
 
-   def isGifEnabled = (findProperty('expo.gif.enabled') ?: "") == "true";
-   def isWebpEnabled = (findProperty('expo.webp.enabled') ?: "") == "true";
-   def isWebpAnimatedEnabled = (findProperty('expo.webp.animated') ?: "") == "true";
-
-   if (isGifEnabled) {
-       // For animated gif support
-       implementation("com.facebook.fresco:animated-gif:${expoLibs.versions.fresco.get()}")
-   }
-
-   if (isWebpEnabled) {
-       // For webp support
-       implementation("com.facebook.fresco:webpsupport:${expoLibs.versions.fresco.get()}")
-       if (isWebpAnimatedEnabled) {
-           // Animated webp support
-           implementation("com.facebook.fresco:animated-webp:${expoLibs.versions.fresco.get()}")
-       }
-   }
-
     if (hermesEnabled.toBoolean()) {
         implementation(libs.hermes.android)
     } else {
@@ -221,14 +194,6 @@ dependencies {
 // ============================================================================
 // React Native Bundle Configuration and Build Tasks
 // ============================================================================
-
-// Configure the source sets to include React Native bundle assets in the APK.
-// This ensures the JavaScript bundle and any generated assets are properly packaged.
-android.sourceSets {
-   main {
-       assets.srcDirs("src/main/assets", "build/generated/assets/react")
-   }
-}
 
 // Clean task to remove old React Native bundles and generated assets.
 // This prevents stale bundles from being included in new builds.
@@ -271,9 +236,3 @@ tasks.register("generateBundle", Exec) {
 // Ensure the React Native bundle is generated before the preBuild task runs.
 // This guarantees the bundle is available for the build process.
 preBuild.dependsOn(generateBundle)
-
-// Make bundle generation run before any application variant is assembled.
-// This ensures the JavaScript bundle is always up-to-date in the final APK.
-android.applicationVariants.all { variant ->
-   variant.assembleProvider.get().dependsOn(generateBundle)
-}
