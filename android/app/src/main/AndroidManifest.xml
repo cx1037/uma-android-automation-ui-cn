@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.steve1316.uma_android_automation">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!--Grants permission for MediaProjection to display a Notification that tells users that it is currently running.-->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
