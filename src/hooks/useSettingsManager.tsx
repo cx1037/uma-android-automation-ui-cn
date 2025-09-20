@@ -18,6 +18,7 @@ export const useSettingsManager = () => {
     
     const bsc = useContext(BotStateContext)
     const mlc = useContext(MessageLogContext)
+    const { addMessageToAsyncMessages } = mlc
     // Auto-load settings when SQLite is initialized.
     useEffect(() => {
         if (isInitialized && !migrationCompleted) {
@@ -50,7 +51,7 @@ export const useSettingsManager = () => {
             endTiming({ status: "success", hasNewSettings: !!newSettings, immediate: true })
         } catch (error) {
             logErrorWithTimestamp(`Error saving settings immediately: ${error}`)
-            mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Error saving settings: \n${error}`])
+            addMessageToAsyncMessages(`\n[ERROR] Error saving settings immediately: \n${error}`)
             endTiming({ status: "error", error: error instanceof Error ? error.message : String(error) })
         } finally {
             setIsSaving(false)
@@ -84,7 +85,7 @@ export const useSettingsManager = () => {
             endTiming({ status: "success", usedDefaults: newSettings === defaultSettings })
         } catch (error) {
             logErrorWithTimestamp("[SettingsManager] Error loading settings:", error)
-            mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Error loading settings: \n${error}`])
+            addMessageToAsyncMessages(`\n[ERROR] Error loading settings: \n${error}`)
             bsc.setSettings(JSON.parse(JSON.stringify(defaultSettings)))
             bsc.setReadyStatus(false)
             endTiming({ status: "error", error: error instanceof Error ? error.message : String(error) })
@@ -102,7 +103,7 @@ export const useSettingsManager = () => {
             return fixedSettings
         } catch (error: any) {
             logErrorWithTimestamp(`Error reading settings from JSON file: ${error}`)
-            mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Error reading settings from JSON file: \n${error}`])
+            addMessageToAsyncMessages(`\n[ERROR] Error reading settings from JSON file: \n${error}`)
             throw error
         }
     }
@@ -141,13 +142,13 @@ export const useSettingsManager = () => {
             bsc.setSettings(importedSettings)
 
             logWithTimestamp("Settings imported successfully.")
-            mlc.setMessageLog([...mlc.messageLog, `\n[SUCCESS] Settings imported successfully from JSON file.`])
+            addMessageToAsyncMessages(`\n[SUCCESS] Settings imported successfully from JSON file.`)
 
             endTiming({ status: "success", fileUri })
             return true
         } catch (error) {
             logErrorWithTimestamp("Error importing settings:", error)
-            mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Error importing settings: \n${error}`])
+            addMessageToAsyncMessages(`\n[ERROR] Error importing settings: \n${error}`)
             endTiming({ status: "error", fileUri, error: error instanceof Error ? error.message : String(error) })
             return false
         } finally {
@@ -171,13 +172,13 @@ export const useSettingsManager = () => {
             await FileSystem.writeAsStringAsync(fileUri, jsonString)
 
             logWithTimestamp(`Settings exported successfully to: ${fileUri}`)
-            mlc.setMessageLog([...mlc.messageLog, `\n[SUCCESS] Settings exported successfully to: ${fileName}`])
+            addMessageToAsyncMessages(`\n[SUCCESS] Settings exported successfully to: ${fileName}`)
 
             endTiming({ status: "success", fileName, fileSize: jsonString.length })
             return fileUri
         } catch (error) {
             logErrorWithTimestamp("Error exporting settings:", error)
-            mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Error exporting settings: \n${error}`])
+            addMessageToAsyncMessages(`\n[ERROR] Error exporting settings: \n${error}`)
             endTiming({ status: "error", error: error instanceof Error ? error.message : String(error) })
             return null
         }
@@ -196,7 +197,7 @@ export const useSettingsManager = () => {
                     flags: 1, // FLAG_GRANT_READ_URI_PERMISSION
                 })
 
-                mlc.setMessageLog([...mlc.messageLog, `\n[SUCCESS] Opened Android data directory for package via SAF: ${packageName}.`])
+                addMessageToAsyncMessages(`\n[SUCCESS] Opened Android data directory for package via SAF: ${packageName}.`)
                 return
             } catch (safError) {
                 console.warn("SAF approach failed, trying fallback:", safError)
@@ -209,7 +210,7 @@ export const useSettingsManager = () => {
                     type: "resource/folder",
                 })
 
-                mlc.setMessageLog([...mlc.messageLog, `\n[SUCCESS] Opened app data directory via VIEW Intent: /storage/emulated/0/Android/data/${packageName}/files.`])
+                addMessageToAsyncMessages(`\n[SUCCESS] Opened app data directory via VIEW Intent: /storage/emulated/0/Android/data/${packageName}/files.`)
                 return
             } catch (folderError) {
                 console.warn("Folder approach failed, trying file sharing:", folderError)
@@ -226,7 +227,7 @@ export const useSettingsManager = () => {
                         mimeType: "application/json",
                         dialogTitle: "Share Settings File",
                     })
-                    mlc.setMessageLog([...mlc.messageLog, `\n[SUCCESS] Shared settings file as fallback: ${settingsPath}`])
+                    addMessageToAsyncMessages(`\n[SUCCESS] Shared settings file as fallback: ${settingsPath}`)
                 } else {
                     throw new Error("Sharing not available")
                 }
@@ -235,8 +236,8 @@ export const useSettingsManager = () => {
             }
         } catch (error) {
             logErrorWithTimestamp(`Error opening app data directory: ${error}`)
-            mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Could not open app data directory. Error: \n${error}`])
-            mlc.setMessageLog([...mlc.messageLog, `\n[INFO] Manual path: /storage/emulated/0/Android/data/${packageName}/files.`])
+            addMessageToAsyncMessages(`\n[ERROR] Could not open app data directory. Error: \n${error}`)
+            addMessageToAsyncMessages(`\n[INFO] Manual path: /storage/emulated/0/Android/data/${packageName}/files.`)
         }
     }
 
@@ -265,13 +266,13 @@ export const useSettingsManager = () => {
             bsc.setReadyStatus(false)
 
             logWithTimestamp("Settings reset to defaults successfully.")
-            mlc.setMessageLog([...mlc.messageLog, `\n[SUCCESS] Settings have been reset to default values.`])
+            addMessageToAsyncMessages(`\n[SUCCESS] Settings have been reset to default values.`)
 
             endTiming({ status: "success" })
             return true
         } catch (error) {
             logErrorWithTimestamp("Error resetting settings:", error)
-            mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Error resetting settings: \n${error}`])
+            addMessageToAsyncMessages(`\n[ERROR] Error resetting settings: \n${error}`)
             endTiming({ status: "error", error: error instanceof Error ? error.message : String(error) })
             return false
         } finally {
