@@ -1937,14 +1937,6 @@ class Game(val myContext: Context) {
 			printToLog(message)
 		}
 
-		// Update the stat targets by distances.
-		setStatTargetsByDistances()
-
-		// If debug mode is off, then it is necessary to wait a few seconds for the Toast message to disappear from the screen to prevent it obstructing anything beneath it.
-		if (!debugMode) {
-			wait(5.0)
-		}
-
 		// Print device and version information.
 		printToLog("[INFO] Device Information: ${SharedData.displayWidth}x${SharedData.displayHeight}, DPI ${SharedData.displayDPI}")
 		if (SharedData.displayWidth != 1080) printToLog("[WARNING] ⚠️ Bot performance will be severely degraded since display width is not 1080p unless an appropriate scale is set for your device.")
@@ -1963,14 +1955,19 @@ class Game(val myContext: Context) {
 			startSingleTrainingFailureOCRTest()
 		} else if (SettingsHelper.getBooleanSetting("debug", "debugMode_startComprehensiveTrainingFailureOCRTest")) {
 			startComprehensiveTrainingFailureOCRTest()
-		}
-		// Otherwise, proceed with regular bot operations.
-		else if (campaign == "Ao Haru") {
-			val aoHaruCampaign = AoHaru(this)
-			aoHaruCampaign.start()
 		} else {
-			val uraFinaleCampaign = Campaign(this)
-			uraFinaleCampaign.start()
+			// Update the stat targets by distances.
+			setStatTargetsByDistances()
+
+			wait(5.0)
+
+			if (campaign == "Ao Haru") {
+				val aoHaruCampaign = AoHaru(this)
+				aoHaruCampaign.start()
+			} else {
+				val uraFinaleCampaign = Campaign(this)
+				uraFinaleCampaign.start()
+			}
 		}
 
 		val endTime: Long = System.currentTimeMillis()
