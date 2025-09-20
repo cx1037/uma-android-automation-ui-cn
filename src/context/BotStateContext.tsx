@@ -1,4 +1,5 @@
 import { createContext, useState } from "react"
+import { startTiming } from "../lib/performanceLogger"
 
 export interface Settings {
     // General settings
@@ -192,6 +193,19 @@ export const BotStateProvider = ({ children }: any): React.ReactElement => {
     // Create a deep copy of default settings to avoid reference issues.
     const [settings, setSettings] = useState<Settings>(() => JSON.parse(JSON.stringify(defaultSettings)))
 
+    // Wrapped setSettings with performance logging.
+    const setSettingsWithLogging = (newSettings: Settings) => {
+        const endTiming = startTiming("bot_state_set_settings", "state")
+        
+        try {
+            setSettings(newSettings)
+            endTiming({ status: "success" })
+        } catch (error) {
+            endTiming({ status: "error", error: error instanceof Error ? error.message : String(error) })
+            throw error
+        }
+    }
+
     const providerValues: BotStateProviderProps = {
         readyStatus,
         setReadyStatus,
@@ -204,7 +218,7 @@ export const BotStateProvider = ({ children }: any): React.ReactElement => {
         refreshAlert,
         setRefreshAlert,
         settings,
-        setSettings,
+        setSettings: setSettingsWithLogging,
         appVersion,
         setAppVersion,
     }
