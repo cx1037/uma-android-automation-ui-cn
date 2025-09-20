@@ -4,6 +4,7 @@ import { BotStateContext, BotStateProviderProps } from "../context/BotStateConte
 import { MessageLogContext, MessageLogProviderProps } from "../context/MessageLogContext"
 import { useSettings } from "../context/SettingsContext"
 import { logWithTimestamp } from "../lib/logger"
+import { useSQLiteSettings } from "./useSQLiteSettings"
 
 /**
  * Manages app initialization, settings persistence, and message handling.
@@ -18,7 +19,8 @@ export const useBootstrap = () => {
     const { addMessageToAsyncMessages } = mlc
 
     // Hook for managing settings persistence.
-    const { saveSettingsImmediate, isLoading, isInitialized } = useSettings()
+    const { saveSettingsImmediate } = useSettings()
+    const { isSQLiteInitialized } = useSQLiteSettings()
 
     useEffect(() => {
         // Listen for messages from the Android automation service.
@@ -30,12 +32,12 @@ export const useBootstrap = () => {
     // Wait for SQLite database initialization to complete before marking app as ready.
     // This ensures the data layer is fully set up before allowing settings operations.
     useEffect(() => {
-        if (isInitialized) {
+        if (isSQLiteInitialized) {
             logWithTimestamp("[Bootstrap] SQLite initialized, app ready...")
             setIsReady(true)
             logWithTimestamp("[Bootstrap] App initialization complete")
         }
-    }, [isInitialized])
+    }, [isSQLiteInitialized])
 
     // Process async messages and add them to the message log.
     // IMPORTANT: This is how the message log gets updated with the messages from the async messages array.
@@ -72,10 +74,4 @@ export const useBootstrap = () => {
             bsc.setReadyStatus(scenario !== "")
         }
     }, [isReady, bsc.settings.general.scenario])
-
-    return {
-        isReady: isReady && isInitialized,
-        isLoading,
-        isInitialized,
-    }
 }
