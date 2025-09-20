@@ -1,7 +1,6 @@
 import scenarios from "../../data/scenarios.json"
 import { useContext, useEffect, useState } from "react"
 import { BotStateContext } from "../../context/BotStateContext"
-import { MessageLogContext } from "../../context/MessageLogContext"
 import { ScrollView, StyleSheet, Text, View } from "react-native"
 import { Snackbar } from "react-native-paper"
 import { useNavigation } from "@react-navigation/native"
@@ -15,7 +14,7 @@ import CustomTitle from "../../components/CustomTitle"
 import { Button } from "../../components/ui/button"
 import { Separator } from "../../components/ui/separator"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "../../components/ui/alert-dialog"
-import { useSettingsManager } from "../../hooks/useSettingsManager"
+import { useSettings } from "../../context/SettingsContext"
 import { useSettingsFileManager } from "../../hooks/useSettingsFileManager"
 
 const Settings = () => {
@@ -27,12 +26,12 @@ const Settings = () => {
     const [localTemplateMatchCustomScale, setLocalTemplateMatchCustomScale] = useState<number>(0)
 
     const bsc = useContext(BotStateContext)
-    const mlc = useContext(MessageLogContext)
     const { colors, isDark } = useTheme()
     const navigation = useNavigation()
 
-    const { openDataDirectory, resetSettings } = useSettingsManager(bsc, mlc)
-    const { handleImportSettings, handleExportSettings, showImportDialog, setShowImportDialog, showResetDialog, setShowResetDialog } = useSettingsFileManager(bsc, mlc)
+    const { openDataDirectory, resetSettings } = useSettings()
+    const { handleImportSettings, handleExportSettings, showImportDialog, setShowImportDialog, showResetDialog, setShowResetDialog } = useSettingsFileManager()
+
     // Initialize local slider state with current settings
     useEffect(() => {
         setLocalSkillPointCheck(bsc.settings.general.skillPointCheck)
