@@ -13,31 +13,19 @@ export interface PerformanceMetric {
 
 export interface PerformanceLoggerOptions {
     enableConsoleLogging?: boolean
-    enableMessageLog?: boolean
-    enableDetailedLogging?: boolean
     maxMetricsHistory?: number
 }
 
 class PerformanceLogger {
     private metrics: PerformanceMetric[] = []
     private options: PerformanceLoggerOptions
-    private messageLogCallback?: (message: string) => void
 
     constructor(options: PerformanceLoggerOptions = {}) {
         this.options = {
             enableConsoleLogging: true,
-            enableMessageLog: false,
-            enableDetailedLogging: true,
             maxMetricsHistory: 1000,
             ...options,
         }
-    }
-
-    /**
-     * Set the message log callback for logging to the UI.
-     */
-    setMessageLogCallback(callback: (message: string) => void) {
-        this.messageLogCallback = callback
     }
 
     /**
@@ -79,7 +67,7 @@ class PerformanceLogger {
     }
 
     /**
-     * Log a performance metric to console and/or message log.
+     * Log a performance metric to console.
      */
     private logMetric(metric: PerformanceMetric) {
         const logMessage = `[PERF] ${metric.category.toUpperCase()} - ${metric.operation}: ${metric.duration.toFixed(2)}ms${metric.details ? ` | Details: ${JSON.stringify(metric.details)}` : ""}`
@@ -91,10 +79,6 @@ class PerformanceLogger {
                 console.log(logMessage)
             }
         }
-
-        if (this.options.enableMessageLog && this.messageLogCallback) {
-            this.messageLogCallback(logMessage)
-        }
     }
 }
 
@@ -103,5 +87,3 @@ export const performanceLogger = new PerformanceLogger()
 
 // Export convenience functions.
 export const startTiming = (operation: string, category?: PerformanceMetric["category"]) => performanceLogger.startTiming(operation, category)
-
-export const setMessageLogCallback = (callback: (message: string) => void) => performanceLogger.setMessageLogCallback(callback)
