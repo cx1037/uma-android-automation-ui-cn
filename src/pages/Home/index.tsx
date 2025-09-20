@@ -2,6 +2,7 @@ import Constants from "expo-constants"
 import MessageLog from "../../components/MessageLog"
 import { useContext, useEffect, useState } from "react"
 import { BotStateContext } from "../../context/BotStateContext"
+import { useSettings } from "../../context/SettingsContext"
 import { logWithTimestamp, logErrorWithTimestamp } from "../../lib/logger"
 import { DeviceEventEmitter, StyleSheet, View, NativeModules, ActivityIndicator } from "react-native"
 import { MessageLogContext } from "../../context/MessageLogContext"
@@ -41,6 +42,7 @@ const Home = () => {
 
     const bsc = useContext(BotStateContext)
     const mlc = useContext(MessageLogContext)
+    const { saveSettings } = useSettings()
 
     useEffect(() => {
         DeviceEventEmitter.addListener("MediaProjectionService", (data) => {
@@ -64,10 +66,20 @@ const Home = () => {
         bsc.setAppVersion(version)
     }
 
-    const handleButtonPress = () => {
+    const handleButtonPress = async () => {
         if (isRunning) {
             StartModule.stop()
         } else if (bsc.readyStatus) {
+            // Save settings before starting the bot.
+            // Also has the added benefit of only writing to the SQLite database when the bot is started instead of every time the settings are changed.
+            logWithTimestamp("[Home] Saving settings before starting bot...")
+            try {
+                await saveSettings()
+                logWithTimestamp("[Home] Settings saved successfully, starting bot...")
+            } catch (error) {
+                logErrorWithTimestamp("[Home] Failed to save settings:", error)
+                mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Failed to save settings before starting: ${error}`])
+            }
             StartModule.start()
         } else {
             setShowNotReadyDialog(true)
