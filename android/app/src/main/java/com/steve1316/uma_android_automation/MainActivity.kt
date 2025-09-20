@@ -19,7 +19,9 @@ class MainActivity : ReactActivity() {
 	}
 
 	override fun onCreate(savedInstanceState: Bundle?) {
-		super.onCreate(savedInstanceState)
+        // State restoration needs to be null to avoid crash with react-native-screens.
+        // https://github.com/software-mansion/react-native-screens/issues/17#issuecomment-424704067
+		super.onCreate(null)
 		
 		// Set application locale to combat cases where user's language uses commas instead of decimal points for floating numbers.
 		val config: Configuration? = this.getResources().configuration
