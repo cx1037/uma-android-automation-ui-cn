@@ -92,7 +92,6 @@ class Game(val myContext: Context) {
 	// Misc
 	private var currentDate: Date = Date(1, "Early", 1, 1)
 	private var inheritancesDone = 0
-	private val startTime: Long = System.currentTimeMillis()
 
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
@@ -173,25 +172,6 @@ class Game(val myContext: Context) {
 	}
 
 	/**
-	 * Returns a formatted string of the elapsed time since the bot started as HH:MM:SS format.
-	 *
-	 * Source is from https://stackoverflow.com/questions/9027317/how-to-convert-milliseconds-to-hhmmss-format/9027379
-	 *
-	 * @return String of HH:MM:SS format of the elapsed time.
-	 */
-	@SuppressLint("DefaultLocale")
-	private fun printTime(): String {
-		val elapsedMillis: Long = System.currentTimeMillis() - startTime
-
-		return String.format(
-			"%02d:%02d:%02d",
-			TimeUnit.MILLISECONDS.toHours(elapsedMillis),
-			TimeUnit.MILLISECONDS.toMinutes(elapsedMillis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(elapsedMillis)),
-			TimeUnit.MILLISECONDS.toSeconds(elapsedMillis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(elapsedMillis))
-		)
-	}
-
-	/**
 	 * Print the specified message to debug console and then saves the message to the log.
 	 *
 	 * @param message Message to be saved.
@@ -200,27 +180,24 @@ class Game(val myContext: Context) {
 	 * @param isOption Flag to determine whether to append a newline right after the time in the string.
 	 */
 	fun printToLog(message: String, tag: String = this.tag, isError: Boolean = false, isOption: Boolean = false) {
-		if (!isError) {
-			Log.d(tag, message)
-		} else {
-			Log.e(tag, message)
-		}
-
 		// Remove the newline prefix if needed and place it where it should be.
-		if (message.startsWith("\n")) {
+		val formattedMessage = if (message.startsWith("\n")) {
 			val newMessage = message.removePrefix("\n")
 			if (isOption) {
-				MessageLog.addMessage("\n" + printTime() + "\n" + newMessage)
+				"\n\n$newMessage"
 			} else {
-				MessageLog.addMessage("\n" + printTime() + " " + newMessage)
+                "\n$newMessage"
 			}
 		} else {
 			if (isOption) {
-				MessageLog.addMessage(printTime() + "\n" + message)
+				"\n$message"
 			} else {
-				MessageLog.addMessage(printTime() + " " + message)
+                "$message"
 			}
 		}
+
+		// Add message to the external library's MessageLog (which already posts to EventBus).
+		MessageLog.printToLog(formattedMessage, tag, false, isError, false)
 	}
 
 	/**
