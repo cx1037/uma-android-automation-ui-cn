@@ -10,8 +10,6 @@ interface SettingsContextType {
     resetSettings: () => Promise<boolean>
     openDataDirectory: () => Promise<void>
     isSaving: boolean
-    isLoading: boolean
-    isInitialized: boolean
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined)
@@ -23,11 +21,7 @@ interface SettingsProviderProps {
 export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) => {
     const settingsManager = useSettingsManager()
 
-    return (
-        <SettingsContext.Provider value={settingsManager}>
-            {children}
-        </SettingsContext.Provider>
-    )
+    return <SettingsContext.Provider value={settingsManager}>{children}</SettingsContext.Provider>
 }
 
 export const useSettings = (): SettingsContextType => {

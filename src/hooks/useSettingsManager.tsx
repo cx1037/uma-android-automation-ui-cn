@@ -15,26 +15,26 @@ export const useSettingsManager = () => {
     // Track whether settings are currently being saved.
     const [isSaving, setIsSaving] = useState(false)
     const [migrationCompleted, setMigrationCompleted] = useState(false)
-    
+
     const bsc = useContext(BotStateContext)
     const mlc = useContext(MessageLogContext)
     const { addMessageToAsyncMessages } = mlc
 
-    const { isInitialized, isLoading, isSaving: sqliteIsSaving, loadSettings: loadSQLiteSettings, saveSettings: saveSQLiteSettings, saveSettingsImmediate: saveSQLiteSettingsImmediate } = useSQLiteSettings()
+    const { isSQLiteInitialized, isSQLiteSaving, loadSQLiteSettings, saveSQLiteSettings, saveSQLiteSettingsImmediate } = useSQLiteSettings()
 
     // Auto-load settings when SQLite is initialized.
     useEffect(() => {
-        if (isInitialized && !migrationCompleted) {
+        if (isSQLiteInitialized && !migrationCompleted) {
             logWithTimestamp("[SettingsManager] Auto-loading settings on initialization...")
             loadSettings()
             setMigrationCompleted(true)
         }
-    }, [isInitialized, migrationCompleted])
+    }, [isSQLiteInitialized, migrationCompleted])
 
     // Save settings to SQLite database.
     const saveSettings = async (newSettings?: Settings) => {
         const endTiming = startTiming("settings_manager_save_settings", "settings")
-        
+
         setIsSaving(true)
 
         try {
@@ -53,7 +53,7 @@ export const useSettingsManager = () => {
     // Save settings immediately without debouncing (for background/exit saves).
     const saveSettingsImmediate = async (newSettings?: Settings) => {
         const endTiming = startTiming("settings_manager_save_settings_immediate", "settings")
-        
+
         setIsSaving(true)
 
         try {
@@ -72,10 +72,10 @@ export const useSettingsManager = () => {
     // Load settings from SQLite database.
     const loadSettings = async () => {
         const endTiming = startTiming("settings_manager_load_settings", "settings")
-        
+
         try {
             // Wait for SQLite to be initialized.
-            if (!isInitialized) {
+            if (!isSQLiteInitialized) {
                 logWithTimestamp("[SettingsManager] Waiting for SQLite initialization...")
                 endTiming({ status: "skipped", reason: "sqlite_not_initialized" })
                 return
@@ -136,13 +136,13 @@ export const useSettingsManager = () => {
     // Import settings from a JSON file and save to SQLite.
     const importSettings = async (fileUri: string): Promise<boolean> => {
         const endTiming = startTiming("settings_manager_import_settings", "settings")
-        
+
         try {
             setIsSaving(true)
 
             // Ensure database is initialized before saving.
             logWithTimestamp("Ensuring database is initialized before saving...")
-            if (!isInitialized) {
+            if (!isSQLiteInitialized) {
                 logWithTimestamp("Database not initialized, triggering initialization...")
                 await loadSQLiteSettings()
             }
@@ -170,7 +170,7 @@ export const useSettingsManager = () => {
     // Export current settings to a JSON file.
     const exportSettings = async (): Promise<string | null> => {
         const endTiming = startTiming("settings_manager_export_settings", "settings")
-        
+
         try {
             const jsonString = JSON.stringify(bsc.settings, null, 4)
 
@@ -255,13 +255,13 @@ export const useSettingsManager = () => {
     // Reset settings to default values.
     const resetSettings = async (): Promise<boolean> => {
         const endTiming = startTiming("settings_manager_reset_settings", "settings")
-        
+
         try {
             setIsSaving(true)
 
             // Ensure database is initialized before saving.
             logWithTimestamp("Ensuring database is initialized before resetting...")
-            if (!isInitialized) {
+            if (!isSQLiteInitialized) {
                 logWithTimestamp("Database not initialized, triggering initialization...")
                 await loadSQLiteSettings()
             }
@@ -299,8 +299,6 @@ export const useSettingsManager = () => {
         exportSettings,
         resetSettings,
         openDataDirectory,
-        isSaving: isSaving || sqliteIsSaving,
-        isLoading,
-        isInitialized,
+        isSaving: isSaving || isSQLiteSaving,
     }
 }
