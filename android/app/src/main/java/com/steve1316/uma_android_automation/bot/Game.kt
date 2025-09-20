@@ -1,10 +1,7 @@
 package com.steve1316.uma_android_automation.bot
 
-import android.annotation.SuppressLint
 import android.content.Context
-import android.content.SharedPreferences
 import android.util.Log
-import androidx.preference.PreferenceManager
 import com.steve1316.uma_android_automation.MainActivity
 import com.steve1316.uma_android_automation.bot.campaigns.AoHaru
 import com.steve1316.uma_android_automation.utils.CustomImageUtils
@@ -13,6 +10,7 @@ import com.steve1316.automation_library.utils.BotService
 import com.steve1316.automation_library.data.SharedData
 import com.steve1316.automation_library.utils.MessageLog
 import com.steve1316.automation_library.utils.MyAccessibilityService
+import com.steve1316.uma_android_automation.utils.SettingsHelper
 import com.steve1316.uma_android_automation.utils.SettingsPrinter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -35,10 +33,9 @@ class Game(val myContext: Context) {
 
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
-	// SharedPreferences
-	private var sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(myContext)
-	val campaign: String = sharedPreferences.getString("campaign", "")!!
-	private val debugMode: Boolean = sharedPreferences.getBoolean("debugMode", false)
+	// SQLite Settings
+	val campaign: String = SettingsHelper.getStringSetting("general", "scenario")
+	private val debugMode: Boolean = SettingsHelper.getBooleanSetting("debug", "enableDebugMode")
 
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
@@ -52,12 +49,12 @@ class Game(val myContext: Context) {
 		"Guts" to 0,
 		"Wit" to 0
 	)
-	private val blacklist: List<String> = sharedPreferences.getStringSet("trainingBlacklist", setOf())!!.toList()
-	private var statPrioritization: List<String> = sharedPreferences.getString("statPrioritization", "Speed|Stamina|Power|Guts|Wit")!!.split("|")
-	private val enablePrioritizeEnergyOptions: Boolean = sharedPreferences.getBoolean("enablePrioritizeEnergyOptions", false)
-	private val maximumFailureChance: Int = sharedPreferences.getInt("maximumFailureChance", 15)
-	private val disableTrainingOnMaxedStat: Boolean = sharedPreferences.getBoolean("disableTrainingOnMaxedStat", true)
-	private val focusOnSparkStatTarget: Boolean = sharedPreferences.getBoolean("focusOnSparkStatTarget", false)
+	private val blacklist: List<String> = SettingsHelper.getStringArraySetting("training", "trainingBlacklist")
+	private val statPrioritization: List<String> = SettingsHelper.getStringArraySetting("training", "statPrioritization")
+	private val enablePrioritizeEnergyOptions: Boolean = SettingsHelper.getBooleanSetting("trainingEvent", "enablePrioritizeEnergyOptions")
+	private val maximumFailureChance: Int = SettingsHelper.getIntSetting("training", "maximumFailureChance")
+	private val disableTrainingOnMaxedStat: Boolean = SettingsHelper.getBooleanSetting("training", "disableTrainingOnMaxedStat")
+	private val focusOnSparkStatTarget: Boolean = SettingsHelper.getBooleanSetting("training", "focusOnSparkStatTarget")
 	private val statTargetsByDistance: MutableMap<String, IntArray> = mutableMapOf(
 		"Sprint" to intArrayOf(0, 0, 0, 0, 0),
 		"Mile" to intArrayOf(0, 0, 0, 0, 0),
@@ -72,10 +69,10 @@ class Game(val myContext: Context) {
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
 	// Racing
-	private val enableFarmingFans = sharedPreferences.getBoolean("enableFarmingFans", false)
-	private val daysToRunExtraRaces: Int = sharedPreferences.getInt("daysToRunExtraRaces", 4)
-	private val disableRaceRetries: Boolean = sharedPreferences.getBoolean("disableRaceRetries", false)
-	val enableForceRacing = sharedPreferences.getBoolean("enableForceRacing", false)
+	private val enableFarmingFans = SettingsHelper.getBooleanSetting("racing", "enableFarmingFans")
+	private val daysToRunExtraRaces: Int = SettingsHelper.getIntSetting("racing", "daysToRunExtraRaces")
+	private val disableRaceRetries: Boolean = SettingsHelper.getBooleanSetting("racing", "disableRaceRetries")
+	val enableForceRacing = SettingsHelper.getBooleanSetting("racing", "enableForceRacing")
 	private var raceRetries = 3
 	private var raceRepeatWarningCheck = false
 	var encounteredRacingPopup = false
@@ -84,10 +81,10 @@ class Game(val myContext: Context) {
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
 	// Stops
-	val enableSkillPointCheck: Boolean = sharedPreferences.getBoolean("enableSkillPointCheck", false)
-	val skillPointsRequired: Int = sharedPreferences.getInt("skillPointCheck", 750)
-	private val enablePopupCheck: Boolean = sharedPreferences.getBoolean("enablePopupCheck", false)
-	private val enableStopOnMandatoryRace: Boolean = sharedPreferences.getBoolean("enableStopOnMandatoryRace", false)
+	val enableSkillPointCheck: Boolean = SettingsHelper.getBooleanSetting("general", "enableSkillPointCheck")
+	val skillPointsRequired: Int = SettingsHelper.getIntSetting("general", "skillPointCheck")
+	private val enablePopupCheck: Boolean = SettingsHelper.getBooleanSetting("general", "enablePopupCheck")
+	private val enableStopOnMandatoryRace: Boolean = SettingsHelper.getBooleanSetting("racing", "enableStopOnMandatoryRaces")
 	var detectedMandatoryRaceCheck = false
 
 	////////////////////////////////////////////////////////////////////
@@ -140,32 +137,32 @@ class Game(val myContext: Context) {
 	////////////////////////////////////////////////////////////////////
 
 	/**
-	 * Sets up stat targets for different race distances by reading values from SharedPreferences. These targets are used to determine training priorities based on the expected race distance.
+	 * Sets up stat targets for different race distances by reading values from SQLite settings. These targets are used to determine training priorities based on the expected race distance.
 	 */
 	private fun setStatTargetsByDistances() {
-		val sprintSpeedTarget = sharedPreferences.getInt("trainingSprintStatTarget_speedStatTarget", 900)
-		val sprintStaminaTarget = sharedPreferences.getInt("trainingSprintStatTarget_staminaStatTarget", 300)
-		val sprintPowerTarget = sharedPreferences.getInt("trainingSprintStatTarget_powerStatTarget", 600)
-		val sprintGutsTarget = sharedPreferences.getInt("trainingSprintStatTarget_gutsStatTarget", 300)
-		val sprintWitTarget = sharedPreferences.getInt("trainingSprintStatTarget_witStatTarget", 300)
+		val sprintSpeedTarget = SettingsHelper.getIntSetting("trainingStatTarget", "trainingSprintStatTarget_speedStatTarget")
+		val sprintStaminaTarget = SettingsHelper.getIntSetting("trainingStatTarget", "trainingSprintStatTarget_staminaStatTarget")
+		val sprintPowerTarget = SettingsHelper.getIntSetting("trainingStatTarget", "trainingSprintStatTarget_powerStatTarget")
+		val sprintGutsTarget = SettingsHelper.getIntSetting("trainingStatTarget", "trainingSprintStatTarget_gutsStatTarget")
+		val sprintWitTarget = SettingsHelper.getIntSetting("trainingStatTarget", "trainingSprintStatTarget_witStatTarget")
 
-		val mileSpeedTarget = sharedPreferences.getInt("trainingMileStatTarget_speedStatTarget", 900)
-		val mileStaminaTarget = sharedPreferences.getInt("trainingMileStatTarget_staminaStatTarget", 300)
-		val milePowerTarget = sharedPreferences.getInt("trainingMileStatTarget_powerStatTarget", 600)
-		val mileGutsTarget = sharedPreferences.getInt("trainingMileStatTarget_gutsStatTarget", 300)
-		val mileWitTarget = sharedPreferences.getInt("trainingMileStatTarget_witStatTarget", 300)
+		val mileSpeedTarget = SettingsHelper.getIntSetting("trainingStatTarget", "trainingMileStatTarget_speedStatTarget")
+		val mileStaminaTarget = SettingsHelper.getIntSetting("trainingStatTarget", "trainingMileStatTarget_staminaStatTarget")
+		val milePowerTarget = SettingsHelper.getIntSetting("trainingStatTarget", "trainingMileStatTarget_powerStatTarget")
+		val mileGutsTarget = SettingsHelper.getIntSetting("trainingStatTarget", "trainingMileStatTarget_gutsStatTarget")
+		val mileWitTarget = SettingsHelper.getIntSetting("trainingStatTarget", "trainingMileStatTarget_witStatTarget")
 
-		val mediumSpeedTarget = sharedPreferences.getInt("trainingMediumStatTarget_speedStatTarget", 800)
-		val mediumStaminaTarget = sharedPreferences.getInt("trainingMediumStatTarget_staminaStatTarget", 450)
-		val mediumPowerTarget = sharedPreferences.getInt("trainingMediumStatTarget_powerStatTarget", 550)
-		val mediumGutsTarget = sharedPreferences.getInt("trainingMediumStatTarget_gutsStatTarget", 300)
-		val mediumWitTarget = sharedPreferences.getInt("trainingMediumStatTarget_witStatTarget", 300)
+		val mediumSpeedTarget = SettingsHelper.getIntSetting("trainingStatTarget", "trainingMediumStatTarget_speedStatTarget")
+		val mediumStaminaTarget = SettingsHelper.getIntSetting("trainingStatTarget", "trainingMediumStatTarget_staminaStatTarget")
+		val mediumPowerTarget = SettingsHelper.getIntSetting("trainingStatTarget", "trainingMediumStatTarget_powerStatTarget")
+		val mediumGutsTarget = SettingsHelper.getIntSetting("trainingStatTarget", "trainingMediumStatTarget_gutsStatTarget")
+		val mediumWitTarget = SettingsHelper.getIntSetting("trainingStatTarget", "trainingMediumStatTarget_witStatTarget")
 
-		val longSpeedTarget = sharedPreferences.getInt("trainingLongStatTarget_speedStatTarget", 700)
-		val longStaminaTarget = sharedPreferences.getInt("trainingLongStatTarget_staminaStatTarget", 600)
-		val longPowerTarget = sharedPreferences.getInt("trainingLongStatTarget_powerStatTarget", 450)
-		val longGutsTarget = sharedPreferences.getInt("trainingLongStatTarget_gutsStatTarget", 300)
-		val longWitTarget = sharedPreferences.getInt("trainingLongStatTarget_witStatTarget", 300)
+		val longSpeedTarget = SettingsHelper.getIntSetting("trainingStatTarget", "trainingLongStatTarget_speedStatTarget")
+		val longStaminaTarget = SettingsHelper.getIntSetting("trainingStatTarget", "trainingLongStatTarget_staminaStatTarget")
+		val longPowerTarget = SettingsHelper.getIntSetting("trainingStatTarget", "trainingLongStatTarget_powerStatTarget")
+		val longGutsTarget = SettingsHelper.getIntSetting("trainingStatTarget", "trainingLongStatTarget_gutsStatTarget")
+		val longWitTarget = SettingsHelper.getIntSetting("trainingStatTarget", "trainingLongStatTarget_witStatTarget")
 
 		// Set the stat targets for each distance type.
 		// Order: Speed, Stamina, Power, Guts, Wit
@@ -851,7 +848,7 @@ class Game(val myContext: Context) {
 							2 -> 1.1
 							else -> 1.0
 						}
-						
+
 						val baseWeight = when {
 							currentDate.year == 1 || currentDate.phase == "Pre-Debut" -> 1.0 + (0.1 * (statPrioritization.size - priorityIndex)) / statPrioritization.size
 							currentDate.year == 2 -> 1.0 + (0.3 * (statPrioritization.size - priorityIndex)) / statPrioritization.size
@@ -890,7 +887,7 @@ class Game(val myContext: Context) {
 					if (focusOnSparkStatTarget) {
 						val sparkTarget = 600
 						val sparkRemaining = sparkTarget - currentStat
-						
+
 						// Check if this is a Spark stat (Speed, Stamina, Power) and it's below 600.
 						if ((stat == "Speed" || stat == "Stamina" || stat == "Power") && sparkRemaining > 0) {
 							// Boost efficiency for Spark stats that are below 600.
@@ -914,7 +911,7 @@ class Game(val myContext: Context) {
 		 *
 		 * Evaluates the value of relationship bars based on their color and fill level:
 		 * - Blue bars: 2.5 points (highest priority)
-		 * - Green bars: 1.0 points (medium priority)  
+		 * - Green bars: 1.0 points (medium priority)
 		 * - Orange bars: 0.0 points (no value)
 		 *
 		 * Applies diminishing returns as bars fill up and early game bonuses for relationship building.
@@ -1315,7 +1312,7 @@ class Game(val myContext: Context) {
 				optionNumber += 1
 			}
 
-			val minimumConfidence = sharedPreferences.getInt("confidence", 80).toDouble() / 100.0
+			val minimumConfidence = SettingsHelper.getIntSetting("debug", "templateMatchConfidence").toDouble() / 100.0
 			val resultString = if (confidence >= minimumConfidence) {
 				"[TRAINING-EVENT] For this Training Event consisting of:\n$eventRewardsString\nThe bot will select Option ${optionSelected + 1}: \"${eventRewards[optionSelected]}\" with a " +
 						"selection weight of $max."
@@ -1975,19 +1972,19 @@ class Game(val myContext: Context) {
 		printToLog("[INFO] Device Information: ${SharedData.displayWidth}x${SharedData.displayHeight}, DPI ${SharedData.displayDPI}")
 		if (SharedData.displayWidth != 1080) printToLog("[WARNING] ⚠️ Bot performance will be severely degraded since display width is not 1080p unless an appropriate scale is set for your device.")
 		if (debugMode) printToLog("[WARNING] ⚠️ Debug Mode is enabled. All bot operations will be significantly slower as a result.")
-		if (sharedPreferences.getInt("customScale", 100).toDouble() / 100.0 != 1.0) printToLog("[INFO] Manual scale has been set to ${sharedPreferences.getInt("customScale", 100).toDouble() / 100.0}")
+		if (SettingsHelper.getIntSetting("debug", "templateMatchCustomScale").toDouble() / 100.0 != 1.0) printToLog("[INFO] Manual scale has been set to ${SettingsHelper.getIntSetting("debug", "templateMatchCustomScale").toDouble() / 100.0}")
 		printToLog("[WARNING] ⚠️ Note that certain Android notification styles (like banners) are big enough that they cover the area that contains the Mood which will interfere with mood recovery logic in the beginning.")
 		val packageInfo = myContext.packageManager.getPackageInfo(myContext.packageName, 0)
 		printToLog("[INFO] Bot version: ${packageInfo.versionName} (${packageInfo.versionCode})\n\n")
 
 		val startTime: Long = System.currentTimeMillis()
 
-		// Start debug tests here if enabled.
-		if (sharedPreferences.getBoolean("debugMode_startTemplateMatchingTest", false)) {
+		// Start debug tests here if enabled. Otherwise, proceed with regular bot operations.
+		if (SettingsHelper.getBooleanSetting("debug", "debugMode_startTemplateMatchingTest")) {
 			startTemplateMatchingTest()
-		} else if (sharedPreferences.getBoolean("debugMode_startSingleTrainingFailureOCRTest", false)) {
+		} else if (SettingsHelper.getBooleanSetting("debug", "debugMode_startSingleTrainingFailureOCRTest")) {
 			startSingleTrainingFailureOCRTest()
-		} else if (sharedPreferences.getBoolean("debugMode_startComprehensiveTrainingFailureOCRTest", false)) {
+		} else if (SettingsHelper.getBooleanSetting("debug", "debugMode_startComprehensiveTrainingFailureOCRTest")) {
 			startComprehensiveTrainingFailureOCRTest()
 		}
 		// Otherwise, proceed with regular bot operations.

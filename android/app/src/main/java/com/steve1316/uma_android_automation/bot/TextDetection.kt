@@ -1,19 +1,15 @@
 package com.steve1316.uma_android_automation.bot
 
-import android.content.SharedPreferences
 import android.util.Log
-import androidx.preference.PreferenceManager
 import com.steve1316.uma_android_automation.MainActivity
-import com.steve1316.uma_android_automation.data.CharacterData
-import com.steve1316.uma_android_automation.data.SupportData
 import com.steve1316.uma_android_automation.utils.CustomImageUtils
+import com.steve1316.uma_android_automation.utils.SettingsHelper
 import net.ricecode.similarity.JaroWinklerStrategy
 import net.ricecode.similarity.StringSimilarityServiceImpl
+import org.json.JSONObject
 
 class TextDetection(private val game: Game, private val imageUtils: CustomImageUtils) {
 	private val tag: String = "[${MainActivity.loggerTag}]TextDetection"
-	
-	private var sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(game.myContext)
 	
 	private var result = ""
 	private var confidence = 0.0
@@ -22,14 +18,48 @@ class TextDetection(private val game: Game, private val imageUtils: CustomImageU
 	private var supportCardTitle = ""
 	private var eventOptionRewards: ArrayList<String> = arrayListOf()
 	
-	private var character = sharedPreferences.getString("character", "")!!
-	private val supportCards: List<String> = sharedPreferences.getString("supportList", "")!!.split("|")
-	private val hideComparisonResults: Boolean = sharedPreferences.getBoolean("hideComparisonResults", false)
-	private val selectAllCharacters: Boolean = sharedPreferences.getBoolean("selectAllCharacters", true)
-	private val selectAllSupportCards: Boolean = sharedPreferences.getBoolean("selectAllSupportCards", true)
-	private var minimumConfidence = sharedPreferences.getInt("ocrConfidence", 80).toDouble() / 100.0
-	private val threshold = sharedPreferences.getInt("threshold", 230).toDouble()
-	private val enableAutomaticRetry = sharedPreferences.getBoolean("enableAutomaticRetry", false)
+	private var character = ""
+	
+	// Get character event data from settings.
+	private val characterEventData: JSONObject? = try {
+		val characterDataString = SettingsHelper.getStringSetting("trainingEvent", "characterEventData")
+		if (characterDataString.isNotEmpty()) {
+			JSONObject(characterDataString)
+		} else {
+			null
+		}
+	} catch (e: Exception) {
+		null
+	}
+
+	
+	// Get support event data from settings.
+	private val supportEventData: JSONObject? = try {
+		val supportDataString = SettingsHelper.getStringSetting("trainingEvent", "supportEventData")
+		if (supportDataString.isNotEmpty()) {
+			JSONObject(supportDataString)
+		} else {
+			null
+		}
+	} catch (e: Exception) {
+		null
+	}
+	
+	private val supportCards: List<String> = try {
+		if (supportEventData != null) {
+			supportEventData!!.keys().asSequence().toList()
+		} else {
+			emptyList()
+		}
+	} catch (e: Exception) {
+		emptyList()
+	}
+	private val hideComparisonResults: Boolean = SettingsHelper.getBooleanSetting("debug", "enableHideOCRComparisonResults")
+	private val selectAllCharacters: Boolean = SettingsHelper.getBooleanSetting("trainingEvent", "selectAllCharacters")
+	private val selectAllSupportCards: Boolean = SettingsHelper.getBooleanSetting("trainingEvent", "selectAllSupportCards")
+	private val minimumConfidence = SettingsHelper.getIntSetting("ocr", "ocrConfidence").toDouble() / 100.0
+	private val threshold = SettingsHelper.getIntSetting("ocr", "ocrThreshold").toDouble()
+	private val enableAutomaticRetry = SettingsHelper.getBooleanSetting("ocr", "enableAutomaticOCRRetry")
 
 	/**
 	 * Fix incorrect characters determined by OCR by replacing them with their Japanese equivalents.
@@ -61,87 +91,111 @@ class TextDetection(private val game: Game, private val imageUtils: CustomImageU
 		// Use the Jaro Winkler algorithm to compare similarities the OCR detected string and the rest of the strings inside the data classes.
 		val service = StringSimilarityServiceImpl(JaroWinklerStrategy())
 		
-		// Attempt to find the most similar string inside the data classes starting with the Character-specific events.
-		if (selectAllCharacters) {
-			CharacterData.characters.keys.forEach { characterKey ->
-				CharacterData.characters[characterKey]?.forEach { (eventName, eventOptions) ->
-					val score = service.score(result, eventName)
-					if (!hideComparisonResults) {
-						game.printToLog("[CHARA] $characterKey \"${result}\" vs. \"${eventName}\" confidence: $score", tag = tag)
+		// Attempt to find the most similar string inside the character event data.
+		if (characterEventData != null) {
+			if (selectAllCharacters) {
+				// Check all characters in the event data.
+				characterEventData!!.keys().forEach { characterKey ->
+					val characterEvents = characterEventData!!.getJSONObject(characterKey)
+					characterEvents.keys().forEach { eventName ->
+						val eventOptionsArray = characterEvents.getJSONArray(eventName)
+						val eventOptions = ArrayList<String>()
+						for (i in 0 until eventOptionsArray.length()) {
+							eventOptions.add(eventOptionsArray.getString(i))
+						}
+						
+						val score = service.score(result, eventName)
+						if (!hideComparisonResults) {
+							game.printToLog("[CHARA] $characterKey \"${result}\" vs. \"${eventName}\" confidence: $score", tag = tag)
+						}
+						
+						if (score >= confidence) {
+							confidence = score
+							eventTitle = eventName
+							eventOptionRewards = eventOptions
+							category = "character"
+							character = characterKey
+						}
 					}
-					
-					if (score >= confidence) {
-						confidence = score
-						eventTitle = eventName
-						eventOptionRewards = eventOptions
-						category = "character"
-						character = characterKey
+				}
+			} else {
+				// Check only the specific character if it exists in the event data.
+				if (character.isNotEmpty() && characterEventData!!.has(character)) {
+					val characterEvents = characterEventData!!.getJSONObject(character)
+					characterEvents.keys().forEach { eventName ->
+						val eventOptionsArray = characterEvents.getJSONArray(eventName)
+						val eventOptions = ArrayList<String>()
+						for (i in 0 until eventOptionsArray.length()) {
+							eventOptions.add(eventOptionsArray.getString(i))
+						}
+						
+						val score = service.score(result, eventName)
+						if (!hideComparisonResults) {
+							game.printToLog("[CHARA] $character \"${result}\" vs. \"${eventName}\" confidence: $score", tag = tag)
+						}
+						
+						if (score >= confidence) {
+							confidence = score
+							eventTitle = eventName
+							eventOptionRewards = eventOptions
+							category = "character"
+						}
 					}
 				}
-			}
-		} else {
-			CharacterData.characters[character]?.forEach { (eventName, eventOptions) ->
-				val score = service.score(result, eventName)
-				if (!hideComparisonResults) {
-					game.printToLog("[CHARA] $character \"${result}\" vs. \"${eventName}\" confidence: $score", tag = tag)
-				}
-				
-				if (score >= confidence) {
-					confidence = score
-					eventTitle = eventName
-					eventOptionRewards = eventOptions
-					category = "character"
-				}
-			}
-		}
-		
-		// Now move on to the Character-shared events.
-		CharacterData.characters["Shared"]?.forEach { (eventName, eventOptions) ->
-			val score = service.score(result, eventName)
-			if (!hideComparisonResults) {
-				game.printToLog("[CHARA-SHARED] \"${result}\" vs. \"${eventName}\" confidence: $score", tag = tag)
-			}
-			
-			if (score >= confidence) {
-				confidence = score
-				eventTitle = eventName
-				eventOptionRewards = eventOptions
-				category = "character-shared"
 			}
 		}
 		
 		// Finally, do the same with the user-selected Support Cards.
-		if (!selectAllSupportCards) {
-			supportCards.forEach { supportCardName ->
-				SupportData.supports[supportCardName]?.forEach { (eventName, eventOptions) ->
-					val score = service.score(result, eventName)
-					if (!hideComparisonResults) {
-						game.printToLog("[SUPPORT] $supportCardName \"${result}\" vs. \"${eventName}\" confidence: $score", tag = tag)
-					}
-					
-					if (score >= confidence) {
-						confidence = score
-						eventTitle = eventName
-						supportCardTitle = supportCardName
-						eventOptionRewards = eventOptions
-						category = "support"
+		if (supportEventData != null) {
+			if (!selectAllSupportCards) {
+				supportCards.forEach { supportCardName ->
+					if (supportEventData!!.has(supportCardName)) {
+						val supportEvents = supportEventData!!.getJSONObject(supportCardName)
+						supportEvents.keys().forEach { eventName ->
+							val eventOptionsArray = supportEvents.getJSONArray(eventName)
+							val eventOptions = ArrayList<String>()
+							for (i in 0 until eventOptionsArray.length()) {
+								eventOptions.add(eventOptionsArray.getString(i))
+							}
+							
+							val score = service.score(result, eventName)
+							if (!hideComparisonResults) {
+								game.printToLog("[SUPPORT] $supportCardName \"${result}\" vs. \"${eventName}\" confidence: $score", tag = tag)
+							}
+							
+							if (score >= confidence) {
+								confidence = score
+								eventTitle = eventName
+								supportCardTitle = supportCardName
+								eventOptionRewards = eventOptions
+								category = "support"
+							}
+						}
 					}
 				}
-			}
-		} else {
-			SupportData.supports.forEach { (supportName, support) ->
-				support.forEach { (eventName, eventOptions) ->
-					val score = service.score(result, eventName)
-					if (!hideComparisonResults) {
-						game.printToLog("[SUPPORT] $supportName \"${result}\" vs. \"${eventName}\" confidence: $score", tag = tag)
-					}
-					
-					if (score >= confidence) {
-						confidence = score
-						eventTitle = eventName
-						supportCardTitle = supportName
-						eventOptionRewards = eventOptions
-						category = "support"
+			} else {
+				// Check all support cards in the event data.
+				supportEventData!!.keys().forEach { supportName ->
+					val supportEvents = supportEventData!!.getJSONObject(supportName)
+					supportEvents.keys().forEach { eventName ->
+						val eventOptionsArray = supportEvents.getJSONArray(eventName)
+						val eventOptions = ArrayList<String>()
+						for (i in 0 until eventOptionsArray.length()) {
+							eventOptions.add(eventOptionsArray.getString(i))
+						}
+						
+						val score = service.score(result, eventName)
+						if (!hideComparisonResults) {
+							game.printToLog("[SUPPORT] $supportName \"${result}\" vs. \"${eventName}\" confidence: $score", tag = tag)
+						}
+						
+						if (score >= confidence) {
+							confidence = score
+							eventTitle = eventName
+							supportCardTitle = supportName
+							eventOptionRewards = eventOptions
+							category = "support"
+						}
 					}
 				}
 			}
@@ -268,10 +322,6 @@ class TextDetection(private val game: Game, private val imageUtils: CustomImageU
 	}
 	
 	fun start(): Pair<ArrayList<String>, Double> {
-		if (minimumConfidence > 1.0) {
-			minimumConfidence = 0.8
-		}
-		
 		// Reset to default values.
 		result = ""
 		confidence = 0.0

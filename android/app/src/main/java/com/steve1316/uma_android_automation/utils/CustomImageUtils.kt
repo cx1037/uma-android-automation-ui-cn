@@ -1,11 +1,9 @@
 package com.steve1316.uma_android_automation.utils
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
-import androidx.preference.PreferenceManager
 import com.google.mlkit.vision.common.InputImage
 import com.steve1316.automation_library.utils.BotService
 import com.steve1316.automation_library.utils.ImageUtils
@@ -35,9 +33,11 @@ class CustomImageUtils(context: Context, private val game: Game) : ImageUtils(co
 
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
-	// SharedPreferences
-	private var sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-	private val threshold = sharedPreferences.getInt("threshold", 230)
+	// SQLite Settings
+	private val threshold: Int = SettingsHelper.getIntSetting("ocr", "ocrThreshold")
+	override var debugMode: Boolean = SettingsHelper.getBooleanSetting("debug", "enableDebugMode")
+	override var confidence: Double = SettingsHelper.getIntSetting("debug", "templateMatchConfidence").toDouble() / 100.0
+	override var customScale: Double = SettingsHelper.getIntSetting("debug", "templateMatchCustomScale").toDouble() / 100.0
 
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
