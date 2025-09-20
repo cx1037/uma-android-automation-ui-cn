@@ -1009,7 +1009,7 @@ class CustomImageUtils(context: Context, private val game: Game) : ImageUtils(co
 
 						val croppedBitmap = createSafeBitmap(sourceBitmap!!, relX(skillPointsLocation.x, -934 + xOffset), relY(skillPointsLocation.y, -103), relWidth(150), relHeight(82), "determineStatGainFromTraining $statName")
 						if (croppedBitmap == null) {
-							MessageLog.printToLog("[ERROR] Failed to create cropped bitmap for $statName stat gain detection.", tag = tag, isError = true)
+							Log.e(tag, "[ERROR] Failed to create cropped bitmap for $statName stat gain detection from $trainingName training.")
 							threadSafeResults[i] = 0
 							statLatch.countDown()
 							return@Thread
@@ -1034,14 +1034,14 @@ class CustomImageUtils(context: Context, private val game: Game) : ImageUtils(co
 							if (templateBitmap != null) {
 								matchResults = processStatGainTemplateWithTransparency(templateName, templateBitmap, workingMat, matchResults)
 							} else {
-								MessageLog.printToLog("[ERROR] Could not load template \"$templateName\".", tag = tag, isError = true)
+								Log.e(tag, "[ERROR] Could not load template \"$templateName\" to process stat gains for $trainingName training.")
 							}
 						}
 
 						// Analyze results and construct the final integer value for this region.
 						val finalValue = constructIntegerFromMatches(matchResults)
 						threadSafeResults[i] = finalValue
-						MessageLog.printToLog("[INFO] $statName region final constructed value: $finalValue.", tag = tag)
+						Log.d(tag, "[INFO] $statName region final constructed value from $trainingName training: $finalValue.")
 
 						// Draw final visualization with all matches for this region.
 						if (debugMode) {
@@ -1076,7 +1076,7 @@ class CustomImageUtils(context: Context, private val game: Game) : ImageUtils(co
 						sourceGray.release()
 						workingMat.release()
 					} catch (e: Exception) {
-						MessageLog.printToLog("[ERROR] Error processing stat ${statNames[i]}: ${e.stackTraceToString()}", tag = tag, isError = true)
+						Log.e(tag, "[ERROR] Error processing stat ${statNames[i]} for $trainingName training: ${e.stackTraceToString()}")
 						threadSafeResults[i] = 0
 					} finally {
 						statLatch.countDown()
@@ -1319,17 +1319,17 @@ class CustomImageUtils(context: Context, private val game: Game) : ImageUtils(co
 		}
 
 		if (allMatches.isEmpty()) {
-			if (debugMode) MessageLog.printToLog("[WARNING] No matches found to construct integer value.", tag = tag)
+			Log.d(tag, "[WARNING] No matches found to construct integer value.")
 			return 0
 		}
 
 		// Sort matches by x-coordinate (left to right).
 		allMatches.sortBy { it.second.x }
-		if (debugMode) MessageLog.printToLog("[DEBUG] Sorted matches: ${allMatches.map { "${it.first}@(${it.second.x}, ${it.second.y})" }}", tag = tag)
+		Log.d(tag, "[DEBUG] Sorted matches: ${allMatches.map { "${it.first}@(${it.second.x}, ${it.second.y})" }}")
 
 		// Construct the string representation and then validate the format: start with + and contain only digits after.
 		val constructedString = allMatches.joinToString("") { it.first }
-		MessageLog.printToLog("[INFO] Constructed string: \"$constructedString\".", tag = tag)
+		Log.d(tag, "[DEBUG] Constructed string: \"$constructedString\".")
 
 		// Extract the numeric part and convert to integer.
 		return try {
@@ -1340,10 +1340,10 @@ class CustomImageUtils(context: Context, private val game: Game) : ImageUtils(co
 			}
 
 			val result = numericPart.toInt()
-			if (debugMode) MessageLog.printToLog("[DEBUG] Successfully constructed integer value: $result from \"$constructedString\".", tag = tag)
+			Log.d(tag, "[DEBUG] Successfully constructed integer value: $result from \"$constructedString\".")
 			result
 		} catch (e: NumberFormatException) {
-			MessageLog.printToLog("[ERROR] Could not convert \"$constructedString\" to integer: ${e.stackTraceToString()}", tag = tag, isError = true)
+			Log.e(tag, "[ERROR] Could not convert \"$constructedString\" to integer: ${e.stackTraceToString()}")
 			0
 		}
 	}

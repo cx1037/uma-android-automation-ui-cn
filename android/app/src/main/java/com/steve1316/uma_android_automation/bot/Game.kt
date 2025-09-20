@@ -676,7 +676,7 @@ class Game(val myContext: Context) {
 						try {
 							statGains = imageUtils.determineStatGainFromTraining(training, sourceBitmap, skillPointsLocation!!)
 						} catch (e: Exception) {
-							printToLog("[ERROR] Error in determineStatGainFromTraining: ${e.stackTraceToString()}", isError = true)
+							Log.e(tag, "[ERROR] Error in determineStatGainFromTraining: ${e.stackTraceToString()}")
 							statGains = intArrayOf(0, 0, 0, 0, 0)
 						} finally {
 							latch.countDown()
@@ -700,7 +700,7 @@ class Game(val myContext: Context) {
 						try {
 							relationshipBars = imageUtils.analyzeRelationshipBars(sourceBitmap)
 						} catch (e: Exception) {
-							printToLog("[ERROR] Error in analyzeRelationshipBars: ${e.stackTraceToString()}", isError = true)
+							Log.e(tag, "[ERROR] Error in analyzeRelationshipBars: ${e.stackTraceToString()}")
 							relationshipBars = arrayListOf()
 						} finally {
 							latch.countDown()
@@ -711,7 +711,9 @@ class Game(val myContext: Context) {
 					try {
 						latch.await(10, TimeUnit.SECONDS)
 					} catch (_: InterruptedException) {
-						printToLog("[ERROR] Parallel training analysis timed out", isError = true)
+						Log.e(tag, "[ERROR] Parallel training analysis timed out")
+					} finally {
+						MessageLog.printToLog("[INFO] All 5 stat regions processed for $training training. Results: ${statGains.toList()}", tag = tag)
 					}
 
 					val newTraining = Training(
