@@ -234,7 +234,7 @@ class CustomImageUtils(context: Context, private val game: Game) : ImageUtils(co
 				if (text.textBlocks.isNotEmpty()) {
 					for (block in text.textBlocks) {
 						try {
-							MessageLog.printToLog("[INFO] Detected Training failure chance with Google ML Kit: ${block.text}", tag = tag)
+							// Logging has been removed to mitigate race conditions involving the message log when called from a thread.
 							result = block.text.replace("%", "").trim().toInt()
 						} catch (_: NumberFormatException) {
 						}
@@ -261,7 +261,7 @@ class CustomImageUtils(context: Context, private val game: Game) : ImageUtils(co
 
 			try {
 				val detectedText = tessDigitsBaseAPI.utF8Text.replace("%", "")
-				MessageLog.printToLog("[INFO] Detected training failure chance with Tesseract: $detectedText", tag = tag)
+				// Logging has been removed to mitigate race conditions involving the message log when called from a thread.
 				val cleanedResult = detectedText.replace(Regex("[^0-9]"), "")
 				result = cleanedResult.toInt()
 			} catch (_: NumberFormatException) {
@@ -1093,12 +1093,12 @@ class CustomImageUtils(context: Context, private val game: Game) : ImageUtils(co
 			try {
 				statLatch.await(30, TimeUnit.SECONDS)
 			} catch (_: InterruptedException) {
-				MessageLog.printToLog("[ERROR] Stat processing timed out", tag = tag, isError = true)
+				MessageLog.printToLog("[ERROR] Stat processing timed out for $trainingName training.", tag = tag, isError = true)
 			}
 
 			MessageLog.printToLog("[INFO] All 5 stat regions processed. Results: ${threadSafeResults.contentToString()}", tag = tag)
 		} else {
-			MessageLog.printToLog("[ERROR] Could not find the skill points location to start determining stat gains.", tag = tag, isError = true)
+			MessageLog.printToLog("[ERROR] Could not find the skill points location to start determining stat gains for $trainingName training.", tag = tag, isError = true)
 		}
 
 		return threadSafeResults
