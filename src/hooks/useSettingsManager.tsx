@@ -17,6 +17,14 @@ export const useSettingsManager = (bsc: BotStateProviderProps, mlc: MessageLogPr
     const [migrationCompleted, setMigrationCompleted] = useState(false)
 
     const { isInitialized, isLoading, isSaving: sqliteIsSaving, loadSettings: loadSQLiteSettings, saveSettings: saveSQLiteSettings } = useSQLiteSettings(mlc)
+    // Auto-load settings when SQLite is initialized.
+    useEffect(() => {
+        if (isInitialized && !migrationCompleted) {
+            logWithTimestamp("[SettingsManager] Auto-loading settings on initialization...")
+            loadSettings()
+            setMigrationCompleted(true)
+        }
+    }, [isInitialized, migrationCompleted])
 
     // Save settings to SQLite database.
     const saveSettings = async (newSettings?: Settings) => {
@@ -269,15 +277,6 @@ export const useSettingsManager = (bsc: BotStateProviderProps, mlc: MessageLogPr
             setIsSaving(false)
         }
     }
-
-    // Auto-load settings when SQLite is initialized.
-    useEffect(() => {
-        if (isInitialized && !migrationCompleted) {
-            logWithTimestamp("[SettingsManager] Auto-loading settings on initialization...")
-            loadSettings()
-            setMigrationCompleted(true)
-        }
-    }, [isInitialized, migrationCompleted, loadSettings])
 
     return {
         saveSettings,
