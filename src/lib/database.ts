@@ -2,12 +2,12 @@ import * as SQLite from "expo-sqlite"
 import { startTiming } from "./performanceLogger"
 import { logWithTimestamp, logErrorWithTimestamp } from "./logger"
 
+// The schema for the database.
 export interface DatabaseSettings {
     id: number
     category: string
     key: string
     value: string
-    created_at: string
     updated_at: string
 }
 
@@ -72,12 +72,11 @@ export class DatabaseManager {
                     category TEXT NOT NULL,
                     key TEXT NOT NULL,
                     value TEXT NOT NULL,
-                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                     UNIQUE(category, key)
                 )
             `)
-            logWithTimestamp("Settings table created successfully")
+            logWithTimestamp("Settings table created successfully.")
 
             // Create index for faster queries.
             logWithTimestamp("Creating index...")
@@ -85,57 +84,96 @@ export class DatabaseManager {
                 CREATE INDEX IF NOT EXISTS idx_settings_category_key 
                 ON settings(category, key)
             `)
-            logWithTimestamp("Index created successfully")
+            logWithTimestamp("Index created successfully.")
 
-            logWithTimestamp("Database initialized successfully")
+            logWithTimestamp("Database initialized successfully.")
         } catch (error) {
             logErrorWithTimestamp("Failed to initialize database:", error)
-            this.db = null // Reset database on error
+            this.db = null // Reset database on error.
             throw error
         }
     }
 
     /**
-     * Save settings to database by category and key with retry logic.
+     * Save settings to database by category and key.
      */
     async saveSetting(category: string, key: string, value: any): Promise<void> {
         const endTiming = startTiming("database_save_setting", "database")
 
         if (!this.db) {
-            logErrorWithTimestamp("Database is null when trying to save setting")
+            logErrorWithTimestamp("Database is null when trying to save setting.")
             endTiming({ status: "error", error: "database_not_initialized" })
             throw new Error("Database not initialized")
         }
 
-        const maxRetries = 3
-        let retryCount = 0
+        try {
+            const valueString = typeof value === "string" ? value : JSON.stringify(value)
+            logWithTimestamp(`[DB] Saving setting: ${category}.${key} = ${valueString.substring(0, 100)}...`)
 
-        while (retryCount < maxRetries) {
-            try {
-                const valueString = typeof value === "string" ? value : JSON.stringify(value)
-                logWithTimestamp(`[DB] Saving setting: ${category}.${key} = ${valueString.substring(0, 100)}... (attempt ${retryCount + 1})`)
+            await this.db.runAsync(
+                `INSERT OR REPLACE INTO settings (category, key, value, updated_at) 
+                 VALUES (?, ?, ?, CURRENT_TIMESTAMP)`,
+                [category, key, valueString]
+            )
+            logWithTimestamp(`[DB] Successfully saved setting: ${category}.${key}`)
+            endTiming({ status: "success", category, key })
+        } catch (error) {
+            logErrorWithTimestamp(`[DB] Failed to save setting ${category}.${key}:`, error)
+            endTiming({ status: "error", category, key, error: error instanceof Error ? error.message : String(error) })
+            throw error
+        }
+    }
 
-                // Use the simpler runAsync method to avoid potential prepareAsync issues.
-                await this.db.runAsync(
-                    `INSERT OR REPLACE INTO settings (category, key, value, updated_at) 
-                     VALUES (?, ?, ?, CURRENT_TIMESTAMP)`,
-                    [category, key, valueString]
-                )
-                logWithTimestamp(`[DB] Successfully saved setting: ${category}.${key}`)
-                return // Success, exit retry loop
-            } catch (error) {
-                retryCount++
-                logErrorWithTimestamp(`[DB] Failed to save settings batch (attempt ${retryCount}):`, error)
-                
-                if (retryCount >= maxRetries) {
-                    throw error
-                }
-                
-                // Wait before retry (exponential backoff).
-                const waitTime = Math.pow(2, retryCount) * 100 // 200ms, 400ms, 800ms
-                logWithTimestamp(`[DB] Retrying batch save in ${waitTime}ms...`)
-                await new Promise(resolve => setTimeout(resolve, waitTime))
+    /**
+     * Save multiple settings in a single transaction for better performance.
+     */
+    async saveSettingsBatch(settings: Array<{ category: string; key: string; value: any }>): Promise<void> {
+        const endTiming = startTiming("database_save_settings_batch", "database")
+
+        if (!this.db) {
+            logErrorWithTimestamp("Database is null when trying to save settings batch.")
+            endTiming({ status: "error", error: "database_not_initialized" })
+            throw new Error("Database not initialized")
+        }
+
+        if (settings.length === 0) {
+            endTiming({ status: "skipped", reason: "no_settings" })
+            return
+        }
+
+        try {
+            logWithTimestamp(`[DB] Saving ${settings.length} settings in batch.`)
+
+            await this.db.runAsync("BEGIN TRANSACTION")
+            const stmt = await this.db.prepareAsync(
+                `INSERT OR REPLACE INTO settings (category, key, value, updated_at) 
+                 VALUES (?, ?, ?, CURRENT_TIMESTAMP)`
+            )
+
+            // Execute all settings in batch.
+            for (const setting of settings) {
+                const valueString = typeof setting.value === "string" ? setting.value : JSON.stringify(setting.value)
+                await stmt.executeAsync([setting.category, setting.key, valueString])
             }
+
+            // Finalize statement and commit transaction.
+            await stmt.finalizeAsync()
+            await this.db.runAsync("COMMIT")
+
+            logWithTimestamp(`[DB] Successfully saved ${settings.length} settings in batch.`)
+            endTiming({ status: "success", settingsCount: settings.length })
+        } catch (error) {
+            logErrorWithTimestamp(`[DB] Failed to save settings batch:`, error)
+
+            // Rollback transaction on error.
+            try {
+                await this.db.runAsync("ROLLBACK")
+            } catch (rollbackError) {
+                logErrorWithTimestamp("[DB] Failed to rollback transaction:", rollbackError)
+            }
+
+            endTiming({ status: "error", settingsCount: settings.length, error: error instanceof Error ? error.message : String(error) })
+            throw error
         }
     }
 
@@ -154,7 +192,7 @@ export class DatabaseManager {
                 return null
             }
 
-            // Try to parse as JSON, fallback to string.
+            // Try to parse as JSON and fallback to string.
             try {
                 return JSON.parse(result.value)
             } catch {
@@ -162,38 +200,6 @@ export class DatabaseManager {
             }
         } catch (error) {
             logErrorWithTimestamp(`Failed to load setting ${category}.${key}:`, error)
-            throw error
-        }
-    }
-
-    /**
-     * Load all settings for a category.
-     */
-    async loadCategorySettings(category: string): Promise<Record<string, any>> {
-        const endTiming = startTiming("database_load_category_settings", "database")
-
-        if (!this.db) {
-            endTiming({ status: "error", error: "database_not_initialized" })
-            throw new Error("Database not initialized")
-        }
-
-        try {
-            const results = await this.db.getAllAsync<DatabaseSettings>("SELECT * FROM settings WHERE category = ?", [category])
-
-            const settings: Record<string, any> = {}
-            for (const result of results) {
-                try {
-                    settings[result.key] = JSON.parse(result.value)
-                } catch {
-                    settings[result.key] = result.value
-                }
-            }
-
-            endTiming({ status: "success", category, settingsCount: Object.keys(settings).length })
-            return settings
-        } catch (error) {
-            logErrorWithTimestamp(`Failed to load category settings ${category}:`, error)
-            endTiming({ status: "error", category, error: error instanceof Error ? error.message : String(error) })
             throw error
         }
     }
@@ -235,84 +241,12 @@ export class DatabaseManager {
     }
 
     /**
-     * Delete a specific setting.
-     */
-    async deleteSetting(category: string, key: string): Promise<void> {
-        if (!this.db) {
-            throw new Error("Database not initialized")
-        }
-
-        try {
-            await this.db.runAsync("DELETE FROM settings WHERE category = ? AND key = ?", [category, key])
-        } catch (error) {
-            logErrorWithTimestamp(`Failed to delete setting ${category}.${key}:`, error)
-            throw error
-        }
-    }
-
-    /**
-     * Delete all settings for a category.
-     */
-    async deleteCategorySettings(category: string): Promise<void> {
-        if (!this.db) {
-            throw new Error("Database not initialized")
-        }
-
-        try {
-            await this.db.runAsync("DELETE FROM settings WHERE category = ?", [category])
-        } catch (error) {
-            logErrorWithTimestamp(`Failed to delete category settings ${category}:`, error)
-            throw error
-        }
-    }
-
-    /**
-     * Clear all settings from database.
-     */
-    async clearAllSettings(): Promise<void> {
-        const endTiming = startTiming("database_clear_all_settings", "database")
-
-        if (!this.db) {
-            endTiming({ status: "error", error: "database_not_initialized" })
-            throw new Error("Database not initialized")
-        }
-
-        try {
-            await this.db.runAsync("DELETE FROM settings")
-            endTiming({ status: "success" })
-        } catch (error) {
-            logErrorWithTimestamp("Failed to clear all settings:", error)
-            endTiming({ status: "error", error: error instanceof Error ? error.message : String(error) })
-            throw error
-        }
-    }
-
-    /**
      * Check if the database is properly initialized.
      */
     isInitialized(): boolean {
         return this.db !== null
     }
-
-    /**
-     * Close the database connection.
-     */
-    async close(): Promise<void> {
-        if (this.db) {
-            logWithTimestamp("[DB] Closing database connection...")
-            try {
-                await this.db.closeAsync()
-                logWithTimestamp("[DB] Database connection closed successfully")
-            } catch (error) {
-                logErrorWithTimestamp("[DB] Error closing database connection:", error)
-            } finally {
-                this.db = null
-                this.isInitializing = false
-                this.initializationPromise = null
-            }
-        }
-    }
 }
 
-// Singleton instance.
+// Available as a singleton instance.
 export const databaseManager = new DatabaseManager()
