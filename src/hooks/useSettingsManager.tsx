@@ -19,6 +19,9 @@ export const useSettingsManager = () => {
     const bsc = useContext(BotStateContext)
     const mlc = useContext(MessageLogContext)
     const { addMessageToAsyncMessages } = mlc
+
+    const { isInitialized, isLoading, isSaving: sqliteIsSaving, loadSettings: loadSQLiteSettings, saveSettings: saveSQLiteSettings, saveSettingsImmediate: saveSQLiteSettingsImmediate } = useSQLiteSettings()
+
     // Auto-load settings when SQLite is initialized.
     useEffect(() => {
         if (isInitialized && !migrationCompleted) {
@@ -37,8 +40,16 @@ export const useSettingsManager = () => {
         try {
             const localSettings: Settings = newSettings ? newSettings : bsc.settings
             await saveSQLiteSettings(localSettings)
+            endTiming({ status: "success", hasNewSettings: !!newSettings })
+        } catch (error) {
+            logErrorWithTimestamp(`Error saving settings: ${error}`)
+            addMessageToAsyncMessages(`\n[ERROR] Error saving settings: \n${error}`)
+            endTiming({ status: "error", error: error instanceof Error ? error.message : String(error) })
+        } finally {
+            setIsSaving(false)
+        }
+    }
 
-            mlc.setAsyncMessages([])
     // Save settings immediately without debouncing (for background/exit saves).
     const saveSettingsImmediate = async (newSettings?: Settings) => {
         const endTiming = startTiming("settings_manager_save_settings_immediate", "settings")
