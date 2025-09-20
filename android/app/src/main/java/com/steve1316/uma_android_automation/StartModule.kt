@@ -45,6 +45,7 @@ class StartModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
     init {
         StartModule.reactContext = reactContext
         StartModule.reactContext?.addActivityEventListener(this)
+        Log.d(tag, "StartModule is now initialized.")
     }
 
     override fun getName(): String {
@@ -62,6 +63,7 @@ class StartModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
                 MediaProjectionService.getStartIntent(reactContext!!, resultCode, data!!)
             )
             sendEvent("MediaProjectionService", "Running")
+            Log.d(tag, "MediaProjectionService is now running.")
         }
     }
 
@@ -239,6 +241,7 @@ class StartModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
         params.putString("message", message)
         if (emitter == null) {
             // Register the event emitter to send messages to JS.
+            Log.d(tag, "Event emitter not found to be able to send messages to the frontend. Registering now.")
             emitter = reactContext?.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
         }
 
@@ -262,6 +265,7 @@ class StartModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
      */
     @Subscribe
     fun onSubscriberExceptionEvent(event: SubscriberExceptionEvent) {
+        Log.e(tag, "Received exception event to send: ${event.throwable}")
         MessageLog.printToLog(event.throwable.toString(), MainActivity.loggerTag, isWarning = false, isError = true, skipPrintTime = false)
         for (line in event.throwable.stackTrace) {
             MessageLog.printToLog("\t${line}", MainActivity.loggerTag, isWarning = false, isError = true, skipPrintTime = true)
