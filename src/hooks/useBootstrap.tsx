@@ -18,7 +18,7 @@ export const useBootstrap = () => {
     const mlc = useContext(MessageLogContext) as MessageLogProviderProps
 
     // Hook for managing settings persistence.
-    const { loadSettings, saveSettings, isLoading, isInitialized } = useSettingsManager(bsc, mlc)
+    const { saveSettings, saveSettingsImmediate, isLoading, isInitialized } = useSettings()
 
     useEffect(() => {
         // Listen for messages from the Android automation service.
@@ -81,7 +81,19 @@ export const useBootstrap = () => {
         return () => subscription?.remove()
     }, [saveSettings])
 
-    // Finalize app ready state after initialization.
+    // Manual save function for Start button and other triggers.
+    const saveSettingsNow = async () => {
+        if (!isSavingRef.current) {
+            logWithTimestamp("[Bootstrap] Manual save triggered...")
+            isSavingRef.current = true
+            try {
+                await saveSettings()
+                logWithTimestamp("[Bootstrap] Manual save completed successfully")
+            } finally {
+                isSavingRef.current = false
+            }
+        }
+    }
     useEffect(() => {
         if (isReady) {
             handleReady()
@@ -99,5 +111,6 @@ export const useBootstrap = () => {
         firstTime,
         isLoading,
         isInitialized,
+        saveSettingsNow,
     }
 }
