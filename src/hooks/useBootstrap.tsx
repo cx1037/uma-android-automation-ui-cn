@@ -61,6 +61,13 @@ export const useBootstrap = () => {
         const subscription = AppState.addEventListener("change", handleAppStateChange)
         return () => subscription?.remove()
     }, [saveSettings])
+    // Update ready status whenever settings change or app becomes ready.
+    useEffect(() => {
+        if (isReady) {
+            const scenario = bsc.settings.general.scenario
+            bsc.setReadyStatus(scenario !== "")
+        }
+    }, [isReady, bsc.settings.general.scenario])
 
     // Manual save function for Start button and other triggers.
     const saveSettingsNow = async () => {
@@ -74,17 +81,6 @@ export const useBootstrap = () => {
                 isSavingRef.current = false
             }
         }
-    }
-    useEffect(() => {
-        if (isReady) {
-            handleReady()
-        }
-    }, [isReady])
-
-    // Determine whether the program is ready to start.
-    const handleReady = () => {
-        const scenario = bsc.settings.general.scenario
-        bsc.setReadyStatus(scenario !== "")
     }
 
     return {
