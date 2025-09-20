@@ -20,6 +20,11 @@ import { useSettingsFileManager } from "../../hooks/useSettingsFileManager"
 
 const Settings = () => {
     const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false)
+    
+    // Local state for sliders to improve performance
+    const [localSkillPointCheck, setLocalSkillPointCheck] = useState<number>(0)
+    const [localTemplateMatchConfidence, setLocalTemplateMatchConfidence] = useState<number>(0)
+    const [localTemplateMatchCustomScale, setLocalTemplateMatchCustomScale] = useState<number>(0)
 
     const bsc = useContext(BotStateContext)
     const mlc = useContext(MessageLogContext)
@@ -28,6 +33,12 @@ const Settings = () => {
 
     const { openDataDirectory, resetSettings } = useSettingsManager(bsc, mlc)
     const { handleImportSettings, handleExportSettings, showImportDialog, setShowImportDialog, showResetDialog, setShowResetDialog } = useSettingsFileManager(bsc, mlc)
+    // Initialize local slider state with current settings
+    useEffect(() => {
+        setLocalSkillPointCheck(bsc.settings.general.skillPointCheck)
+        setLocalTemplateMatchConfidence(bsc.settings.debug.templateMatchConfidence)
+        setLocalTemplateMatchCustomScale(bsc.settings.debug.templateMatchCustomScale)
+    }, [bsc.settings.general.skillPointCheck, bsc.settings.debug.templateMatchConfidence, bsc.settings.debug.templateMatchCustomScale])
 
     const styles = StyleSheet.create({
         root: {
@@ -95,8 +106,9 @@ const Settings = () => {
                     options={scenarios}
                     value={bsc.settings.general.scenario}
                     onValueChange={(value) => {
-                        bsc.setReadyStatus(true)
-                        bsc.setSettings({ ...bsc.settings, general: { ...bsc.settings.general, scenario: value || "" } })
+                        const newScenario = value || ""
+                        bsc.setSettings({ ...bsc.settings, general: { ...bsc.settings.general, scenario: newScenario } })
+                        bsc.setReadyStatus(newScenario !== "")
                     }}
                 />
                 {!bsc.settings.general.scenario && (
@@ -170,8 +182,11 @@ const Settings = () => {
                 {bsc.settings.general.enableSkillPointCheck && (
                     <View style={{ marginTop: 8, marginLeft: 20 }}>
                         <CustomSlider
-                            value={bsc.settings.general.skillPointCheck}
+                            value={localSkillPointCheck}
                             onValueChange={(value) => {
+                                setLocalSkillPointCheck(value)
+                            }}
+                            onSlidingComplete={(value) => {
                                 bsc.setSettings({
                                     ...bsc.settings,
                                     general: { ...bsc.settings.general, skillPointCheck: value },
@@ -273,8 +288,11 @@ const Settings = () => {
                 )}
 
                 <CustomSlider
-                    value={bsc.settings.debug.templateMatchConfidence}
+                    value={localTemplateMatchConfidence}
                     onValueChange={(value) => {
+                        setLocalTemplateMatchConfidence(value)
+                    }}
+                    onSlidingComplete={(value) => {
                         bsc.setSettings({
                             ...bsc.settings,
                             debug: { ...bsc.settings.debug, templateMatchConfidence: value },
@@ -291,8 +309,11 @@ const Settings = () => {
                 />
 
                 <CustomSlider
-                    value={bsc.settings.debug.templateMatchCustomScale}
+                    value={localTemplateMatchCustomScale}
                     onValueChange={(value) => {
+                        setLocalTemplateMatchCustomScale(value)
+                    }}
+                    onSlidingComplete={(value) => {
                         bsc.setSettings({
                             ...bsc.settings,
                             debug: { ...bsc.settings.debug, templateMatchCustomScale: value },
