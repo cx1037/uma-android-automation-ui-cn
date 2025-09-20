@@ -27,11 +27,13 @@ export const useBootstrap = () => {
         })
     }, [])
 
-        DeviceEventEmitter.addListener("MessageLog", messageListener)
-
-        // Cleanup listeners on unmount.
-        return () => {
-            DeviceEventEmitter.removeAllListeners("MessageLog")
+    // Wait for SQLite database initialization to complete before marking app as ready.
+    // This ensures the data layer is fully set up before allowing settings operations.
+    useEffect(() => {
+        if (isInitialized) {
+            logWithTimestamp("[Bootstrap] SQLite initialized, app ready...")
+            setIsReady(true)
+            logWithTimestamp("[Bootstrap] App initialization complete")
         }
     }, [isInitialized])
 
