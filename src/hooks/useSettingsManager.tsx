@@ -29,6 +29,16 @@ export const useSettingsManager = (bsc: BotStateProviderProps, mlc: MessageLogPr
             await saveSQLiteSettings(localSettings)
 
             mlc.setAsyncMessages([])
+    // Save settings immediately without debouncing (for background/exit saves).
+    const saveSettingsImmediate = async (newSettings?: Settings) => {
+        const endTiming = startTiming("settings_manager_save_settings_immediate", "settings")
+        
+        setIsSaving(true)
+
+        try {
+            const localSettings: Settings = newSettings ? newSettings : bsc.settings
+            await saveSQLiteSettingsImmediate(localSettings)
+            endTiming({ status: "success", hasNewSettings: !!newSettings, immediate: true })
         } catch (error) {
             logErrorWithTimestamp(`Error saving settings immediately: ${error}`)
             mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Error saving settings: \n${error}`])
@@ -271,6 +281,7 @@ export const useSettingsManager = (bsc: BotStateProviderProps, mlc: MessageLogPr
 
     return {
         saveSettings,
+        saveSettingsImmediate,
         loadSettings,
         importSettings,
         exportSettings,
