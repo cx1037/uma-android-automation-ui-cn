@@ -1,22 +1,23 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react"
 import * as FileSystem from "expo-file-system"
 import * as Sharing from "expo-sharing"
 import { startActivityAsync } from "expo-intent-launcher"
-import { defaultSettings, Settings, BotStateProviderProps } from "../context/BotStateContext"
-import { MessageLogProviderProps } from "../context/MessageLogContext"
+import { defaultSettings, Settings, BotStateContext } from "../context/BotStateContext"
 import { useSQLiteSettings } from "./useSQLiteSettings"
 import { startTiming } from "../lib/performanceLogger"
 import { logWithTimestamp, logErrorWithTimestamp } from "../lib/logger"
+import { MessageLogContext } from "../context/MessageLogContext"
 
 /**
  * Manages settings persistence using SQLite database.
  */
-export const useSettingsManager = (bsc: BotStateProviderProps, mlc: MessageLogProviderProps) => {
+export const useSettingsManager = () => {
     // Track whether settings are currently being saved.
     const [isSaving, setIsSaving] = useState(false)
     const [migrationCompleted, setMigrationCompleted] = useState(false)
-
-    const { isInitialized, isLoading, isSaving: sqliteIsSaving, loadSettings: loadSQLiteSettings, saveSettings: saveSQLiteSettings } = useSQLiteSettings(mlc)
+    
+    const bsc = useContext(BotStateContext)
+    const mlc = useContext(MessageLogContext)
     // Auto-load settings when SQLite is initialized.
     useEffect(() => {
         if (isInitialized && !migrationCompleted) {
