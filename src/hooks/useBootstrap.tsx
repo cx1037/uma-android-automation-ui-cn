@@ -2,7 +2,7 @@ import { useContext, useEffect, useState, useRef } from "react"
 import { DeviceEventEmitter, AppState } from "react-native"
 import { BotStateContext, BotStateProviderProps } from "../context/BotStateContext"
 import { MessageLogContext, MessageLogProviderProps } from "../context/MessageLogContext"
-import { useSettingsManager } from "./useSettingsManager"
+import { useSettings } from "../context/SettingsContext"
 import { logWithTimestamp } from "../lib/logger"
 
 /**
@@ -15,6 +15,7 @@ export const useBootstrap = () => {
 
     const bsc = useContext(BotStateContext) as BotStateProviderProps
     const mlc = useContext(MessageLogContext) as MessageLogProviderProps
+    const { addMessageToAsyncMessages } = mlc
 
     // Hook for managing settings persistence.
     const { saveSettings, saveSettingsImmediate, isLoading, isInitialized } = useSettings()
@@ -51,7 +52,8 @@ export const useBootstrap = () => {
                 logWithTimestamp(`[Bootstrap] App state changed to ${nextAppState}, saving settings...`)
                 if (!isSavingRef.current) {
                     isSavingRef.current = true
-                    saveSettings().finally(() => {
+                    // Do an immediate save to bypass debouncing.
+                    saveSettingsImmediate().finally(() => {
                         isSavingRef.current = false
                     })
                 }
@@ -60,7 +62,8 @@ export const useBootstrap = () => {
 
         const subscription = AppState.addEventListener("change", handleAppStateChange)
         return () => subscription?.remove()
-    }, [saveSettings])
+    }, [saveSettingsImmediate])
+
     // Update ready status whenever settings change or app becomes ready.
     useEffect(() => {
         if (isReady) {
