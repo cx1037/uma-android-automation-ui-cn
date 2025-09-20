@@ -7,6 +7,7 @@ import { StatusBar } from "expo-status-bar"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { BotStateProvider } from "./context/BotStateContext"
 import { MessageLogProvider } from "./context/MessageLogContext"
+import { SettingsProvider } from "./context/SettingsContext"
 import { ThemeProvider, useTheme } from "./context/ThemeContext"
 import { useBootstrap } from "./hooks/useBootstrap"
 import Home from "./pages/Home"
@@ -34,15 +35,13 @@ function SettingsStack() {
     )
 }
 
-function AppContent() {
-    const { theme, colors } = useTheme()
-    
-    // Initialize app with bootstrap logic
-    const { isReady } = useBootstrap()
+function AppWithBootstrap({ theme, colors }: { theme: string; colors: any }) {
+    // Initialize app with bootstrap logic.
+    useBootstrap()
 
     return (
         <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: colors.background }}>
-            <NavigationContainer theme={NAV_THEME[theme]}>
+            <NavigationContainer theme={NAV_THEME[theme as "light" | "dark"]}>
                 <StatusBar style={theme === "light" ? "dark" : "light"} />
                 <Tab.Navigator
                     screenOptions={({ route }) => ({
@@ -65,14 +64,24 @@ function AppContent() {
     )
 }
 
+function AppContent() {
+    const { theme, colors } = useTheme()
+
+    return (
+        <BotStateProvider>
+            <MessageLogProvider>
+                <SettingsProvider>
+                    <AppWithBootstrap theme={theme} colors={colors} />
+                </SettingsProvider>
+            </MessageLogProvider>
+        </BotStateProvider>
+    )
+}
+
 function App() {
     return (
         <ThemeProvider>
-            <BotStateProvider>
-                <MessageLogProvider>
-                    <AppContent />
-                </MessageLogProvider>
-            </BotStateProvider>
+            <AppContent />
         </ThemeProvider>
     )
 }
