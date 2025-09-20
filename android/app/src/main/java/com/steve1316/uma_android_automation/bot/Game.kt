@@ -591,7 +591,7 @@ class Game(val myContext: Context) {
 
 		if (speedStatTextLocation != null) {
 			// Perform a percentage check of Speed training to see if the bot has enough energy to do training. As a result, Speed training will be the one selected for the rest of the algorithm.
-			if (imageUtils.findImage("speed_training_header", tries = 1, region = imageUtils.regionTopHalf, suppressError = true).first != null) {
+			if (imageUtils.findImage("speed_training_header", tries = 1, region = imageUtils.regionTopHalf, suppressError = true).first == null) {
 				findAndTapImage("training_speed", region = imageUtils.regionBottomHalf)
 				wait(0.5)
 			}
