@@ -7,6 +7,7 @@ import { Input } from "../ui/input"
 interface CustomSliderProps {
     value: number
     onValueChange: (value: number) => void
+    onSlidingComplete?: (value: number) => void
     min: number
     max: number
     step: number
@@ -18,7 +19,7 @@ interface CustomSliderProps {
     style?: ViewStyle
 }
 
-const CustomSlider: React.FC<CustomSliderProps> = ({ value, onValueChange, min, max, step, label, labelUnit = "", showValue = true, showLabels = true, description, style }) => {
+const CustomSlider: React.FC<CustomSliderProps> = ({ value, onValueChange, onSlidingComplete, min, max, step, label, labelUnit = "", showValue = true, showLabels = true, description, style }) => {
     const { colors } = useTheme()
     const [isDragging, setIsDragging] = useState(false)
     const [sliderWidth, setSliderWidth] = useState(0)
@@ -164,6 +165,11 @@ const CustomSlider: React.FC<CustomSliderProps> = ({ value, onValueChange, min, 
                 useNativeDriver: true,
             }),
         ]).start()
+        
+        // Call the onSlidingComplete prop if provided
+        if (onSlidingComplete) {
+            onSlidingComplete(value)
+        }
     }
 
     const handleValueChange = (sliderValue: number) => {
