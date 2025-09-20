@@ -5,6 +5,8 @@ import { startActivityAsync } from "expo-intent-launcher"
 import { defaultSettings, Settings, BotStateProviderProps } from "../context/BotStateContext"
 import { MessageLogProviderProps } from "../context/MessageLogContext"
 import { useSQLiteSettings } from "./useSQLiteSettings"
+import { startTiming } from "../lib/performanceLogger"
+import { logWithTimestamp, logErrorWithTimestamp } from "../lib/logger"
 
 /**
  * Manages settings persistence using SQLite database.
@@ -18,6 +20,8 @@ export const useSettingsManager = (bsc: BotStateProviderProps, mlc: MessageLogPr
 
     // Save settings to SQLite database.
     const saveSettings = async (newSettings?: Settings) => {
+        const endTiming = startTiming("settings_manager_save_settings", "settings")
+        
         setIsSaving(true)
 
         try {
@@ -26,8 +30,9 @@ export const useSettingsManager = (bsc: BotStateProviderProps, mlc: MessageLogPr
 
             mlc.setAsyncMessages([])
         } catch (error) {
-            console.error(`Error saving settings: ${error}`)
+            logErrorWithTimestamp(`Error saving settings immediately: ${error}`)
             mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Error saving settings: \n${error}`])
+            endTiming({ status: "error", error: error instanceof Error ? error.message : String(error) })
         } finally {
             setIsSaving(false)
         }
@@ -35,10 +40,13 @@ export const useSettingsManager = (bsc: BotStateProviderProps, mlc: MessageLogPr
 
     // Load settings from SQLite database.
     const loadSettings = async () => {
+        const endTiming = startTiming("settings_manager_load_settings", "settings")
+        
         try {
             // Wait for SQLite to be initialized.
             if (!isInitialized) {
-                console.log("[SettingsManager] Waiting for SQLite initialization...")
+                logWithTimestamp("[SettingsManager] Waiting for SQLite initialization...")
+                endTiming({ status: "skipped", reason: "sqlite_not_initialized" })
                 return
             }
 
@@ -46,18 +54,21 @@ export const useSettingsManager = (bsc: BotStateProviderProps, mlc: MessageLogPr
             let newSettings: Settings = JSON.parse(JSON.stringify(defaultSettings))
             try {
                 newSettings = await loadSQLiteSettings()
-                console.log("[SettingsManager] Settings loaded from SQLite database.")
+                logWithTimestamp("[SettingsManager] Settings loaded from SQLite database.")
             } catch (sqliteError) {
-                console.warn("[SettingsManager] Failed to load from SQLite, using defaults:", sqliteError)
+                logWithTimestamp("[SettingsManager] Failed to load from SQLite, using defaults:")
+                console.warn(sqliteError)
             }
 
             bsc.setSettings(newSettings)
-            console.log("[SettingsManager] Settings loaded and applied to context.")
+            logWithTimestamp("[SettingsManager] Settings loaded and applied to context.")
+            endTiming({ status: "success", usedDefaults: newSettings === defaultSettings })
         } catch (error) {
-            console.error("[SettingsManager] Error loading settings:", error)
+            logErrorWithTimestamp("[SettingsManager] Error loading settings:", error)
             mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Error loading settings: \n${error}`])
             bsc.setSettings(JSON.parse(JSON.stringify(defaultSettings)))
             bsc.setReadyStatus(false)
+            endTiming({ status: "error", error: error instanceof Error ? error.message : String(error) })
         }
     }
 
@@ -68,10 +79,10 @@ export const useSettingsManager = (bsc: BotStateProviderProps, mlc: MessageLogPr
             const parsed: Settings = JSON.parse(data)
             const fixedSettings: Settings = fixSettings(parsed)
 
-            console.log("Settings imported from JSON file successfully.")
+            logWithTimestamp("Settings imported from JSON file successfully.")
             return fixedSettings
         } catch (error: any) {
-            console.error(`Error reading settings from JSON file: ${error}`)
+            logErrorWithTimestamp(`Error reading settings from JSON file: ${error}`)
             mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Error reading settings from JSON file: \n${error}`])
             throw error
         }
@@ -93,13 +104,15 @@ export const useSettingsManager = (bsc: BotStateProviderProps, mlc: MessageLogPr
 
     // Import settings from a JSON file and save to SQLite.
     const importSettings = async (fileUri: string): Promise<boolean> => {
+        const endTiming = startTiming("settings_manager_import_settings", "settings")
+        
         try {
             setIsSaving(true)
 
             // Ensure database is initialized before saving.
-            console.log("Ensuring database is initialized before saving...")
+            logWithTimestamp("Ensuring database is initialized before saving...")
             if (!isInitialized) {
-                console.log("Database not initialized, triggering initialization...")
+                logWithTimestamp("Database not initialized, triggering initialization...")
                 await loadSQLiteSettings()
             }
 
@@ -108,13 +121,15 @@ export const useSettingsManager = (bsc: BotStateProviderProps, mlc: MessageLogPr
             await saveSQLiteSettings(importedSettings)
             bsc.setSettings(importedSettings)
 
-            console.log("Settings imported successfully.")
+            logWithTimestamp("Settings imported successfully.")
             mlc.setMessageLog([...mlc.messageLog, `\n[SUCCESS] Settings imported successfully from JSON file.`])
 
+            endTiming({ status: "success", fileUri })
             return true
         } catch (error) {
-            console.error("Error importing settings:", error)
+            logErrorWithTimestamp("Error importing settings:", error)
             mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Error importing settings: \n${error}`])
+            endTiming({ status: "error", fileUri, error: error instanceof Error ? error.message : String(error) })
             return false
         } finally {
             setIsSaving(false)
@@ -123,6 +138,8 @@ export const useSettingsManager = (bsc: BotStateProviderProps, mlc: MessageLogPr
 
     // Export current settings to a JSON file.
     const exportSettings = async (): Promise<string | null> => {
+        const endTiming = startTiming("settings_manager_export_settings", "settings")
+        
         try {
             const jsonString = JSON.stringify(bsc.settings, null, 4)
 
@@ -134,13 +151,15 @@ export const useSettingsManager = (bsc: BotStateProviderProps, mlc: MessageLogPr
             // Write the settings to file.
             await FileSystem.writeAsStringAsync(fileUri, jsonString)
 
-            console.log("Settings exported successfully to:", fileUri)
+            logWithTimestamp(`Settings exported successfully to: ${fileUri}`)
             mlc.setMessageLog([...mlc.messageLog, `\n[SUCCESS] Settings exported successfully to: ${fileName}`])
 
+            endTiming({ status: "success", fileName, fileSize: jsonString.length })
             return fileUri
         } catch (error) {
-            console.error("Error exporting settings:", error)
+            logErrorWithTimestamp("Error exporting settings:", error)
             mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Error exporting settings: \n${error}`])
+            endTiming({ status: "error", error: error instanceof Error ? error.message : String(error) })
             return null
         }
     }
@@ -196,7 +215,7 @@ export const useSettingsManager = (bsc: BotStateProviderProps, mlc: MessageLogPr
                 throw new Error("Settings file not found")
             }
         } catch (error) {
-            console.error(`Error opening app data directory: ${error}`)
+            logErrorWithTimestamp(`Error opening app data directory: ${error}`)
             mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Could not open app data directory. Error: \n${error}`])
             mlc.setMessageLog([...mlc.messageLog, `\n[INFO] Manual path: /storage/emulated/0/Android/data/${packageName}/files.`])
         }
@@ -204,13 +223,15 @@ export const useSettingsManager = (bsc: BotStateProviderProps, mlc: MessageLogPr
 
     // Reset settings to default values.
     const resetSettings = async (): Promise<boolean> => {
+        const endTiming = startTiming("settings_manager_reset_settings", "settings")
+        
         try {
             setIsSaving(true)
 
             // Ensure database is initialized before saving.
-            console.log("Ensuring database is initialized before resetting...")
+            logWithTimestamp("Ensuring database is initialized before resetting...")
             if (!isInitialized) {
-                console.log("Database not initialized, triggering initialization...")
+                logWithTimestamp("Database not initialized, triggering initialization...")
                 await loadSQLiteSettings()
             }
 
@@ -224,13 +245,15 @@ export const useSettingsManager = (bsc: BotStateProviderProps, mlc: MessageLogPr
             bsc.setSettings(defaultSettingsCopy)
             bsc.setReadyStatus(false)
 
-            console.log("Settings reset to defaults successfully.")
+            logWithTimestamp("Settings reset to defaults successfully.")
             mlc.setMessageLog([...mlc.messageLog, `\n[SUCCESS] Settings have been reset to default values.`])
 
+            endTiming({ status: "success" })
             return true
         } catch (error) {
-            console.error("Error resetting settings:", error)
+            logErrorWithTimestamp("Error resetting settings:", error)
             mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Error resetting settings: \n${error}`])
+            endTiming({ status: "error", error: error instanceof Error ? error.message : String(error) })
             return false
         } finally {
             setIsSaving(false)
@@ -240,6 +263,7 @@ export const useSettingsManager = (bsc: BotStateProviderProps, mlc: MessageLogPr
     // Auto-load settings when SQLite is initialized.
     useEffect(() => {
         if (isInitialized && !migrationCompleted) {
+            logWithTimestamp("[SettingsManager] Auto-loading settings on initialization...")
             loadSettings()
             setMigrationCompleted(true)
         }

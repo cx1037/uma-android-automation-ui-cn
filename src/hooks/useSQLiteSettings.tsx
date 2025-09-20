@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from "react"
 import { databaseManager } from "../lib/database"
 import { Settings, defaultSettings } from "../context/BotStateContext"
-import { MessageLogProviderProps } from "../context/MessageLogContext"
+import { startTiming, setMessageLogCallback } from "../lib/performanceLogger"
+import { logWithTimestamp, logErrorWithTimestamp } from "../lib/logger"
 
 /**
  * Hook for managing settings persistence with SQLite.
@@ -16,20 +17,25 @@ export const useSQLiteSettings = (mlc: MessageLogProviderProps) => {
      * Initialize the database and migrate from JSON if needed.
      */
     const initializeDatabase = useCallback(async () => {
+        const endTiming = startTiming("sqlite_initialize_database", "settings")
+
         if (isInitialized) {
-            console.log("[SQLite] Database already initialized, skipping...")
+            logWithTimestamp("[SQLite] Database already initialized, skipping...")
+            endTiming({ status: "already_initialized" })
             return
         }
 
         try {
-            console.log("[SQLite] Starting database initialization...")
+            logWithTimestamp("[SQLite] Starting database initialization...")
             setIsLoading(true)
             await databaseManager.initialize()
             setIsInitialized(true)
-            console.log("[SQLite] Database initialized successfully.")
+            logWithTimestamp("[SQLite] Database initialized successfully.")
+            endTiming({ status: "success" })
         } catch (error) {
-            console.error("[SQLite] Failed to initialize database:", error)
+            logErrorWithTimestamp("[SQLite] Failed to initialize database:", error)
             mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Failed to initialize database: ${error}`])
+            endTiming({ status: "error", error: error instanceof Error ? error.message : String(error) })
             throw error
         } finally {
             setIsLoading(false)
@@ -40,6 +46,8 @@ export const useSQLiteSettings = (mlc: MessageLogProviderProps) => {
      * Load all settings from SQLite database.
      */
     const loadSettings = useCallback(async (): Promise<Settings> => {
+        const endTiming = startTiming("sqlite_load_settings", "settings")
+
         if (!isInitialized) {
             await initializeDatabase()
         }
@@ -59,8 +67,9 @@ export const useSQLiteSettings = (mlc: MessageLogProviderProps) => {
             console.log("Settings loaded from SQLite database.")
             return mergedSettings
         } catch (error) {
-            console.error("Failed to load settings from database:", error)
+            logErrorWithTimestamp("Failed to load settings from database:", error)
             mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Failed to load settings from database: ${error}`])
+            endTiming({ status: "error", error: error instanceof Error ? error.message : String(error) })
             return JSON.parse(JSON.stringify(defaultSettings))
         } finally {
             setIsLoading(false)
@@ -96,10 +105,13 @@ export const useSQLiteSettings = (mlc: MessageLogProviderProps) => {
      */
     const performSave = useCallback(
         async (settings: Settings): Promise<void> => {
-            console.log(`[SQLite] performSave called, isSaving: ${isSaving}`)
+            const endTiming = startTiming("sqlite_perform_save", "settings")
+
+            logWithTimestamp(`[SQLite] performSave called, isSaving: ${isSaving}`)
 
             if (isSaving) {
-                console.log("[SQLite] Save already in progress, skipping...")
+                logWithTimestamp("[SQLite] Save already in progress, skipping...")
+                endTiming({ status: "skipped", reason: "already_saving" })
                 return
             }
 
@@ -107,7 +119,7 @@ export const useSQLiteSettings = (mlc: MessageLogProviderProps) => {
                 setIsSaving(true)
 
                 if (!isInitialized) {
-                    console.log("[SQLite] Database not initialized, initializing now...")
+                    logWithTimestamp("[SQLite] Database not initialized, initializing now...")
                     await initializeDatabase()
                 }
 
@@ -116,7 +128,7 @@ export const useSQLiteSettings = (mlc: MessageLogProviderProps) => {
                     throw new Error("Database failed to initialize properly")
                 }
 
-                console.log("[SQLite] Starting to save settings to SQLite database...")
+                logWithTimestamp("[SQLite] Starting to save settings to SQLite database...")
 
                 // Save each category of settings.
                 for (const [category, categorySettings] of Object.entries(settings)) {
@@ -128,11 +140,12 @@ export const useSQLiteSettings = (mlc: MessageLogProviderProps) => {
 
                 console.log("[SQLite] Settings saved to SQLite database.")
             } catch (error) {
-                console.error("[SQLite] Failed to save settings to database:", error)
+                logErrorWithTimestamp("[SQLite] Failed to save settings to database:", error)
                 mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Failed to save settings to database: ${error}`])
+                endTiming({ status: "error", error: error instanceof Error ? error.message : String(error) })
                 throw error
             } finally {
-                console.log("[SQLite] Setting isSaving to false...")
+                logWithTimestamp("[SQLite] Setting isSaving to false...")
                 setIsSaving(false)
             }
         },
@@ -154,19 +167,25 @@ export const useSQLiteSettings = (mlc: MessageLogProviderProps) => {
      */
     const saveCategorySettings = useCallback(
         async (category: keyof Settings, categorySettings: any): Promise<void> => {
+            const endTiming = startTiming("sqlite_save_category_settings", "settings")
+
             if (!isInitialized) {
                 await initializeDatabase()
             }
 
             try {
+                let settingsCount = 0
                 for (const [key, value] of Object.entries(categorySettings)) {
                     await databaseManager.saveSetting(category, key, value)
+                    settingsCount++
                 }
 
-                console.log(`[SQLite] Category ${category} settings saved to SQLite database`)
+                logWithTimestamp(`[SQLite] Category ${category} settings saved to SQLite database`)
+                endTiming({ status: "success", category, settingsCount })
             } catch (error) {
-                console.error(`[SQLite] Failed to save ${category} settings to database:`, error)
+                logErrorWithTimestamp(`[SQLite] Failed to save ${category} settings to database:`, error)
                 mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Failed to save ${category} settings to database: ${error}`])
+                endTiming({ status: "error", category, error: error instanceof Error ? error.message : String(error) })
                 throw error
             }
         },
@@ -178,16 +197,20 @@ export const useSQLiteSettings = (mlc: MessageLogProviderProps) => {
      */
     const loadCategorySettings = useCallback(
         async (category: keyof Settings): Promise<any> => {
+            const endTiming = startTiming("sqlite_load_category_settings", "settings")
+
             if (!isInitialized) {
                 await initializeDatabase()
             }
 
             try {
                 const categorySettings = await databaseManager.loadCategorySettings(category)
+                endTiming({ status: "success", category, settingsCount: Object.keys(categorySettings).length })
                 return categorySettings
             } catch (error) {
-                console.error(`Failed to load ${category} settings from database:`, error)
+                logErrorWithTimestamp(`Failed to load ${category} settings from database:`, error)
                 mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Failed to load ${category} settings from database: ${error}`])
+                endTiming({ status: "error", category, error: error instanceof Error ? error.message : String(error) })
                 return JSON.parse(JSON.stringify(defaultSettings[category]))
             }
         },
@@ -198,17 +221,21 @@ export const useSQLiteSettings = (mlc: MessageLogProviderProps) => {
      * Clear all settings from database.
      */
     const clearAllSettings = useCallback(async (): Promise<void> => {
+        const endTiming = startTiming("sqlite_clear_all_settings", "settings")
+
         if (!isInitialized) {
             await initializeDatabase()
         }
 
         try {
             await databaseManager.clearAllSettings()
-            console.log("All settings cleared from SQLite database")
+            logWithTimestamp("All settings cleared from SQLite database")
             mlc.setMessageLog([...mlc.messageLog, `\n[SUCCESS] All settings cleared from SQLite database`])
+            endTiming({ status: "success" })
         } catch (error) {
-            console.error("Failed to clear settings from database:", error)
+            logErrorWithTimestamp("Failed to clear settings from database:", error)
             mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Failed to clear settings from database: ${error}`])
+            endTiming({ status: "error", error: error instanceof Error ? error.message : String(error) })
             throw error
         }
     }, [isInitialized, initializeDatabase, mlc])

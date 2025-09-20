@@ -3,6 +3,7 @@ import { DeviceEventEmitter, AppState } from "react-native"
 import { BotStateContext, BotStateProviderProps } from "../context/BotStateContext"
 import { MessageLogContext, MessageLogProviderProps } from "../context/MessageLogContext"
 import { useSettingsManager } from "./useSettingsManager"
+import { logWithTimestamp } from "../lib/logger"
 
 /**
  * Manages app initialization, settings persistence, and message handling.
@@ -80,7 +81,7 @@ export const useBootstrap = () => {
     useEffect(() => {
         const handleAppStateChange = (nextAppState: string) => {
             if (nextAppState === "background" || nextAppState === "inactive") {
-                console.log(`[Bootstrap] App state changed to ${nextAppState}, saving settings...`)
+                logWithTimestamp(`[Bootstrap] App state changed to ${nextAppState}, saving settings...`)
                 if (!isSavingRef.current) {
                     isSavingRef.current = true
                     saveSettings().finally(() => {

@@ -2,6 +2,7 @@ import Constants from "expo-constants"
 import MessageLog from "../../components/MessageLog"
 import { useContext, useEffect, useState } from "react"
 import { BotStateContext } from "../../context/BotStateContext"
+import { logWithTimestamp, logErrorWithTimestamp } from "../../lib/logger"
 import { DeviceEventEmitter, StyleSheet, View, NativeModules, ActivityIndicator } from "react-native"
 import { MessageLogContext } from "../../context/MessageLogContext"
 import { useTheme } from "../../context/ThemeContext"
@@ -59,7 +60,7 @@ const Home = () => {
     // Grab the program version.
     const getVersion = () => {
         const version = Constants.expoConfig?.version || "1.0.0"
-        console.log("Android app version is ", version)
+        logWithTimestamp("Android app version is " + version)
         bsc.setAppVersion(version)
     }
 

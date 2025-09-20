@@ -2,7 +2,7 @@ import { useState } from "react"
 import * as DocumentPicker from "expo-document-picker"
 import * as Sharing from "expo-sharing"
 import { useSettingsManager } from "./useSettingsManager"
-import { BotStateProviderProps } from "../context/BotStateContext"
+import { logErrorWithTimestamp } from "../lib/logger"
 import { MessageLogProviderProps } from "../context/MessageLogContext"
 
 /**
@@ -39,7 +39,7 @@ export const useSettingsFileManager = (bsc: BotStateProviderProps, mlc: MessageL
                 setShowImportDialog(true)
             }
         } catch (error) {
-            console.error("Error importing settings:", error)
+            logErrorWithTimestamp("Error importing settings:", error)
             mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Error importing settings: ${error}`])
         }
     }
@@ -61,7 +61,7 @@ export const useSettingsFileManager = (bsc: BotStateProviderProps, mlc: MessageL
                 }
             }
         } catch (error) {
-            console.error("Error exporting settings:", error)
+            logErrorWithTimestamp("Error exporting settings:", error)
             mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Error exporting settings: ${error}`])
         }
     }
