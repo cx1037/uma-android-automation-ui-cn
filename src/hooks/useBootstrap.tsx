@@ -20,28 +20,12 @@ export const useBootstrap = () => {
     // Hook for managing settings persistence.
     const { loadSettings, saveSettings, isLoading, isInitialized } = useSettingsManager(bsc, mlc)
 
-    // Initialize app on mount: load settings, set up message listener.
     useEffect(() => {
-        const initializeApp = async () => {
-            // Wait for SQLite to be initialized before loading settings.
-            if (isInitialized) {
-                console.log("[Bootstrap] SQLite initialized, loading settings...")
-                await loadSettings()
-                setIsReady(true)
-                console.log("[Bootstrap] App initialization complete")
-            }
-        }
-
-        if (isInitialized) {
-            console.log("[Bootstrap] Starting app initialization...")
-            initializeApp()
-        }
-
         // Listen for messages from the Android automation service.
-        const messageListener = (data: any) => {
-            const newLog = [...mlc.asyncMessages, `\n${data["message"]}`]
-            mlc.setAsyncMessages(newLog)
-        }
+        DeviceEventEmitter.addListener("MessageLog", (data: any) => {
+            addMessageToAsyncMessages(data["message"])
+        })
+    }, [])
 
         DeviceEventEmitter.addListener("MessageLog", messageListener)
 
