@@ -10,7 +10,6 @@ import { logWithTimestamp } from "../lib/logger"
  * Coordinates startup sequence and maintains app state synchronization.
  */
 export const useBootstrap = () => {
-    const [firstTime, setFirstTime] = useState<boolean>(true)
     const [isReady, setIsReady] = useState<boolean>(false)
     const isSavingRef = useRef<boolean>(false)
 
@@ -36,24 +35,6 @@ export const useBootstrap = () => {
             logWithTimestamp("[Bootstrap] App initialization complete")
         }
     }, [isInitialized])
-
-    // Auto-save settings when they change (skip first load).
-    useEffect(() => {
-        if (!firstTime && isReady && !isSavingRef.current) {
-            console.log("[Bootstrap] Settings changed, auto-saving...")
-            isSavingRef.current = true
-
-            // Add a small delay to prevent rapid successive saves.
-            setTimeout(() => {
-                saveSettings().finally(() => {
-                    isSavingRef.current = false
-                })
-            }, 100)
-        } else if (isReady && firstTime) {
-            console.log("[Bootstrap] First load complete, enabling auto-save")
-            setFirstTime(false)
-        }
-    }, [bsc.settings, firstTime, isReady])
 
     // Process async messages and add them to the message log.
     useEffect(() => {
@@ -108,7 +89,6 @@ export const useBootstrap = () => {
 
     return {
         isReady: isReady && isInitialized,
-        firstTime,
         isLoading,
         isInitialized,
         saveSettingsNow,
