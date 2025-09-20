@@ -38,6 +38,7 @@ export const useBootstrap = () => {
     }, [isInitialized])
 
     // Process async messages and add them to the message log.
+    // IMPORTANT: This is how the message log gets updated with the messages from the async messages array.
     useEffect(() => {
         if (mlc.asyncMessages.length > 0) {
             const newLog = [...mlc.messageLog, ...mlc.asyncMessages]
