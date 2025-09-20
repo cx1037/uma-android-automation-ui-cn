@@ -1,18 +1,21 @@
-import { useState } from "react"
+import { useState, useContext } from "react"
 import * as DocumentPicker from "expo-document-picker"
 import * as Sharing from "expo-sharing"
-import { useSettingsManager } from "./useSettingsManager"
+import { useSettings } from "../context/SettingsContext"
 import { logErrorWithTimestamp } from "../lib/logger"
-import { MessageLogProviderProps } from "../context/MessageLogContext"
+import { MessageLogContext } from "../context/MessageLogContext"
 
 /**
  * Hook for managing settings file operations (import/export) with file picker and restart prompts.
  */
-export const useSettingsFileManager = (bsc: BotStateProviderProps, mlc: MessageLogProviderProps) => {
+export const useSettingsFileManager = () => {
     const [showImportDialog, setShowImportDialog] = useState(false)
     const [showResetDialog, setShowResetDialog] = useState(false)
 
-    const { importSettings, exportSettings } = useSettingsManager(bsc, mlc)
+    const mlc = useContext(MessageLogContext)
+    const { addMessageToAsyncMessages } = mlc
+
+    const { importSettings, exportSettings } = useSettings()
 
     /**
      * Import settings from a JSON file using document picker.
@@ -40,7 +43,7 @@ export const useSettingsFileManager = (bsc: BotStateProviderProps, mlc: MessageL
             }
         } catch (error) {
             logErrorWithTimestamp("Error importing settings:", error)
-            mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Error importing settings: ${error}`])
+            addMessageToAsyncMessages(`\n[ERROR] Error importing settings: ${error}`)
         }
     }
 
@@ -62,7 +65,7 @@ export const useSettingsFileManager = (bsc: BotStateProviderProps, mlc: MessageL
             }
         } catch (error) {
             logErrorWithTimestamp("Error exporting settings:", error)
-            mlc.setMessageLog([...mlc.messageLog, `\n[ERROR] Error exporting settings: ${error}`])
+            addMessageToAsyncMessages(`\n[ERROR] Error exporting settings: ${error}`)
         }
     }
 
