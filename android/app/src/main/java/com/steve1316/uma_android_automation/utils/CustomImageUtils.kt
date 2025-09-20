@@ -56,6 +56,11 @@ class CustomImageUtils(context: Context, private val game: Game) : ImageUtils(co
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
 
+	init {
+		initTesseract("eng.traineddata")
+		SharedData.templateSubfolderPathName = "images/"
+	}
+
 	/**
 	 * Find all occurrences of the specified image in the images folder using a provided source bitmap. Useful for parallel processing to avoid exceeding the maxImages buffer.
 	 *
