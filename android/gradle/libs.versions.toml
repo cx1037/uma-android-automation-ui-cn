@@ -11,7 +11,7 @@ app-versionName = "3.0.3"
 app-jvm-toolchain = "17"
 
 
-androidGradleBuildTools = "8.9.1"
+androidGradleBuildTools = "8.13.0"
 kotlinGradlePlugin = "2.2.0"
 androidCvAutomationLibrary = "2.0.9"
 
