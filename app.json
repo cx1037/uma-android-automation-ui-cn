@@ -2,11 +2,6 @@
     "expo": {
         "name": "Uma Android Automation",
         "slug": "uma-android-automation",
-        "version": "3.0.3",
-        "platforms": ["android"],
-        "userInterfaceStyle": "automatic",
-        "android": {
-            "package": "com.steve1316.uma_android_automation"
-        }
+        "platforms": ["android"]
     }
 }
