@@ -158,6 +158,10 @@ android {
             output.outputFileName = "v${versionName}-UmaAndroidAutomation-${architecture}-${type}.apk"
         }
     }
+
+    androidResources {
+        noCompress += ["bundle"]
+    }
 }
 
 // Apply static values from `gradle.properties` to the `android.packagingOptions`
