@@ -113,3 +113,6 @@ lint/tmp/
 # Android Profiling
 *.hprof
 .idea/
+
+# Generated image files by react-navigation
+app/src/main/drawable-*/
