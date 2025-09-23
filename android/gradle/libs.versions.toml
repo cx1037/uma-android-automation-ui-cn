@@ -14,10 +14,12 @@ app-jvm-toolchain = "17"
 androidGradleBuildTools = "8.13.0"
 kotlinGradlePlugin = "2.2.0"
 androidCvAutomationLibrary = "2.0.9"
+lottie = "6.6.9"
 
 [libraries]
 androidGradleBuildTools = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradleBuildTools" }
 kotlinGradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlinGradlePlugin" }
+lottie = { module = "com.airbnb.android:lottie", version.ref = "lottie" }
 react-native-gradle-plugin = { module = "com.facebook.react:react-native-gradle-plugin" }
 android-cv-automation-library = { module = "com.github.steve1316:android-cv-automation-library", version.ref = "androidCvAutomationLibrary" }
 react-android = { module = "com.facebook.react:react-android" }

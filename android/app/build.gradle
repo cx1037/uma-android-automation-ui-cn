@@ -192,6 +192,9 @@ dependencies {
     implementation(libs.react.android)
     implementation(libs.hermes.android)
 
+    // Lottie for the native splash screen
+    implementation(libs.lottie)
+
     if (hermesEnabled.toBoolean()) {
         implementation(libs.hermes.android)
     } else {
