@@ -3,6 +3,11 @@ package com.steve1316.uma_android_automation
 import expo.modules.ReactActivityDelegateWrapper
 import android.content.res.Configuration
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.view.ViewGroup
+import android.widget.FrameLayout
+import com.airbnb.lottie.LottieAnimationView
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
@@ -17,6 +22,10 @@ class MainActivity : ReactActivity() {
 	companion object {
 		const val loggerTag: String = "UAA"
 	}
+
+	// This ViewGroup holds the Lottie animated splash screen that is displayed during app startup and allows for cleanup.
+	private var splashViewGroup: ViewGroup? = null
+	private val splashDuration = 2000L
 
 	override fun onCreate(savedInstanceState: Bundle?) {
         // State restoration needs to be null to avoid crash with react-native-screens.
@@ -38,6 +47,9 @@ class MainActivity : ReactActivity() {
 		// Load OpenCV native library. This will throw a "E/OpenCV/StaticHelper: OpenCV error: Cannot load info library for OpenCV". It is safe to
 		// ignore this error. OpenCV functionality is not impacted by this error.
 		OpenCVLoader.initDebug()
+
+		// Display the Lottie animated splash screen while the Javascript bundle is being loaded.
+		showSplashScreen()
 	}
 
 	/**
@@ -53,4 +65,53 @@ class MainActivity : ReactActivity() {
 	 * which allows you to enable New Architecture with a single boolean flags [com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled]
 	 */
 	override fun createReactActivityDelegate(): ReactActivityDelegate = ReactActivityDelegateWrapper(this, BuildConfig.IS_NEW_ARCHITECTURE_ENABLED, DefaultReactActivityDelegate(this, mainComponentName, fabricEnabled))
+
+	/**
+	 * Displays an animated splash screen while the application loads the Javascript bundle.
+	 */
+	private fun showSplashScreen() {
+		// Create a FrameLayout container that will hold the Lottie animation and allows the animation to be positioned and scaled.
+		val frameLayout = FrameLayout(this)
+		frameLayout.layoutParams = ViewGroup.LayoutParams(
+			ViewGroup.LayoutParams.MATCH_PARENT,
+			ViewGroup.LayoutParams.MATCH_PARENT
+		)
+
+		// Initialize the Lottie animation view with proper scaling configuration and add it to the FrameLayout.
+		// Animation file located in assets/splash.json
+		val lottieView = LottieAnimationView(this)
+		lottieView.setAnimation("splash.json")
+		lottieView.scaleType = android.widget.ImageView.ScaleType.CENTER_CROP
+		lottieView.layoutParams = FrameLayout.LayoutParams(
+			FrameLayout.LayoutParams.MATCH_PARENT,
+			FrameLayout.LayoutParams.MATCH_PARENT
+		)
+		frameLayout.addView(lottieView)
+
+		// Display the splash screen visible to the user.
+		addContentView(frameLayout, ViewGroup.LayoutParams(
+			ViewGroup.LayoutParams.MATCH_PARENT,
+			ViewGroup.LayoutParams.MATCH_PARENT
+		))
+		splashViewGroup = frameLayout
+
+		// Play the Lottie animation.
+		lottieView.playAnimation()
+
+		// Automatically transition to the main UI after the animation is finished.
+		Handler(Looper.getMainLooper()).postDelayed({
+			hideSplashScreen()
+		}, splashDuration)
+	}
+
+	/**
+	 * Removes the splash screen and performs cleanup.
+	 */
+	private fun hideSplashScreen() {
+		splashViewGroup?.let { view ->
+			val parent = view.parent as? ViewGroup
+			parent?.removeView(view)
+			splashViewGroup = null
+		}
+	}
 }
