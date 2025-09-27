@@ -86,8 +86,8 @@ export interface Settings {
         templateMatchConfidence: number
         templateMatchCustomScale: number
         debugMode_startTemplateMatchingTest: boolean
-        debugMode_startSingleTrainingFailureOCRTest: boolean
-        debugMode_startComprehensiveTrainingFailureOCRTest: boolean
+        debugMode_startSingleTrainingOCRTest: boolean
+        debugMode_startComprehensiveTrainingOCRTest: boolean
         enableHideOCRComparisonResults: boolean
     }
 }
@@ -156,8 +156,8 @@ export const defaultSettings: Settings = {
         templateMatchConfidence: 80,
         templateMatchCustomScale: 100,
         debugMode_startTemplateMatchingTest: false,
-        debugMode_startSingleTrainingFailureOCRTest: false,
-        debugMode_startComprehensiveTrainingFailureOCRTest: false,
+        debugMode_startSingleTrainingOCRTest: false,
+        debugMode_startComprehensiveTrainingOCRTest: false,
         enableHideOCRComparisonResults: true,
     },
 }
