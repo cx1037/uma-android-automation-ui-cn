@@ -11,7 +11,7 @@ import NavigationLink from "../../components/NavigationLink"
 import CustomCheckbox from "../../components/CustomCheckbox"
 import CustomSlider from "../../components/CustomSlider"
 import CustomTitle from "../../components/CustomTitle"
-import { Button } from "../../components/ui/button"
+import CustomButton from "../../components/CustomButton"
 import { Separator } from "../../components/ui/separator"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "../../components/ui/alert-dialog"
 import { useSettings } from "../../context/SettingsContext"
@@ -26,7 +26,7 @@ const Settings = () => {
     const [localTemplateMatchCustomScale, setLocalTemplateMatchCustomScale] = useState<number>(0)
 
     const bsc = useContext(BotStateContext)
-    const { colors, isDark } = useTheme()
+    const { colors } = useTheme()
     const navigation = useNavigation()
 
     const { openDataDirectory, resetSettings } = useSettings()
@@ -234,23 +234,23 @@ const Settings = () => {
                 <CustomTitle title="Settings Management" description="Import and export settings from JSON file or access the app's data directory." />
 
                 <View style={{ flexDirection: "row", gap: 12 }}>
-                    <Button onPress={handleImportSettings} variant="default" style={{ flex: 1, backgroundColor: isDark ? colors.muted : colors.input }}>
-                        <Text style={{ color: colors.foreground }}>📥 Import Settings</Text>
-                    </Button>
+                    <CustomButton onPress={handleImportSettings} variant="default" style={{ flex: 1 }}>
+                        📥 Import Settings
+                    </CustomButton>
 
-                    <Button onPress={handleExportSettings} variant="default" style={{ flex: 1, backgroundColor: isDark ? colors.muted : colors.input }}>
-                        <Text style={{ color: colors.foreground }}>📤 Export Settings</Text>
-                    </Button>
+                    <CustomButton onPress={handleExportSettings} variant="default" style={{ flex: 1 }}>
+                        📤 Export Settings
+                    </CustomButton>
                 </View>
 
                 <View style={{ flexDirection: "row", gap: 12, marginTop: 16 }}>
-                    <Button onPress={openDataDirectory} variant="default" style={{ flex: 1, backgroundColor: isDark ? colors.muted : colors.input }}>
-                        <Text style={{ color: colors.foreground }}>📁 Open Data Directory</Text>
-                    </Button>
+                    <CustomButton onPress={openDataDirectory} variant="default" style={{ flex: 1 }} fontSize={12}>
+                        📁 Open Data Directory
+                    </CustomButton>
 
-                    <Button onPress={() => setShowResetDialog(true)} variant="default" style={{ flex: 1, backgroundColor: "#dc2626" }}>
-                        <Text style={{ color: "white" }}>🔄 Reset Settings</Text>
-                    </Button>
+                    <CustomButton onPress={() => setShowResetDialog(true)} variant="destructive" style={{ flex: 1 }}>
+                        🔄 Reset Settings
+                    </CustomButton>
                 </View>
 
                 <View style={styles.errorContainer}>

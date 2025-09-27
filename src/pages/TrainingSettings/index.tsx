@@ -3,7 +3,7 @@ import { View, Text, ScrollView, StyleSheet, Modal, TouchableOpacity, Dimensions
 import { useNavigation } from "@react-navigation/native"
 import { useTheme } from "../../context/ThemeContext"
 import { BotStateContext } from "../../context/BotStateContext"
-import { Button } from "../../components/ui/button"
+import CustomButton from "../../components/CustomButton"
 import CustomSlider from "../../components/CustomSlider"
 import CustomCheckbox from "../../components/CustomCheckbox"
 import CustomTitle from "../../components/CustomTitle"
@@ -12,7 +12,7 @@ import CustomAccordion from "../../components/CustomAccordion"
 import { ArrowLeft } from "lucide-react-native"
 
 const TrainingSettings = () => {
-    const { colors } = useTheme()
+    const { colors, isDark } = useTheme()
     const navigation = useNavigation()
     const bsc = useContext(BotStateContext)
     const [blacklistModalVisible, setBlacklistModalVisible] = useState(false)
@@ -213,12 +213,12 @@ const TrainingSettings = () => {
                         )}
 
                         <View style={styles.buttonRow}>
-                            <Button onPress={() => clearAll(setSelectedStats)}>
-                                <Text>Clear All</Text>
-                            </Button>
-                            <Button onPress={() => selectAll(setSelectedStats)}>
-                                <Text>Select All</Text>
-                            </Button>
+                            <CustomButton onPress={() => clearAll(setSelectedStats)} variant="destructive">
+                                Clear All
+                            </CustomButton>
+                            <CustomButton onPress={() => selectAll(setSelectedStats)} variant={isDark ? "default" : "outline"}>
+                                Select All
+                            </CustomButton>
                         </View>
                     </TouchableOpacity>
                 </TouchableOpacity>

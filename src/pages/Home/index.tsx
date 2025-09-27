@@ -4,10 +4,10 @@ import { useContext, useEffect, useState } from "react"
 import { BotStateContext } from "../../context/BotStateContext"
 import { useSettings } from "../../context/SettingsContext"
 import { logWithTimestamp, logErrorWithTimestamp } from "../../lib/logger"
-import { DeviceEventEmitter, StyleSheet, View, NativeModules, ActivityIndicator } from "react-native"
+import { DeviceEventEmitter, StyleSheet, View, NativeModules } from "react-native"
 import { MessageLogContext } from "../../context/MessageLogContext"
 import { useTheme } from "../../context/ThemeContext"
-import { Button } from "../../components/ui/button"
+import CustomButton from "../../components/CustomButton"
 import { Text } from "../../components/ui/text"
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "../../components/ui/alert-dialog"
 
@@ -89,10 +89,9 @@ const Home = () => {
     return (
         <View style={styles.root}>
             <View style={styles.buttonContainer}>
-                <Button variant={isRunning ? "destructive" : isDark ? "default" : "secondary"} onPress={handleButtonPress} style={styles.button}>
-                    {isRunning && <ActivityIndicator size="small" color="#ffffff" />}
-                    <Text>{isRunning ? "Stop" : bsc.readyStatus ? "Start" : "Not Ready"}</Text>
-                </Button>
+                <CustomButton variant={isRunning ? "destructive" : isDark ? "default" : "secondary"} onPress={handleButtonPress} isLoading={isRunning} style={styles.button}>
+                    {isRunning ? "Stop" : bsc.readyStatus ? "Start" : "Not Ready"}
+                </CustomButton>
             </View>
 
             <View style={styles.contentContainer}>

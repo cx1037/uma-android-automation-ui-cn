@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react"
 import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, ScrollView, ViewStyle } from "react-native"
 import { useTheme } from "../../context/ThemeContext"
 import CustomCheckbox from "../CustomCheckbox"
-import { Button } from "../ui/button"
+import CustomButton from "../CustomButton"
 import { Search, X } from "lucide-react-native"
 
 interface MultiSelectorProps {
@@ -336,12 +336,12 @@ const MultiSelector: React.FC<MultiSelectorProps> = ({
                         </ScrollView>
 
                         <View style={styles.buttonRow}>
-                            <Button onPress={() => clearAll()} style={{ backgroundColor: colors.destructive }}>
-                                <Text>Clear All</Text>
-                            </Button>
-                            <Button onPress={() => handleSelectAll(true)} style={{ backgroundColor: isDark ? colors.primary : colors.border }}>
-                                <Text>Select All</Text>
-                            </Button>
+                            <CustomButton onPress={() => clearAll()} variant="destructive">
+                                Clear All
+                            </CustomButton>
+                            <CustomButton onPress={() => handleSelectAll(true)} variant={isDark ? "default" : "outline"}>
+                                Select All
+                            </CustomButton>
                         </View>
                     </TouchableOpacity>
                 </TouchableOpacity>
