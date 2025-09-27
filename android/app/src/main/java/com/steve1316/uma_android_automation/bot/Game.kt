@@ -192,7 +192,7 @@ class Game(val myContext: Context) {
 			if (isOption) {
 				"\n$message"
 			} else {
-                "$message"
+                message
 			}
 		}
 
