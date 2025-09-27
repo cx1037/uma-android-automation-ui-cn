@@ -173,6 +173,7 @@ export interface BotStateProviderProps {
     setStopBot: (stopBot: boolean) => void
     refreshAlert: boolean
     setRefreshAlert: (refreshAlert: boolean) => void
+    defaultSettings: Settings
     settings: Settings
     setSettings: (settings: Settings) => void
     appVersion: string
