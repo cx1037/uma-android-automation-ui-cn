@@ -13,13 +13,14 @@ interface CustomSliderProps {
     step: number
     label?: string
     labelUnit?: string
+    placeholder?: number
     showValue?: boolean
     showLabels?: boolean
     description?: string
     style?: ViewStyle
 }
 
-const CustomSlider: React.FC<CustomSliderProps> = ({ value, onValueChange, onSlidingComplete, min, max, step, label, labelUnit = "", showValue = true, showLabels = true, description, style }) => {
+const CustomSlider: React.FC<CustomSliderProps> = ({ value, onValueChange, onSlidingComplete, min, max, step, label, labelUnit = "", placeholder = "", showValue = true, showLabels = true, description, style }) => {
     const { colors } = useTheme()
     const [isDragging, setIsDragging] = useState(false)
     const [sliderWidth, setSliderWidth] = useState(0)
@@ -272,7 +273,7 @@ const CustomSlider: React.FC<CustomSliderProps> = ({ value, onValueChange, onSli
                             onBlur={handleInputSubmit}
                             keyboardType="numeric"
                             style={styles.input}
-                            placeholder={value.toString()}
+                            placeholder={placeholder.toString()}
                         />
                         {labelUnit && <Text style={styles.unitText}>{labelUnit}</Text>}
                     </View>
