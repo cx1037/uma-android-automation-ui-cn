@@ -72,6 +72,7 @@ const OCRSettings = () => {
                     <View style={styles.section}>
                         <CustomSlider
                             value={ocrThreshold}
+                            placeholder={bsc.defaultSettings.ocr.ocrThreshold}
                             onValueChange={(value) => updateOCRSetting("ocrThreshold", value)}
                             min={100}
                             max={255}
@@ -98,6 +99,7 @@ const OCRSettings = () => {
                     <View style={styles.section}>
                         <CustomSlider
                             value={ocrConfidence}
+                            placeholder={bsc.defaultSettings.ocr.ocrConfidence}
                             onValueChange={(value) => updateOCRSetting("ocrConfidence", value)}
                             min={50}
                             max={100}

@@ -182,6 +182,7 @@ const Settings = () => {
                     <View style={{ marginTop: 8, marginLeft: 20 }}>
                         <CustomSlider
                             value={localSkillPointCheck}
+                            placeholder={bsc.defaultSettings.general.skillPointCheck}
                             onValueChange={(value) => {
                                 setLocalSkillPointCheck(value)
                             }}
@@ -288,6 +289,7 @@ const Settings = () => {
 
                 <CustomSlider
                     value={localTemplateMatchConfidence}
+                    placeholder={bsc.defaultSettings.debug.templateMatchConfidence}
                     onValueChange={(value) => {
                         setLocalTemplateMatchConfidence(value)
                     }}
@@ -309,6 +311,7 @@ const Settings = () => {
 
                 <CustomSlider
                     value={localTemplateMatchCustomScale}
+                    placeholder={bsc.defaultSettings.debug.templateMatchCustomScale}
                     onValueChange={(value) => {
                         setLocalTemplateMatchCustomScale(value)
                     }}
