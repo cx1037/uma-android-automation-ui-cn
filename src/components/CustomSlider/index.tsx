@@ -20,7 +20,21 @@ interface CustomSliderProps {
     style?: ViewStyle
 }
 
-const CustomSlider: React.FC<CustomSliderProps> = ({ value, onValueChange, onSlidingComplete, min, max, step, label, labelUnit = "", placeholder = "", showValue = true, showLabels = true, description, style }) => {
+const CustomSlider: React.FC<CustomSliderProps> = ({
+    value,
+    onValueChange,
+    onSlidingComplete,
+    min,
+    max,
+    step,
+    label,
+    labelUnit = "",
+    placeholder = "",
+    showValue = true,
+    showLabels = true,
+    description,
+    style,
+}) => {
     const { colors } = useTheme()
     const [isDragging, setIsDragging] = useState(false)
     const [sliderWidth, setSliderWidth] = useState(0)
@@ -166,7 +180,7 @@ const CustomSlider: React.FC<CustomSliderProps> = ({ value, onValueChange, onSli
                 useNativeDriver: true,
             }),
         ]).start()
-        
+
         // Call the onSlidingComplete prop if provided
         if (onSlidingComplete) {
             onSlidingComplete(value)

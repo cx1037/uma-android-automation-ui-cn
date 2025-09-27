@@ -19,7 +19,7 @@ import { useSettingsFileManager } from "../../hooks/useSettingsFileManager"
 
 const Settings = () => {
     const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false)
-    
+
     // Local state for sliders to improve performance
     const [localSkillPointCheck, setLocalSkillPointCheck] = useState<number>(0)
     const [localTemplateMatchConfidence, setLocalTemplateMatchConfidence] = useState<number>(0)
@@ -256,7 +256,9 @@ const Settings = () => {
                 <View style={styles.errorContainer}>
                     <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
                         <Text style={{ fontWeight: "bold" }}>⚠️ File Explorer Note:</Text>
-                        <Text style={styles.errorText}>To manually access files, you need a file explorer app that can access the /Android/data folder (like CX File Explorer). Standard file managers will not work.</Text>
+                        <Text style={styles.errorText}>
+                            To manually access files, you need a file explorer app that can access the /Android/data folder (like CX File Explorer). Standard file managers will not work.
+                        </Text>
                     </View>
                 </View>
             </View>
@@ -486,7 +488,9 @@ const Settings = () => {
                             <Text style={{ color: "white" }}>Reset Settings to Default</Text>
                         </AlertDialogTitle>
                         <AlertDialogDescription style={{ height: 50 }}>
-                            <Text style={{ color: "white" }}>Are you sure you want to reset all settings to their default values? This action cannot be undone and will overwrite your current configuration.</Text>
+                            <Text style={{ color: "white" }}>
+                                Are you sure you want to reset all settings to their default values? This action cannot be undone and will overwrite your current configuration.
+                            </Text>
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>

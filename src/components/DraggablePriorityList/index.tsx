@@ -115,7 +115,13 @@ const DraggablePriorityList: React.FC<DraggablePriorityListProps> = ({ items, se
 
         return (
             <View key={item.id} style={{ marginVertical: 1 }} className={`mb-2 ${className}`}>
-                <TouchableOpacity style={{ justifyContent: "space-between", backgroundColor: colors.input }} activeOpacity={0.7} className="flex flex-row items-center gap-2 border border-border rounded-lg p-2" onPressIn={isSelected ? onDragStart : undefined} onPressOut={isSelected ? onDragEnd : undefined}>
+                <TouchableOpacity
+                    style={{ justifyContent: "space-between", backgroundColor: colors.input }}
+                    activeOpacity={0.7}
+                    className="flex flex-row items-center gap-2 border border-border rounded-lg p-2"
+                    onPressIn={isSelected ? onDragStart : undefined}
+                    onPressOut={isSelected ? onDragEnd : undefined}
+                >
                     <View style={{ flex: 1, flexDirection: "row", gap: 10 }}>
                         {/* Priority Number - smaller size */}
                         {isSelected && (
@@ -169,7 +175,7 @@ const DraggablePriorityList: React.FC<DraggablePriorityListProps> = ({ items, se
 
                 {/* Scroll helper buttons for very long lists */}
                 {contentHeight > containerHeight && (
-                    <View style={{flexDirection: "row", justifyContent: "space-between", gap: 2, marginTop: 2}}>
+                    <View style={{ flexDirection: "row", justifyContent: "space-between", gap: 2, marginTop: 2 }}>
                         <TouchableOpacity style={{ borderColor: colors.primary }} className="px-3 py-1 border rounded" onPress={scrollToTop}>
                             <Text style={{ color: colors.foreground }} className="text-xs">
                                 ↑ Scroll Up
