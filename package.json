@@ -7,8 +7,10 @@
         "android": "expo run:android",
         "build": "cd android && ./gradlew assembleDebug --stacktrace",
         "clean": "cd android && ./gradlew clean --stacktrace",
-        "build:debug": "cd android && ./gradlew clean && ./gradlew assembleDebug",
-        "build:release": "cd android && ./gradlew clean && ./gradlew assembleRelease",
+        "build:debug": "cd android && ./gradlew assembleDebug",
+        "build:release": "cd android && ./gradlew assembleRelease",
+        "build:debug:clean": "cd android && ./gradlew clean && ./gradlew assembleDebug",
+        "build:release:clean": "cd android && ./gradlew clean && ./gradlew assembleRelease",
         "lint": "expo lint",
         "update": "yarn install && yarn upgrade-interactive --latest"
     },
