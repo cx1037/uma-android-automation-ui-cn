@@ -464,15 +464,15 @@ const Settings = () => {
                 <AlertDialogContent>
                     <AlertDialogHeader>
                         <AlertDialogTitle>
-                            <Text>Settings Imported</Text>
+                            <Text style={{ color: "white" }}>Settings Imported</Text>
                         </AlertDialogTitle>
                         <AlertDialogDescription>
-                            <Text>Settings have been imported successfully.</Text>
+                            <Text style={{ color: "white" }}>Settings have been imported successfully.</Text>
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                         <AlertDialogAction>
-                            <Text>OK</Text>
+                            <Text style={{ color: "black" }}>OK</Text>
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
@@ -483,18 +483,18 @@ const Settings = () => {
                 <AlertDialogContent>
                     <AlertDialogHeader>
                         <AlertDialogTitle>
-                            <Text>Reset Settings to Default</Text>
+                            <Text style={{ color: "white" }}>Reset Settings to Default</Text>
                         </AlertDialogTitle>
-                        <AlertDialogDescription>
-                            <Text>Are you sure you want to reset all settings to their default values? This action cannot be undone and will overwrite your current configuration.</Text>
+                        <AlertDialogDescription style={{ height: 50 }}>
+                            <Text style={{ color: "white" }}>Are you sure you want to reset all settings to their default values? This action cannot be undone and will overwrite your current configuration.</Text>
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                         <AlertDialogCancel onPress={() => setShowResetDialog(false)}>
                             <Text style={{ color: "white" }}>Cancel</Text>
                         </AlertDialogCancel>
-                        <AlertDialogAction onPress={handleResetSettings} style={{ backgroundColor: "#dc2626" }}>
-                            <Text style={{ color: "white" }}>Reset</Text>
+                        <AlertDialogAction onPress={handleResetSettings}>
+                            <Text style={{ color: "black" }}>Reset</Text>
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
