@@ -209,8 +209,8 @@ Debug Mode: ${settings.debug.enableDebugMode ? "✅" : "❌"}
 Minimum Template Match Confidence: ${settings.debug.templateMatchConfidence}
 Custom Scale: ${settings.debug.templateMatchCustomScale / 100}
 Start Template Matching Test: ${settings.debug.debugMode_startTemplateMatchingTest ? "✅" : "❌"}
-Start Single Training Failure OCR Test: ${settings.debug.debugMode_startSingleTrainingFailureOCRTest ? "✅" : "❌"}
-Start Comprehensive Training Failure OCR Test: ${settings.debug.debugMode_startComprehensiveTrainingFailureOCRTest ? "✅" : "❌"}
+Start Single Training OCR Test: ${settings.debug.debugMode_startSingleTrainingOCRTest ? "✅" : "❌"}
+Start Comprehensive Training OCR Test: ${settings.debug.debugMode_startComprehensiveTrainingOCRTest ? "✅" : "❌"}
 Hide String Comparison Results: ${settings.debug.enableHideOCRComparisonResults ? "✅" : "❌"}
 
 ****************************************`

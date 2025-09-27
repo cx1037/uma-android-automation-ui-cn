@@ -354,8 +354,8 @@ const Settings = () => {
                                 debug: {
                                     ...bsc.settings.debug,
                                     debugMode_startTemplateMatchingTest: true,
-                                    debugMode_startSingleTrainingFailureOCRTest: false,
-                                    debugMode_startComprehensiveTrainingFailureOCRTest: false,
+                                    debugMode_startSingleTrainingOCRTest: false,
+                                    debugMode_startComprehensiveTrainingOCRTest: false,
                                 },
                             })
                         } else {
@@ -371,7 +371,7 @@ const Settings = () => {
                 />
 
                 <CustomCheckbox
-                    checked={bsc.settings.debug.debugMode_startSingleTrainingFailureOCRTest}
+                    checked={bsc.settings.debug.debugMode_startSingleTrainingOCRTest}
                     onCheckedChange={(checked) => {
                         if (checked) {
                             // Disable other tests when enabling this one.
@@ -380,24 +380,24 @@ const Settings = () => {
                                 debug: {
                                     ...bsc.settings.debug,
                                     debugMode_startTemplateMatchingTest: false,
-                                    debugMode_startSingleTrainingFailureOCRTest: true,
-                                    debugMode_startComprehensiveTrainingFailureOCRTest: false,
+                                    debugMode_startSingleTrainingOCRTest: true,
+                                    debugMode_startComprehensiveTrainingOCRTest: false,
                                 },
                             })
                         } else {
                             bsc.setSettings({
                                 ...bsc.settings,
-                                debug: { ...bsc.settings.debug, debugMode_startSingleTrainingFailureOCRTest: false },
+                                debug: { ...bsc.settings.debug, debugMode_startSingleTrainingOCRTest: false },
                             })
                         }
                     }}
-                    label="Start Training Failure OCR Test"
-                    description="Disables normal bot operations and starts the training failure OCR test. Only on the Training screen and only tests on the training currently on display for their failure chances."
+                    label="Start Single Training OCR Test"
+                    description="Disables normal bot operations and starts the single training OCR test. Only on the Training screen and tests the current training on display for stat gains and failure chances."
                     style={{ marginTop: 10 }}
                 />
 
                 <CustomCheckbox
-                    checked={bsc.settings.debug.debugMode_startComprehensiveTrainingFailureOCRTest}
+                    checked={bsc.settings.debug.debugMode_startComprehensiveTrainingOCRTest}
                     onCheckedChange={(checked) => {
                         if (checked) {
                             // Disable other tests when enabling this one.
@@ -406,19 +406,19 @@ const Settings = () => {
                                 debug: {
                                     ...bsc.settings.debug,
                                     debugMode_startTemplateMatchingTest: false,
-                                    debugMode_startSingleTrainingFailureOCRTest: false,
-                                    debugMode_startComprehensiveTrainingFailureOCRTest: true,
+                                    debugMode_startSingleTrainingOCRTest: false,
+                                    debugMode_startComprehensiveTrainingOCRTest: true,
                                 },
                             })
                         } else {
                             bsc.setSettings({
                                 ...bsc.settings,
-                                debug: { ...bsc.settings.debug, debugMode_startComprehensiveTrainingFailureOCRTest: false },
+                                debug: { ...bsc.settings.debug, debugMode_startComprehensiveTrainingOCRTest: false },
                             })
                         }
                     }}
                     label="Start Comprehensive Training OCR Test"
-                    description="Disables normal bot operations and starts the comprehensive training OCR test. Only on the Training screen and tests all 5 trainings for their stat gain weights and failure chances."
+                    description="Disables normal bot operations and starts the comprehensive training OCR test. Only on the Training screen and tests all 5 trainings for their stat gains and failure chances."
                     style={{ marginTop: 10 }}
                 />
             </View>
