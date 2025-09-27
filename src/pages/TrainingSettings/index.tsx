@@ -163,7 +163,6 @@ const TrainingSettings = () => {
         setSelectedStats: (value: string[]) => void,
         modalVisible: boolean,
         setModalVisible: React.Dispatch<React.SetStateAction<boolean>>,
-        defaultOrder?: string[],
         description?: string,
         mode: "checkbox" | "priority" = "checkbox"
     ) => (
@@ -243,7 +242,6 @@ const TrainingSettings = () => {
                         (value) => updateTrainingSetting("trainingBlacklist", value),
                         blacklistModalVisible,
                         setBlacklistModalVisible,
-                        undefined,
                         "Select which stats to exclude from training. These stats will be skipped during training sessions.",
                         "checkbox"
                     )}
@@ -254,7 +252,6 @@ const TrainingSettings = () => {
                         (value) => updateTrainingSetting("statPrioritization", value),
                         prioritizationModalVisible,
                         setPrioritizationModalVisible,
-                        ["Speed", "Stamina", "Power", "Guts", "Wit"],
                         "Select the priority order of the stats. The stats will be trained in the order they are selected.",
                         "priority"
                     )}
