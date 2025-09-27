@@ -23,7 +23,7 @@ interface DraggablePriorityListProps {
 }
 
 const DraggablePriorityList: React.FC<DraggablePriorityListProps> = ({ items, selectedItems, onSelectionChange, onOrderChange, className = "", style }) => {
-    const { colors } = useTheme()
+    const { colors, isDark } = useTheme()
 
     const [orderedItems, setOrderedItems] = useState<string[]>(items.map((item) => item.id))
     const dragOrderRef = useRef<string[]>([]) // Track drag order separately
@@ -109,35 +109,34 @@ const DraggablePriorityList: React.FC<DraggablePriorityListProps> = ({ items, se
     }
 
     const renderItem = (info: DragListRenderItemInfo<PriorityItem>) => {
-        const { item, onDragStart, onDragEnd, isActive } = info
+        const { item, onDragStart, onDragEnd } = info
         const isSelected = selectedItems.includes(item.id)
         const priorityNumber = isSelected ? orderedItems.indexOf(item.id) + 1 : null
 
         return (
-            <View key={item.id} className={`mb-2 ${className}`}>
-                <TouchableOpacity
-                    className="flex flex-row items-center gap-2 border border-border rounded-lg p-2"
-                    onPressIn={isSelected ? onDragStart : undefined}
-                    onPressOut={isSelected ? onDragEnd : undefined}
-                    activeOpacity={0.7}
-                >
-                    {/* Priority Number - smaller size */}
-                    {isSelected && (
-                        <View className="w-6 h-6 bg-primary rounded-full items-center justify-center">
-                            <Text className="text-primary-foreground font-bold text-xs">{priorityNumber}</Text>
+            <View key={item.id} style={{ marginVertical: 1 }} className={`mb-2 ${className}`}>
+                <TouchableOpacity style={{ justifyContent: "space-between", backgroundColor: colors.input }} activeOpacity={0.7} className="flex flex-row items-center gap-2 border border-border rounded-lg p-2" onPressIn={isSelected ? onDragStart : undefined} onPressOut={isSelected ? onDragEnd : undefined}>
+                    <View style={{ flex: 1, flexDirection: "row", gap: 10 }}>
+                        {/* Priority Number - smaller size */}
+                        {isSelected && (
+                            <View className="w-6 h-6 bg-primary rounded-full items-center justify-center">
+                                <Text style={{ color: isDark ? "white" : "black" }}>{priorityNumber}</Text>
+                            </View>
+                        )}
+
+                        {/* Checkbox - keep same size */}
+                        <Checkbox id={`priority-${item.id}`} checked={isSelected} onCheckedChange={() => toggleItem(item.id)} />
+
+                        {/* Content - tighter spacing */}
+                        <View className="flex-1 gap-1">
+                            <Label style={{ color: colors.foreground }} className="text-sm" onPress={() => toggleItem(item.id)}>
+                                {item.label}
+                            </Label>
+                            {item.description && <UIText className="text-muted-foreground text-xs">{item.description}</UIText>}
                         </View>
-                    )}
-
-                    {/* Checkbox - keep same size */}
-                    <Checkbox id={`priority-${item.id}`} checked={isSelected} onCheckedChange={() => toggleItem(item.id)} />
-
-                    {/* Content - tighter spacing */}
-                    <View className="flex-1 gap-1">
-                        <Label style={{ color: colors.foreground }} className="text-sm" onPress={() => toggleItem(item.id)}>
-                            {item.label}
-                        </Label>
-                        {item.description && <UIText className="text-muted-foreground text-xs">{item.description}</UIText>}
                     </View>
+
+                    {!isSelected && <View className="w-8" />}
 
                     {/* Drag Handle - smaller and more compact */}
                     {isSelected && (
@@ -152,7 +151,7 @@ const DraggablePriorityList: React.FC<DraggablePriorityListProps> = ({ items, se
 
     return (
         <View style={style}>
-            <Text className="text-sm text-muted-foreground mb-3">Drag items to reorder. Top to bottom = highest to lowest priority.</Text>
+            <Text style={{ fontSize: 14, color: colors.mutedForeground, paddingBottom: 10 }}>Drag items to reorder. Top to bottom = highest to lowest priority.</Text>
 
             {/* Always show the DragList, regardless of selection state */}
             <View>
@@ -162,7 +161,7 @@ const DraggablePriorityList: React.FC<DraggablePriorityListProps> = ({ items, se
                     keyExtractor={(item) => item.id}
                     onReordered={handleReordered}
                     renderItem={renderItem}
-                    style={{ maxHeight: 320 }}
+                    style={{ height: 200 }}
                     onLayout={handleContainerLayout}
                     onContentSizeChange={handleContentSizeChange}
                     showsVerticalScrollIndicator={false}
@@ -170,7 +169,7 @@ const DraggablePriorityList: React.FC<DraggablePriorityListProps> = ({ items, se
 
                 {/* Scroll helper buttons for very long lists */}
                 {contentHeight > containerHeight && (
-                    <View className="flex-row justify-center gap-2 mt-2">
+                    <View style={{flexDirection: "row", justifyContent: "space-between", gap: 2, marginTop: 2}}>
                         <TouchableOpacity style={{ borderColor: colors.primary }} className="px-3 py-1 border rounded" onPress={scrollToTop}>
                             <Text style={{ color: colors.foreground }} className="text-xs">
                                 ↑ Scroll Up
