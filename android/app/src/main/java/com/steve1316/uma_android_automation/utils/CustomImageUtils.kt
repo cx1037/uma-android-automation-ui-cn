@@ -738,7 +738,7 @@ class CustomImageUtils(context: Context, private val game: Game) : ImageUtils(co
 			hsvMat.release()
 			barMat.release()
 
-			if (debugMode) MessageLog.printToLog("[DEBUG] Relationship bar #${index + 1} is $fillPercent% filled with $filledSegments filled segments and the dominant color is $dominantColor", tag = tag)
+			if (debugMode) MessageLog.printToLog("[DEBUG] Relationship bar #${index + 1} is ${decimalFormat.format(fillPercent)}% filled with $filledSegments filled segments and the dominant color is $dominantColor", tag = tag)
 			results.add(BarFillResult(fillPercent, filledSegments, dominantColor))
 		}
 
