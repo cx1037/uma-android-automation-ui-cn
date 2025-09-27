@@ -217,6 +217,7 @@ export const BotStateProvider = ({ children }: any): React.ReactElement => {
         setStopBot,
         refreshAlert,
         setRefreshAlert,
+        defaultSettings,
         settings,
         setSettings: setSettingsWithLogging,
         appVersion,
