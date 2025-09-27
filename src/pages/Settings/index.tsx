@@ -254,10 +254,10 @@ const Settings = () => {
                 </View>
 
                 <View style={styles.errorContainer}>
-                    <Text style={styles.errorText}>
-                        ⚠️ <Text style={{ fontWeight: "bold" }}>File Explorer Note:</Text> To manually access files, you need a file explorer app that can access the /Android/data folder (like CX File
-                        Explorer). Standard file managers will not work.
-                    </Text>
+                    <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+                        <Text style={{ fontWeight: "bold" }}>⚠️ File Explorer Note:</Text>
+                        <Text style={styles.errorText}>To manually access files, you need a file explorer app that can access the /Android/data folder (like CX File Explorer). Standard file managers will not work.</Text>
+                    </View>
                 </View>
             </View>
         )
