@@ -93,7 +93,7 @@ android {
         minSdkVersion libs.versions.app.minSdk.get() as Integer
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion libs.versions.app.targetSdk.get() as Integer
-        versionCode 1
+        versionCode libs.versions.app.versionCode.get() as Integer
         versionName libs.versions.app.versionName.get()
 
         buildConfigField "String", "REACT_NATIVE_RELEASE_LEVEL", "\"${findProperty('reactNativeReleaseLevel') ?: 'stable'}\""
