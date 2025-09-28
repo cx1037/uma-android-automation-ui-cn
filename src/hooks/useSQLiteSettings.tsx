@@ -257,7 +257,7 @@ export const useSQLiteSettings = () => {
 
             logWithTimestamp(`[SQLite] Simple save requested, isSQLiteSaving: ${isSQLiteSaving}`)
 
-            // Clear any existing timeout.
+            // Clear any existing timeout to reset the debounce timer.
             if (saveTimeoutRef.current) {
                 clearTimeout(saveTimeoutRef.current)
             }
