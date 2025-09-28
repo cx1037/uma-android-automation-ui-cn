@@ -282,11 +282,11 @@ Hide String Comparison Results: ${settings.debug.enableHideOCRComparisonResults 
 
     // Font size control functions.
     const increaseFontSize = useCallback(() => {
-        setFontSize((prev) => Math.min(prev + 2, 24))
+        setFontSize((prev) => Math.min(prev + 1, 24))
     }, [])
 
     const decreaseFontSize = useCallback(() => {
-        setFontSize((prev) => Math.max(prev - 2, 8))
+        setFontSize((prev) => Math.max(prev - 1, 8))
     }, [])
 
     // Clear search query.
