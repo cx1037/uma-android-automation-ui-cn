@@ -215,7 +215,7 @@ const TrainingSettings = () => {
                             <CustomButton onPress={() => clearAll(setSelectedStats)} variant="destructive">
                                 Clear All
                             </CustomButton>
-                            <CustomButton onPress={() => selectAll(setSelectedStats)} variant={isDark ? "default" : "outline"}>
+                            <CustomButton onPress={() => selectAll(setSelectedStats)} variant="outline">
                                 Select All
                             </CustomButton>
                         </View>
