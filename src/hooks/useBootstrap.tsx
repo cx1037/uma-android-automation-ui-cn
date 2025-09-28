@@ -45,6 +45,12 @@ export const useBootstrap = () => {
         if (mlc.asyncMessages.length > 0) {
             const newLog = [...mlc.messageLog, ...mlc.asyncMessages]
             mlc.setMessageLog(newLog)
+
+            // If the last async message was to save the Message Log to the log file, clear the async messages array to avoid rare log duplication.
+            const lastMessage = mlc.asyncMessages[mlc.asyncMessages.length - 1]
+            if (lastMessage.includes("Now saving Message Log to file")) {
+                mlc.setAsyncMessages([])
+            }
         }
     }, [mlc.asyncMessages])
 
