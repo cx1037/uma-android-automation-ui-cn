@@ -1,4 +1,4 @@
-import Constants from "expo-constants"
+import * as Application from "expo-application"
 import MessageLog from "../../components/MessageLog"
 import { useContext, useEffect, useState } from "react"
 import { BotStateContext } from "../../context/BotStateContext"
@@ -59,10 +59,13 @@ const Home = () => {
         getVersion()
     }, [])
 
-    // Grab the program version.
+    // Grab the program name and version.
     const getVersion = () => {
-        const version = Constants.expoConfig?.version || "1.0.0"
+        const appName = Application.applicationName || "App"
+        var version = Application.nativeApplicationVersion || "0.0.0"
+        version += " (" + (Application.nativeBuildVersion || "0") + ")"
         logWithTimestamp("Android app version is " + version)
+        bsc.setAppName(appName)
         bsc.setAppVersion(version)
     }
 

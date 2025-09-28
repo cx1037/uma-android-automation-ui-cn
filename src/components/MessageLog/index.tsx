@@ -1,4 +1,3 @@
-import Constants from "expo-constants"
 import { useContext, useState, useMemo, useCallback } from "react"
 import { MessageLogContext } from "../../context/MessageLogContext"
 import { BotStateContext } from "../../context/BotStateContext"
@@ -115,9 +114,6 @@ const MessageLog = () => {
     const [showErrorDialog, setShowErrorDialog] = useState(false)
     const [errorMessage, setErrorMessage] = useState("")
 
-    const appName = Constants.expoConfig?.name || "App"
-    const appVersion = Constants.expoConfig?.version || "1.0.0"
-
     const showError = useCallback((message: string) => {
         setErrorMessage(message)
         setShowErrorDialog(true)
@@ -165,7 +161,7 @@ const MessageLog = () => {
         const longTargetsString = `Long: \n\t\tSpeed: ${settings.trainingStatTarget.trainingLongStatTarget_speedStatTarget}\t\tStamina: ${settings.trainingStatTarget.trainingLongStatTarget_staminaStatTarget}\t\tPower: ${settings.trainingStatTarget.trainingLongStatTarget_powerStatTarget}\n\t\tGuts: ${settings.trainingStatTarget.trainingLongStatTarget_gutsStatTarget}\t\t\tWit: ${settings.trainingStatTarget.trainingLongStatTarget_witStatTarget}`
 
         return `****************************************
-Welcome to ${appName} v${appVersion}
+Welcome to ${bsc.appName} v${bsc.appVersion}
 ****************************************
 
 Campaign Selected: ${campaignString}
@@ -214,11 +210,11 @@ Start Comprehensive Training OCR Test: ${settings.debug.debugMode_startComprehen
 Hide String Comparison Results: ${settings.debug.enableHideOCRComparisonResults ? "✅" : "❌"}
 
 ****************************************`
-    }, [bsc.settings, appName, appVersion])
+    }, [bsc.settings, bsc.appName, bsc.appVersion])
 
     const introMessage = bsc.settings.misc.enableSettingsDisplay
         ? formatSettings()
-        : `****************************************\nWelcome to ${appName} v${appVersion}\n****************************************`
+        : `****************************************\nWelcome to ${bsc.appName} v${bsc.appVersion}\n****************************************`
 
     // Process log messages with color coding and virtualization.
     const processedMessages = useMemo((): LogMessage[] => {
