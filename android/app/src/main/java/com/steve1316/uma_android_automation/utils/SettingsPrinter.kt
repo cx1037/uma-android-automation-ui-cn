@@ -77,8 +77,8 @@ object SettingsPrinter {
 		val confidence: Int = SettingsHelper.getIntSetting("debug", "templateMatchConfidence")
 		val customScale: Int = SettingsHelper.getIntSetting("debug", "templateMatchCustomScale")
 		val debugModeStartTemplateMatchingTest: Boolean = SettingsHelper.getBooleanSetting("debug", "debugMode_startTemplateMatchingTest")
-		val debugModeStartSingleTrainingFailureOCRTest: Boolean = SettingsHelper.getBooleanSetting("debug", "debugMode_startSingleTrainingFailureOCRTest")
-		val debugModeStartComprehensiveTrainingFailureOCRTest: Boolean = SettingsHelper.getBooleanSetting("debug", "debugMode_startComprehensiveTrainingFailureOCRTest")
+		val debugModeStartSingleTrainingOCRTest: Boolean = SettingsHelper.getBooleanSetting("debug", "debugMode_startSingleTrainingOCRTest")
+		val debugModeStartComprehensiveTrainingOCRTest: Boolean = SettingsHelper.getBooleanSetting("debug", "debugMode_startComprehensiveTrainingOCRTest")
 		val hideComparisonResults: Boolean = SettingsHelper.getBooleanSetting("debug", "enableHideOCRComparisonResults")
 
 
@@ -199,8 +199,8 @@ object SettingsPrinter {
 			appendLine("Minimum Template Match Confidence: $confidence")
 			appendLine("Custom Scale: ${customScale.toDouble() / 100.0}")
 			appendLine("Start Template Matching Test: ${if (debugModeStartTemplateMatchingTest) "✅" else "❌"}")
-			appendLine("Start Single Training Failure OCR Test: ${if (debugModeStartSingleTrainingFailureOCRTest) "✅" else "❌"}")
-			appendLine("Start Comprehensive Training Failure OCR Test: ${if (debugModeStartComprehensiveTrainingFailureOCRTest) "✅" else "❌"}")
+			appendLine("Start Single Training OCR Test: ${if (debugModeStartSingleTrainingOCRTest) "✅" else "❌"}")
+			appendLine("Start Comprehensive Training OCR Test: ${if (debugModeStartComprehensiveTrainingOCRTest) "✅" else "❌"}")
 			appendLine("Hide String Comparison Results: ${if (hideComparisonResults) "✅" else "❌"}")
 		}
 
