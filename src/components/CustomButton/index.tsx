@@ -16,25 +16,25 @@ interface CustomButtonProps extends PressableProps {
 }
 
 const CustomButton: React.FC<CustomButtonProps> = ({ variant = "default", size = "default", style, className = "", disabled = false, isLoading = false, fontSize, children, ...props }) => {
-    const { colors } = useTheme()
+    const { colors, isDark } = useTheme()
 
     // Determine the background color based on variant and theme.
     const getBackgroundColor = () => {
-        if (disabled) return "opacity-50"
+        if (disabled) return { opacity: 0.5 }
 
         switch (variant) {
             case "destructive":
-                return "bg-destructive"
+                return { backgroundColor: colors.destructive }
             case "outline":
-                return "border-border bg-background"
+                return { backgroundColor: isDark ? "black" : "white" }
             case "secondary":
-                return "bg-secondary"
+                return { backgroundColor: colors.secondary }
             case "ghost":
-                return "transparent"
+                return { backgroundColor: "transparent" }
             case "link":
-                return "transparent"
+                return { backgroundColor: "transparent" }
             default:
-                return "bg-primary"
+                return {}
         }
     }
 
@@ -44,15 +44,15 @@ const CustomButton: React.FC<CustomButtonProps> = ({ variant = "default", size =
 
         switch (variant) {
             case "destructive":
-                return "text-white"
+                return "text-secondary-foreground"
             case "outline":
-                return "text-foreground"
+                return isDark ? "text-secondary-foreground" : "text-primary-foreground"
             case "secondary":
                 return "text-secondary-foreground"
             case "ghost":
-                return "text-foreground"
+                return isDark ? "text-secondary-foreground" : "text-primary-foreground"
             case "link":
-                return "text-primary"
+                return isDark ? "text-secondary-foreground" : "text-primary-foreground"
             default:
                 return "text-primary-foreground"
         }
@@ -66,22 +66,18 @@ const CustomButton: React.FC<CustomButtonProps> = ({ variant = "default", size =
             case "destructive":
                 return { backgroundColor: colors.destructive }
             case "outline":
-                return {
-                    backgroundColor: colors.background,
-                    borderColor: colors.border,
-                    borderWidth: 1,
-                }
+                return { borderColor: isDark ? "white" : "black" }
             case "secondary":
-                return { backgroundColor: colors.secondary }
+                return { backgroundColor: isDark ? colors.secondary : colors.primary }
             case "default":
-                return { backgroundColor: colors.primary }
+                return { backgroundColor: isDark ? colors.primary : colors.secondary }
             default:
                 return {}
         }
     }
 
     return (
-        <Button variant={variant} size={size} className={`${getBackgroundColor()} ${className}`} style={[getCustomStyle(), style]} disabled={disabled} {...props}>
+        <Button variant={variant} size={size} style={[getBackgroundColor(), getCustomStyle(), style]} disabled={disabled} {...props}>
             {isLoading && <ActivityIndicator size="small" color="#ffffff" />}
             <Text className={`${getTextColor()}`} style={fontSize ? { fontSize: fontSize } : undefined}>
                 {children}
