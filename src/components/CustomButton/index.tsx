@@ -40,21 +40,17 @@ const CustomButton: React.FC<CustomButtonProps> = ({ variant = "default", size =
 
     // Determine the text color based on variant and theme.
     const getTextColor = () => {
-        if (disabled) return "opacity-50"
+        if (disabled) return { opacity: 0.5 }
 
         switch (variant) {
             case "destructive":
-                return "text-secondary-foreground"
+                return { color: "white" }
             case "outline":
-                return isDark ? "text-secondary-foreground" : "text-primary-foreground"
+                return { color: isDark ? "white" : "black" }
             case "secondary":
-                return "text-secondary-foreground"
-            case "ghost":
-                return isDark ? "text-secondary-foreground" : "text-primary-foreground"
-            case "link":
-                return isDark ? "text-secondary-foreground" : "text-primary-foreground"
+                return { color: isDark ? "black" : "white" }
             default:
-                return "text-primary-foreground"
+                return { color: "black" }
         }
     }
 
@@ -79,9 +75,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({ variant = "default", size =
     return (
         <Button variant={variant} size={size} style={[getBackgroundColor(), getCustomStyle(), style]} disabled={disabled} {...props}>
             {isLoading && <ActivityIndicator size="small" color="#ffffff" />}
-            <Text className={`${getTextColor()}`} style={fontSize ? { fontSize: fontSize } : undefined}>
-                {children}
-            </Text>
+            <Text style={[getTextColor(), fontSize ? { fontSize: fontSize } : undefined]}>{children}</Text>
         </Button>
     )
 }

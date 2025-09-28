@@ -362,7 +362,7 @@ Hide String Comparison Results: ${settings.debug.enableHideOCRComparisonResults 
                             <Type size={16} color="white" />
                         </TouchableOpacity>
                     </PopoverTrigger>
-                    <PopoverContent className="w-auto p-2" align="end" side="bottom">
+                    <PopoverContent className="bg-black w-auto p-2" align="end" side="bottom">
                         <View style={styles.popoverContentContainer}>
                             <Text style={styles.fontSizeDisplay}>Font Size: {fontSize}pt</Text>
                             <View style={styles.popoverButtonContainer}>
