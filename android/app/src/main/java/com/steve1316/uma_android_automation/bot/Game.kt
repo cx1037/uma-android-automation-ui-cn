@@ -338,9 +338,9 @@ class Game(val myContext: Context) {
 	}
 
 	/**
-	 * Handles the test to perform OCR on the training failure chance for the current training on display.
+	 * Handles the test to perform OCR on the current training on display for stat gains and failure chance.
 	 */
-	fun startSingleTrainingFailureOCRTest() {
+	fun startSingleTrainingOCRTest() {
 		printToLog("\n[TEST] Now beginning Single Training Failure OCR test on the Training screen for the current training on display.")
 		printToLog("[TEST] Note that this test is dependent on having the correct scale.")
 		val failureChance: Int = imageUtils.findTrainingFailureChance()
@@ -352,10 +352,10 @@ class Game(val myContext: Context) {
 	}
 
 	/**
-	 * Handles the test to perform OCR on training failure chances for all 5 of the trainings on display.
+	 * Handles the test to perform OCR on all 5 trainings on display for stat gains and failure chances.
 	 */
-	fun startComprehensiveTrainingFailureOCRTest() {
-		printToLog("\n[TEST] Now beginning Comprehensive Training Failure OCR test on the Training screen for all 5 trainings on display.")
+	fun startComprehensiveTrainingOCRTest() {
+		printToLog("\n[TEST] Now beginning Comprehensive Training OCR test on the Training screen for all 5 trainings on display.")
 		printToLog("[TEST] Note that this test is dependent on having the correct scale.")
 		analyzeTrainings(test = true)
 		printTrainingMap()
@@ -1953,10 +1953,10 @@ class Game(val myContext: Context) {
 		// Start debug tests here if enabled. Otherwise, proceed with regular bot operations.
 		if (SettingsHelper.getBooleanSetting("debug", "debugMode_startTemplateMatchingTest")) {
 			startTemplateMatchingTest()
-		} else if (SettingsHelper.getBooleanSetting("debug", "debugMode_startSingleTrainingFailureOCRTest")) {
-			startSingleTrainingFailureOCRTest()
-		} else if (SettingsHelper.getBooleanSetting("debug", "debugMode_startComprehensiveTrainingFailureOCRTest")) {
-			startComprehensiveTrainingFailureOCRTest()
+		} else if (SettingsHelper.getBooleanSetting("debug", "debugMode_startSingleTrainingOCRTest")) {
+			startSingleTrainingOCRTest()
+		} else if (SettingsHelper.getBooleanSetting("debug", "debugMode_startComprehensiveTrainingOCRTest")) {
+			startComprehensiveTrainingOCRTest()
 		} else {
 			// Update the stat targets by distances.
 			setStatTargetsByDistances()
