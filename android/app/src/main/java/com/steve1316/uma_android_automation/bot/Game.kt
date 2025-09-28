@@ -341,14 +341,10 @@ class Game(val myContext: Context) {
 	 * Handles the test to perform OCR on the current training on display for stat gains and failure chance.
 	 */
 	fun startSingleTrainingOCRTest() {
-		printToLog("\n[TEST] Now beginning Single Training Failure OCR test on the Training screen for the current training on display.")
+		printToLog("\n[TEST] Now beginning Single Training OCR test on the Training screen for the current training on display.")
 		printToLog("[TEST] Note that this test is dependent on having the correct scale.")
-		val failureChance: Int = imageUtils.findTrainingFailureChance()
-		if (failureChance == -1) {
-			printToLog("[ERROR] Training Failure Chance detection failed.", isError = true)
-		} else {
-			printToLog("[TEST] Training Failure Chance: $failureChance")
-		}
+		analyzeTrainings(test = true, singleTraining = true)
+		printTrainingMap()
 	}
 
 	/**
@@ -578,8 +574,9 @@ class Game(val myContext: Context) {
 	 * Analyze all 5 Trainings for their details including stat gains, relationship bars, etc.
 	 *
 	 * @param test Flag that forces the failure chance through even if it is not in the acceptable range for testing purposes.
+	 * @param singleTraining Flag that forces only singular training analysis for the current training on the screen.
 	 */
-	private fun analyzeTrainings(test: Boolean = false) {
+	private fun analyzeTrainings(test: Boolean = false, singleTraining: Boolean = false) {
 		printToLog("\n[TRAINING] Now starting process to analyze all 5 Trainings.")
 
 		// Acquire the position of the speed stat text.
@@ -591,7 +588,7 @@ class Game(val myContext: Context) {
 
 		if (speedStatTextLocation != null) {
 			// Perform a percentage check of Speed training to see if the bot has enough energy to do training. As a result, Speed training will be the one selected for the rest of the algorithm.
-			if (imageUtils.findImage("speed_training_header", tries = 1, region = imageUtils.regionTopHalf, suppressError = true).first == null) {
+			if (!singleTraining && imageUtils.findImage("speed_training_header", tries = 1, region = imageUtils.regionTopHalf, suppressError = true).first == null) {
 				findAndTapImage("training_speed", region = imageUtils.regionBottomHalf)
 				wait(0.5)
 			}
@@ -610,6 +607,14 @@ class Game(val myContext: Context) {
 					if (blacklist.getOrElse(index) { "" } == training) {
 						printToLog("[TRAINING] Skipping $training training due to being blacklisted.")
 						return@forEachIndexed
+					}
+
+					if (singleTraining) {
+						val trainingHeader = "${training.lowercase()}_training_header"
+						if (imageUtils.findImage(trainingHeader, tries = 1, region = imageUtils.regionTopHalf, suppressError = true).first == null) {
+							// Keep iterating until the current training is found.
+							return@forEachIndexed
+						}
 					}
 
 					// Select the Training to make it active except Speed Training since that is already selected at the start.
@@ -631,7 +636,7 @@ class Game(val myContext: Context) {
 						}
 					}
 
-					if (newX != 0.0) {
+					if (newX != 0.0 && !singleTraining) {
 						if (imageUtils.isTablet) {
 							if (training == "Stamina") {
 								tap(
@@ -723,9 +728,16 @@ class Game(val myContext: Context) {
 						relationshipBars = relationshipBars
 					)
 					trainingMap.put(training, newTraining)
+					if (singleTraining) {
+						return@forEachIndexed
+					}
 				}
 
-				printToLog("[TRAINING] Process to analyze all 5 Trainings complete.")
+				if (singleTraining) {
+					printToLog("[TRAINING] Process to analyze the singular Training complete.")
+				} else {
+					printToLog("[TRAINING] Process to analyze all 5 Trainings complete.")
+				}
 			} else {
 				// Clear the Training map if the bot failed to have enough energy to conduct the training.
 				printToLog("[TRAINING] $failureChance% is not within acceptable range of ${maximumFailureChance}%. Proceeding to recover energy.")
