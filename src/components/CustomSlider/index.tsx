@@ -119,6 +119,8 @@ const CustomSlider: React.FC<CustomSliderProps> = ({
             fontSize: 18,
             fontWeight: "600",
             color: colors.foreground,
+            backgroundColor: colors.input,
+            borderColor: colors.foreground,
         },
         unitText: {
             fontSize: 18,
