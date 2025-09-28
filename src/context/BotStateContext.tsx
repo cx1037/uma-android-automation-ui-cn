@@ -176,6 +176,8 @@ export interface BotStateProviderProps {
     defaultSettings: Settings
     settings: Settings
     setSettings: (settings: Settings) => void
+    appName: string
+    setAppName: (appName: string) => void
     appVersion: string
     setAppVersion: (appVersion: string) => void
 }
@@ -189,6 +191,7 @@ export const BotStateProvider = ({ children }: any): React.ReactElement => {
     const [startBot, setStartBot] = useState<boolean>(false)
     const [stopBot, setStopBot] = useState<boolean>(false)
     const [refreshAlert, setRefreshAlert] = useState<boolean>(false)
+    const [appName, setAppName] = useState<string>("")
     const [appVersion, setAppVersion] = useState<string>("")
 
     // Create a deep copy of default settings to avoid reference issues.
@@ -221,6 +224,8 @@ export const BotStateProvider = ({ children }: any): React.ReactElement => {
         defaultSettings,
         settings,
         setSettings: setSettingsWithLogging,
+        appName,
+        setAppName,
         appVersion,
         setAppVersion,
     }
