@@ -157,7 +157,7 @@ const DraggablePriorityList: React.FC<DraggablePriorityListProps> = ({ items, se
 
     return (
         <View style={style}>
-            <Text style={{ fontSize: 14, color: colors.mutedForeground, paddingBottom: 10 }}>Drag items to reorder. Top to bottom = highest to lowest priority.</Text>
+            <Text style={{ fontSize: 12, color: colors.mutedForeground, paddingBottom: 10 }}>Drag items to reorder. Top to bottom = highest to lowest priority.</Text>
 
             {/* Always show the DragList, regardless of selection state */}
             <View>
@@ -175,7 +175,7 @@ const DraggablePriorityList: React.FC<DraggablePriorityListProps> = ({ items, se
 
                 {/* Scroll helper buttons for very long lists */}
                 {contentHeight > containerHeight && (
-                    <View style={{ flexDirection: "row", justifyContent: "space-between", gap: 2, marginTop: 2 }}>
+                    <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 10 }}>
                         <TouchableOpacity style={{ borderColor: colors.primary }} className="px-3 py-1 border rounded" onPress={scrollToTop}>
                             <Text style={{ color: colors.foreground }} className="text-xs">
                                 ↑ Scroll Up
@@ -191,7 +191,7 @@ const DraggablePriorityList: React.FC<DraggablePriorityListProps> = ({ items, se
             </View>
 
             {/* Show message below the list when no items are selected */}
-            {selectedItems.length === 0 && <Text className="text-center text-muted-foreground py-4">No stats selected. Select stats to set priority order.</Text>}
+            {selectedItems.length === 0 && <Text style={{ fontSize: 12, color: colors.mutedForeground, paddingTop: 10 }}>No stats selected. Select stats to set priority order.</Text>}
         </View>
     )
 }
