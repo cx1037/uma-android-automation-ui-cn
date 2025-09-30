@@ -42,6 +42,7 @@ class StartModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
     }
     
     private val context: Context = reactContext.applicationContext
+    private var messageId = 1
 
     init {
         StartModule.reactContext = reactContext
@@ -281,6 +282,7 @@ class StartModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
     fun sendEvent(eventName: String, message: String) {
         val params = Arguments.createMap()
         params.putString("message", message)
+        params.putInt("id", messageId++)
         if (emitter == null) {
             // Register the event emitter to send messages to JS.
             Log.d(tag, "Event emitter not found to be able to send messages to the frontend. Registering now.")
