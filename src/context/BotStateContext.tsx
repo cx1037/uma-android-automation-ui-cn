@@ -165,14 +165,6 @@ export const defaultSettings: Settings = {
 export interface BotStateProviderProps {
     readyStatus: boolean
     setReadyStatus: (readyStatus: boolean) => void
-    isBotRunning: boolean
-    setIsBotRunning: (isBotRunning: boolean) => void
-    startBot: boolean
-    setStartBot: (startBot: boolean) => void
-    stopBot: boolean
-    setStopBot: (stopBot: boolean) => void
-    refreshAlert: boolean
-    setRefreshAlert: (refreshAlert: boolean) => void
     defaultSettings: Settings
     settings: Settings
     setSettings: (settings: Settings) => void
@@ -187,10 +179,6 @@ export const BotStateContext = createContext<BotStateProviderProps>({} as BotSta
 // https://stackoverflow.com/a/60130448 and https://stackoverflow.com/a/60198351
 export const BotStateProvider = ({ children }: any): React.ReactElement => {
     const [readyStatus, setReadyStatus] = useState<boolean>(false)
-    const [isBotRunning, setIsBotRunning] = useState<boolean>(false)
-    const [startBot, setStartBot] = useState<boolean>(false)
-    const [stopBot, setStopBot] = useState<boolean>(false)
-    const [refreshAlert, setRefreshAlert] = useState<boolean>(false)
     const [appName, setAppName] = useState<string>("")
     const [appVersion, setAppVersion] = useState<string>("")
 
@@ -213,14 +201,6 @@ export const BotStateProvider = ({ children }: any): React.ReactElement => {
     const providerValues: BotStateProviderProps = {
         readyStatus,
         setReadyStatus,
-        isBotRunning,
-        setIsBotRunning,
-        startBot,
-        setStartBot,
-        stopBot,
-        setStopBot,
-        refreshAlert,
-        setRefreshAlert,
         defaultSettings,
         settings,
         setSettings: setSettingsWithLogging,
