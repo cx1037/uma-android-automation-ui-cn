@@ -56,7 +56,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
     return (
         <Select onValueChange={handleValueChange} value={value as any} defaultValue={defaultValue as any} disabled={disabled}>
             <View ref={triggerRef} style={[{ width: width as any }, style]} onLayout={onTriggerLayout}>
-                <SelectTrigger>
+                <SelectTrigger style={{ backgroundColor: "white" }}>
                     <SelectValue placeholder={value || placeholder} style={{ color: "black" }} />
                 </SelectTrigger>
             </View>
