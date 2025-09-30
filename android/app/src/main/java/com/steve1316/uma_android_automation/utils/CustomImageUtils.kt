@@ -17,6 +17,7 @@ import org.opencv.imgproc.Imgproc
 import java.lang.Integer.max
 import androidx.core.graphics.scale
 import androidx.core.graphics.createBitmap
+import com.steve1316.automation_library.data.SharedData
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import kotlin.collections.component1
@@ -155,7 +156,6 @@ class CustomImageUtils(context: Context, private val game: Game) : ImageUtils(co
 
 		// Thresh the grayscale cropped image to make it black and white.
 		val bwImage = Mat()
-		val threshold = sharedPreferences.getInt("threshold", 230)
 		Imgproc.threshold(cvImage, bwImage, threshold.toDouble() + increment, 255.0, Imgproc.THRESH_BINARY)
 		if (debugMode) Imgcodecs.imwrite("$matchFilePath/debugEventTitleText_afterThreshold.png", bwImage)
 
@@ -325,7 +325,6 @@ class CustomImageUtils(context: Context, private val game: Game) : ImageUtils(co
 
 			// Thresh the grayscale cropped image to make it black and white.
 			val bwImage = Mat()
-			val threshold = sharedPreferences.getInt("threshold", 230)
 			Imgproc.threshold(cvImage, bwImage, threshold.toDouble(), 255.0, Imgproc.THRESH_BINARY)
 			if (debugMode) Imgcodecs.imwrite("$matchFilePath/debugDayForExtraRace_afterThreshold.png", bwImage)
 
@@ -445,7 +444,6 @@ class CustomImageUtils(context: Context, private val game: Game) : ImageUtils(co
 
 			// Thresh the grayscale cropped image to make it black and white.
 			val bwImage = Mat()
-			val threshold = sharedPreferences.getInt("threshold", 230)
 			Imgproc.threshold(cvImage, bwImage, threshold.toDouble(), 255.0, Imgproc.THRESH_BINARY)
 			if (debugMode) Imgcodecs.imwrite("$matchFilePath/debugExtraRaceFans_afterThreshold.png", bwImage)
 
@@ -519,7 +517,6 @@ class CustomImageUtils(context: Context, private val game: Game) : ImageUtils(co
 
 			// Thresh the grayscale cropped image to make it black and white.
 			val bwImage = Mat()
-			val threshold = sharedPreferences.getInt("threshold", 230)
 			Imgproc.threshold(cvImage, bwImage, threshold.toDouble(), 255.0, Imgproc.THRESH_BINARY)
 			if (debugMode) Imgcodecs.imwrite("$matchFilePath/debugSkillPoints_afterThreshold.png", bwImage)
 
