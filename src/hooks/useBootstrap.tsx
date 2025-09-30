@@ -23,9 +23,11 @@ export const useBootstrap = () => {
 
     useEffect(() => {
         // Listen for messages from the Android automation service.
-        DeviceEventEmitter.addListener("MessageLog", (data: any) => {
+        const messageLogSubscription = DeviceEventEmitter.addListener("MessageLog", (data: any) => {
             mlc.addMessageToLog(data.id, data.message)
         })
+
+        return () => messageLogSubscription.remove()
     }, [])
 
     // Wait for SQLite database initialization to complete before marking app as ready.

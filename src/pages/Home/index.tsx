@@ -45,17 +45,22 @@ const Home = () => {
     const { saveSettings } = useSettings()
 
     useEffect(() => {
-        DeviceEventEmitter.addListener("MediaProjectionService", (data) => {
+        const mediaProjectionSubscription = DeviceEventEmitter.addListener("MediaProjectionService", (data) => {
             setIsRunning(data["message"] === "Running")
         })
 
-        DeviceEventEmitter.addListener("BotService", (data) => {
+        const botServiceSubscription = DeviceEventEmitter.addListener("BotService", (data) => {
             if (data["message"] === "Running") {
                 mlc.setMessageLog([])
             }
         })
 
         getVersion()
+
+        return () => {
+            mediaProjectionSubscription.remove()
+            botServiceSubscription.remove()
+        }
     }, [])
 
     // Grab the program name and version.
