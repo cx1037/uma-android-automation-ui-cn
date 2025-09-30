@@ -1093,12 +1093,76 @@ class CustomImageUtils(context: Context, private val game: Game) : ImageUtils(co
 				MessageLog.printToLog("[ERROR] Stat processing timed out for $trainingName training.", tag = tag, isError = true)
 			}
 
-			MessageLog.printToLog("[INFO] All 5 stat regions processed. Results: ${threadSafeResults.contentToString()}", tag = tag)
+			// Apply artificial boost to main stat gains if they appear lower than side-effect stats.
+			val boostedResults = applyStatGainBoost(trainingName, threadSafeResults, statNames, trainingToStatIndices)
+			return boostedResults
 		} else {
 			MessageLog.printToLog("[ERROR] Could not find the skill points location to start determining stat gains for $trainingName training.", tag = tag, isError = true)
 		}
 
 		return threadSafeResults
+	}
+
+	/**
+	 * Applies artificial boost to main stat gains when they appear lower than side-effect stats due to OCR failure.
+	 * 
+	 * @param trainingName Name of the training type (Speed, Stamina, Power, Guts, Wit).
+	 * @param statGains Array of 5 stat gains.
+	 * @param statNames List of stat names in order.
+	 * @param trainingToStatIndices Mapping of training types to their affected stat indices.
+	 * @return Array of stat gains with potential artificial boost applied to main stat.
+	 */
+	private fun applyStatGainBoost(trainingName: String, statGains: IntArray, statNames: List<String>, trainingToStatIndices: Map<String, List<Int>>): IntArray {
+		val boostedResults = statGains.clone()
+		
+		// Define the main stat index for each training type.
+		val mainStatIndex = when (trainingName) {
+			"Speed" -> 0
+			"Stamina" -> 1
+			"Power" -> 2
+			"Guts" -> 3
+			"Wit" -> 4
+			else -> return boostedResults
+		}
+		
+		// Get the stat indices affected by this training type and filter out the main stat to get side-effects.
+		val affectedIndices = trainingToStatIndices[trainingName] ?: return boostedResults
+		val sideEffectIndices = affectedIndices.filter { it != mainStatIndex }
+		
+		val mainStatGain = boostedResults[mainStatIndex]
+		val mainStatName = statNames[mainStatIndex]
+		
+		// Check if any side-effect stat has a higher gain than the main stat.
+		val maxSideEffectGain = sideEffectIndices.maxOfOrNull { boostedResults[it] } ?: 0
+		
+		if (mainStatGain > 0 && maxSideEffectGain > mainStatGain) {
+			// Set main stat to be 10 points higher than the highest side-effect stat.
+			val originalGain = boostedResults[mainStatIndex]
+			boostedResults[mainStatIndex] = maxSideEffectGain + 10
+			Log.d(tag,
+				"[DEBUG] Artificially increased $mainStatName stat gain from $originalGain to ${boostedResults[mainStatIndex]} due to possible OCR failure. " +
+				"Side-effect stats had higher gains: ${sideEffectIndices.joinToString(", ") { "${statNames[it]} = ${boostedResults[it]}" }}"
+			)
+		} else if (mainStatGain == 0) {
+			// Set main stat to be 10 points higher than the highest side-effect stat when main stat is 0.
+			boostedResults[mainStatIndex] = maxSideEffectGain + 10
+			Log.d(tag, "[DEBUG] Artificially increased $mainStatName stat gain to ${boostedResults[mainStatIndex]} due to possible OCR failure of 0 gains for the main stat. " +
+				"Based on highest side-effect: ${sideEffectIndices.joinToString(", ") { "${statNames[it]} = ${boostedResults[it]}" }}"
+			)
+		}
+
+		// If the side-effect stat gains were zeroes, boost them to half of the main stat gain.
+		val boostedMainStatGain = boostedResults[mainStatIndex]
+		sideEffectIndices.forEach { idx ->
+			if (boostedResults[idx] == 0 && boostedMainStatGain > 0) {
+				boostedResults[idx] = boostedMainStatGain / 2
+				Log.d(tag, "[DEBUG] Artificially increased ${statNames[idx]} side-effect stat gain to ${boostedResults[idx]} because it was 0 due to possible OCR failure. " +
+						"Based on half of boosted $mainStatName = $boostedMainStatGain."
+				)
+			}
+		}
+		
+		return boostedResults
 	}
 
 	/**
