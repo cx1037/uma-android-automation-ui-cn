@@ -1,11 +1,9 @@
-import { createContext, useState } from "react"
+import { createContext, useState, useRef } from "react"
 
 export interface MessageLogProviderProps {
     messageLog: string[]
-    setMessageLog: (messageLog: string[]) => void
-    asyncMessages: string[]
-    setAsyncMessages: (asyncMessages: string[]) => void
-    addMessageToAsyncMessages: (message: string) => void
+    setMessageLog: React.Dispatch<React.SetStateAction<string[]>>
+    addMessageToLog: (id: number, message: string) => void
 }
 
 export const MessageLogContext = createContext<MessageLogProviderProps>({} as MessageLogProviderProps)
@@ -13,18 +11,22 @@ export const MessageLogContext = createContext<MessageLogProviderProps>({} as Me
 // https://stackoverflow.com/a/60130448 and https://stackoverflow.com/a/60198351
 export const MessageLogProvider = ({ children }: any): React.ReactElement => {
     const [messageLog, setMessageLog] = useState<string[]>([])
-    const [asyncMessages, setAsyncMessages] = useState<string[]>([])
+    const lastSeenId = useRef(0)
 
-    const addMessageToAsyncMessages = (message: string) => {
-        setAsyncMessages(prev => [...prev, message])
+    // Add to the message log while keeping track of the sequential message IDs to prevent duplication.
+    const addMessageToLog = (id: number, message: string) => {
+        if (id <= lastSeenId.current) {
+            return
+        }
+
+        lastSeenId.current = id
+        setMessageLog((prev) => [...prev, message])
     }
 
     const providerValues: MessageLogProviderProps = {
         messageLog,
         setMessageLog,
-        asyncMessages,
-        setAsyncMessages,
-        addMessageToAsyncMessages,
+        addMessageToLog,
     }
 
     return <MessageLogContext.Provider value={providerValues}>{children}</MessageLogContext.Provider>

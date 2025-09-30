@@ -16,7 +16,6 @@ export const useBootstrap = () => {
 
     const bsc = useContext(BotStateContext) as BotStateProviderProps
     const mlc = useContext(MessageLogContext) as MessageLogProviderProps
-    const { addMessageToAsyncMessages } = mlc
 
     // Hook for managing settings persistence.
     const { saveSettingsImmediate } = useSettings()
@@ -25,7 +24,7 @@ export const useBootstrap = () => {
     useEffect(() => {
         // Listen for messages from the Android automation service.
         DeviceEventEmitter.addListener("MessageLog", (data: any) => {
-            addMessageToAsyncMessages(data["message"])
+            mlc.addMessageToLog(data.id, data.message)
         })
     }, [])
 
@@ -38,21 +37,6 @@ export const useBootstrap = () => {
             logWithTimestamp("[Bootstrap] App initialization complete")
         }
     }, [isSQLiteInitialized])
-
-    // Process async messages and add them to the message log.
-    // IMPORTANT: This is how the message log gets updated with the messages from the async messages array.
-    useEffect(() => {
-        if (mlc.asyncMessages.length > 0) {
-            const newLog = [...mlc.messageLog, ...mlc.asyncMessages]
-            mlc.setMessageLog(newLog)
-
-            // If the last async message was to save the Message Log to the log file, clear the async messages array to avoid rare log duplication.
-            const lastMessage = mlc.asyncMessages[mlc.asyncMessages.length - 1]
-            if (lastMessage.includes("Now saving Message Log to file")) {
-                mlc.setAsyncMessages([])
-            }
-        }
-    }, [mlc.asyncMessages])
 
     // Save settings when app goes to background or is about to close.
     useEffect(() => {

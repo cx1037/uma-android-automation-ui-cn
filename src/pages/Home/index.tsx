@@ -51,7 +51,6 @@ const Home = () => {
 
         DeviceEventEmitter.addListener("BotService", (data) => {
             if (data["message"] === "Running") {
-                mlc.setAsyncMessages([])
                 mlc.setMessageLog([])
             }
         })
