@@ -1071,7 +1071,7 @@ class CustomImageUtils(context: Context, private val game: Game) : ImageUtils(co
 								}
 							}
 
-							Imgcodecs.imwrite("$matchFilePath/debug_trainingStatGain_${statNames[i]}_thread${i + 1}.png", resultMat)
+							Imgcodecs.imwrite("$matchFilePath/debug_${trainingName}TrainingStatGain_${statNames[i]}.png", resultMat)
 						}
 
 						sourceMat.release()
