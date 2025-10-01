@@ -26,6 +26,7 @@ This project is purely for educational purposes to learn about Android automatio
             -   4GB Memory
             -   Display resolution set to Portrait 1080 x 1920
             -   Pixel density 240 DPI (Medium)
+-   The in-game graphics need to be set to `Standard` instead of `Basic` for best performance.
 
 # Features
 
