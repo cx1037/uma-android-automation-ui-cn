@@ -54,7 +54,22 @@ class BaseScraper:
             except NoSuchElementException:
                 logging.info("No cookie consent button found.")
                 self.cookie_accepted = True
-                
+
+    def handle_ad_banner(self, driver: uc.Chrome, skip = False):
+        if not skip:
+            try:
+                ad_banner_button = driver.find_element(By.XPATH, "//div[contains(@class, 'publift-widget-sticky_footer-button')]")
+                if ad_banner_button and ad_banner_button.is_displayed():
+                    ad_banner_button.click()
+                    time.sleep(0.1)
+                    logging.info("Ad banner dismissed.")
+                    return True
+            except NoSuchElementException:
+                logging.info("No ad banner found.")
+            return False
+        else:
+            return True
+
     def extract_training_event_options(self, tooltip_rows: List[WebElement]):
         """Extracts the training event options from the tooltip rows.
 
@@ -105,6 +120,8 @@ class BaseScraper:
         all_training_events = driver.find_elements(By.XPATH, "//div[contains(@class, 'compatibility_viewer_item')]")
         logging.info(f"Found {len(all_training_events)} training events for {item_name}.")
 
+        ad_banner_closed = False
+
         for j, training_event in enumerate(all_training_events):
             training_event.click()
             time.sleep(0.3)
@@ -126,6 +143,8 @@ class BaseScraper:
 
             logging.info(f"Found {len(tooltip_rows)} options for training event {tooltip_title} ({j + 1}/{len(all_training_events)}).")
             data_dict[tooltip_title] = self.extract_training_event_options(tooltip_rows)
+
+            ad_banner_closed = self.handle_ad_banner(driver, ad_banner_closed)
 
 class SkillScraper(BaseScraper):
     """Scrapes the skills from the website."""
