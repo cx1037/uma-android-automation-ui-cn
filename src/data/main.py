@@ -15,9 +15,7 @@ def create_chromedriver():
     Returns:
         The Chrome driver.
     """
-    options = uc.ChromeOptions()
-    options.add_argument('--headless')
-    driver = uc.Chrome(options=options, use_subprocess=True)
+    driver = uc.Chrome(headless=True, use_subprocess=True)
     return driver
 
 class BaseScraper:
