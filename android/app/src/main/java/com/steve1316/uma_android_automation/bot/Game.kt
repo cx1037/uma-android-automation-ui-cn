@@ -577,7 +577,8 @@ class Game(val myContext: Context) {
 	 * @param singleTraining Flag that forces only singular training analysis for the current training on the screen.
 	 */
 	private fun analyzeTrainings(test: Boolean = false, singleTraining: Boolean = false) {
-		printToLog("\n[TRAINING] Now starting process to analyze all 5 Trainings.")
+		if (singleTraining) printToLog("\n[TRAINING] Now starting process to analyze the training on screen.")
+		else printToLog("\n[TRAINING] Now starting process to analyze all 5 Trainings.")
 
 		// Acquire the position of the speed stat text.
 		val (speedStatTextLocation, _) = if (campaign == "Ao Haru") {
@@ -600,7 +601,7 @@ class Game(val myContext: Context) {
 			}
 
 			if (test || failureChance <= maximumFailureChance) {
-				printToLog("[TRAINING] $failureChance% within acceptable range of ${maximumFailureChance}%. Proceeding to acquire all other percentages and total stat increases...")
+				if (!test) printToLog("[TRAINING] $failureChance% within acceptable range of ${maximumFailureChance}%. Proceeding to acquire all other percentages and total stat increases...")
 
 				// Iterate through every training that is not blacklisted.
 				for ((index, training) in trainings.withIndex()) {
@@ -615,6 +616,7 @@ class Game(val myContext: Context) {
 							// Keep iterating until the current training is found.
 							continue
 						}
+						printToLog("[TRAINING] The $training training is currently selected on the screen.")
 					}
 
 					// Select the Training to make it active except Speed Training since that is already selected at the start.
