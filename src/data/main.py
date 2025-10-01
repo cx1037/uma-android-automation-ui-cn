@@ -315,6 +315,76 @@ class SupportCardScraper(BaseScraper):
         self.save_data()
         driver.quit()
 
+class RaceScraper(BaseScraper):
+    """Scrapes the races from the website."""
+    def __init__(self):
+        super().__init__("https://gametora.com/umamusume/races", "races.json")
+
+    def start(self):
+        """Starts the scraping process."""
+        driver = create_chromedriver()
+        driver.get(self.url)
+        time.sleep(5)
+
+        self.handle_cookie_consent(driver)
+
+        # Get references to all the races in the list.
+        race_list = driver.find_element(By.XPATH, "//div[contains(@class, 'races_race_list')]")
+        race_items = race_list.find_elements(By.XPATH, ".//div[contains(@class, 'races_row')]")
+
+        # Pop the first 2 races (Junior Make Debut and Junior Maiden Race).
+        race_items = race_items[2:]
+
+        # Pop the last 7 races (URA Finals, Grand Masters, Twinkle Star Climax).
+        race_items = race_items[:-7]
+
+        logging.info(f"Found {len(race_items)} races.")
+
+        race_details_links = [item.find_element(By.XPATH, ".//div[contains(@class, 'races_ribbon')]").find_element(By.XPATH, ".//div[contains(@class, 'utils_linkcolor')]") for item in race_items]
+
+        ad_banner_closed = False
+
+        # Iterate through each race.
+        for i, link in enumerate(race_details_links):
+            ad_banner_closed = self.handle_ad_banner(driver, ad_banner_closed)
+            
+            logging.info(f"Opening race ({i + 1}/{len(race_details_links)})")
+            link.click()
+            time.sleep(0.5)
+
+            # Acquire the elements needed to scrape the race information.
+            dialog = driver.find_element(By.XPATH, "//div[@role='dialog']").find_element(By.XPATH, ".//div[contains(@class, 'races_det_wrapper')]")
+            dialog_infobox = dialog.find_element(By.XPATH, ".//div[contains(@class, 'races_det_infobox')]")
+            dialog_schedule = dialog.find_element(By.XPATH, ".//div[contains(@class, 'races_det_schedule')]")
+            dialog_schedule_items = dialog_schedule.find_elements(By.XPATH, ".//div[contains(@class, 'races_schedule_item')]")
+
+            # Extract all caption-value pairs for the elements.
+            captions = dialog_infobox.find_elements(By.XPATH, ".//div[contains(@class, 'races_det_item_caption')]")
+            values = dialog_infobox.find_elements(By.XPATH, ".//div[contains(@class, 'races_det_item__')]")
+            info_map = {}
+            for cap, val in zip(captions, values):
+                info_map[cap.text.strip()] = val.text.strip()
+
+            race_data = {
+                "name": dialog.find_element(By.XPATH, ".//div[contains(@class, 'races_det_header')]").text,
+                "date": dialog.find_element(By.XPATH, ".//div[contains(@class, 'races_schedule_header')]").text.replace("\n", " "),
+                "grade": info_map.get("Grade"),
+                "terrain": info_map.get("Terrain"),
+                "distanceType": info_map.get("Distance (type)"),
+                "distanceMeters": int(info_map.get("Distance (meters)")),
+                "fans": int(dialog_schedule_items[-1].text.replace("Fans gained", "").replace("for 1st place", "").replace("See all", "").strip())
+            }
+
+            self.data[race_data["name"]] = race_data
+
+            # Close the dialog.
+            dialog_close_button = driver.find_element(By.XPATH, "//div[contains(@class, 'sc-f83b4a49-1')]")
+            dialog_close_button.click()
+            time.sleep(0.3)
+
+        self.save_data()
+        driver.quit()
+
 if __name__ == '__main__':
     logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
     start_time = time.time()
@@ -327,6 +397,9 @@ if __name__ == '__main__':
 
     support_card_scraper = SupportCardScraper()
     support_card_scraper.start()
+    
+    race_scraper = RaceScraper()
+    race_scraper.start()
 
     end_time = round(time.time() - start_time, 2)
     logging.info(f"Total time for processing all applications: {end_time} seconds or {round(end_time / 60, 2)} minutes.")
