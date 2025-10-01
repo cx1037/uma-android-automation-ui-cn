@@ -1,0 +1,2513 @@
+{
+    "Chukyo Junior Stakes": {
+        "name": "Chukyo Junior Stakes",
+        "date": "Junior Class July, Second Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 1600
+    },
+    "Hakodate Junior Stakes": {
+        "name": "Hakodate Junior Stakes",
+        "date": "Junior Class July, Second Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 3100
+    },
+    "Cosmos Sho": {
+        "name": "Cosmos Sho",
+        "date": "Junior Class August, First Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 1600
+    },
+    "Dahlia Sho": {
+        "name": "Dahlia Sho",
+        "date": "Junior Class August, First Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 1600
+    },
+    "Phoenix Sho": {
+        "name": "Phoenix Sho",
+        "date": "Junior Class August, First Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 1600
+    },
+    "Clover Sho": {
+        "name": "Clover Sho",
+        "date": "Junior Class August, Second Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1500,
+        "fans": 1600
+    },
+    "Niigata Junior Stakes": {
+        "name": "Niigata Junior Stakes",
+        "date": "Junior Class August, Second Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 3100
+    },
+    "Aster Sho": {
+        "name": "Aster Sho",
+        "date": "Junior Class September, First Half",
+        "grade": "Pre-OP",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 1000
+    },
+    "Kokura Junior Stakes": {
+        "name": "Kokura Junior Stakes",
+        "date": "Junior Class September, First Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 3100
+    },
+    "Nojigiku Stakes": {
+        "name": "Nojigiku Stakes",
+        "date": "Junior Class September, First Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 1600
+    },
+    "Sapporo Junior Stakes": {
+        "name": "Sapporo Junior Stakes",
+        "date": "Junior Class September, First Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 3100
+    },
+    "Suzuran Sho": {
+        "name": "Suzuran Sho",
+        "date": "Junior Class September, First Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 1600
+    },
+    "Canna Stakes": {
+        "name": "Canna Stakes",
+        "date": "Junior Class September, Second Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 1600
+    },
+    "Fuyo Stakes": {
+        "name": "Fuyo Stakes",
+        "date": "Junior Class September, Second Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 1600
+    },
+    "Kikyo Stakes": {
+        "name": "Kikyo Stakes",
+        "date": "Junior Class September, Second Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 1600
+    },
+    "Saffron Sho": {
+        "name": "Saffron Sho",
+        "date": "Junior Class September, Second Half",
+        "grade": "Pre-OP",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 1000
+    },
+    "Momiji Stakes": {
+        "name": "Momiji Stakes",
+        "date": "Junior Class October, First Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 1600
+    },
+    "Platanus Sho": {
+        "name": "Platanus Sho",
+        "date": "Junior Class October, First Half",
+        "grade": "Pre-OP",
+        "terrain": "Dirt",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 1000
+    },
+    "Rindo Sho": {
+        "name": "Rindo Sho",
+        "date": "Junior Class October, First Half",
+        "grade": "Pre-OP",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 1000
+    },
+    "Saudi Arabia Royal Cup": {
+        "name": "Saudi Arabia Royal Cup",
+        "date": "Junior Class October, First Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 3300
+    },
+    "Shigiku Sho": {
+        "name": "Shigiku Sho",
+        "date": "Junior Class October, First Half",
+        "grade": "Pre-OP",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 1000
+    },
+    "Artemis Stakes": {
+        "name": "Artemis Stakes",
+        "date": "Junior Class October, Second Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 2900
+    },
+    "Hagi Stakes": {
+        "name": "Hagi Stakes",
+        "date": "Junior Class October, Second Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 1700
+    },
+    "Ivy Stakes": {
+        "name": "Ivy Stakes",
+        "date": "Junior Class October, Second Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 1700
+    },
+    "Nadeshiko Sho": {
+        "name": "Nadeshiko Sho",
+        "date": "Junior Class October, Second Half",
+        "grade": "Pre-OP",
+        "terrain": "Dirt",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 1000
+    },
+    "Daily Hai Junior Stakes": {
+        "name": "Daily Hai Junior Stakes",
+        "date": "Junior Class November, First Half",
+        "grade": "G2",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 3800
+    },
+    "Fantasy Stakes": {
+        "name": "Fantasy Stakes",
+        "date": "Junior Class November, First Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 2900
+    },
+    "Fukushima Junior Stakes": {
+        "name": "Fukushima Junior Stakes",
+        "date": "Junior Class November, First Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 1600
+    },
+    "Hyakunichiso Tokubetsu": {
+        "name": "Hyakunichiso Tokubetsu",
+        "date": "Junior Class November, First Half",
+        "grade": "Pre-OP",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 1000
+    },
+    "Keio Hai Junior Stakes": {
+        "name": "Keio Hai Junior Stakes",
+        "date": "Junior Class November, First Half",
+        "grade": "G2",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 3800
+    },
+    "Kigiku Sho": {
+        "name": "Kigiku Sho",
+        "date": "Junior Class November, First Half",
+        "grade": "Pre-OP",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 1000
+    },
+    "Kimmokusei Tokubetsu": {
+        "name": "Kimmokusei Tokubetsu",
+        "date": "Junior Class November, First Half",
+        "grade": "Pre-OP",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 1000
+    },
+    "Oxalis Sho": {
+        "name": "Oxalis Sho",
+        "date": "Junior Class November, First Half",
+        "grade": "Pre-OP",
+        "terrain": "Dirt",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 1000
+    },
+    "Akamatsu Sho": {
+        "name": "Akamatsu Sho",
+        "date": "Junior Class November, Second Half",
+        "grade": "Pre-OP",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 1000
+    },
+    "Begonia Sho": {
+        "name": "Begonia Sho",
+        "date": "Junior Class November, Second Half",
+        "grade": "Pre-OP",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 1000
+    },
+    "Cattleya Sho": {
+        "name": "Cattleya Sho",
+        "date": "Junior Class November, Second Half",
+        "grade": "Pre-OP",
+        "terrain": "Dirt",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 1000
+    },
+    "Habotan Sho": {
+        "name": "Habotan Sho",
+        "date": "Junior Class November, Second Half",
+        "grade": "Pre-OP",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 1000
+    },
+    "Koyamaki Sho": {
+        "name": "Koyamaki Sho",
+        "date": "Junior Class November, Second Half",
+        "grade": "Pre-OP",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 1000
+    },
+    "Kyoto Junior Stakes": {
+        "name": "Kyoto Junior Stakes",
+        "date": "Junior Class November, Second Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 3300
+    },
+    "Mochinoki Sho": {
+        "name": "Mochinoki Sho",
+        "date": "Junior Class November, Second Half",
+        "grade": "Pre-OP",
+        "terrain": "Dirt",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 1000
+    },
+    "Shiragiku Sho": {
+        "name": "Shiragiku Sho",
+        "date": "Junior Class November, Second Half",
+        "grade": "Pre-OP",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 1000
+    },
+    "Shumeigiku Sho": {
+        "name": "Shumeigiku Sho",
+        "date": "Junior Class November, Second Half",
+        "grade": "Pre-OP",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 1000
+    },
+    "Tokyo Sports Hai Junior Stakes": {
+        "name": "Tokyo Sports Hai Junior Stakes",
+        "date": "Junior Class November, Second Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 3300
+    },
+    "Asahi Hai Futurity Stakes": {
+        "name": "Asahi Hai Futurity Stakes",
+        "date": "Junior Class December, First Half",
+        "grade": "G1",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 7000
+    },
+    "Erica Sho": {
+        "name": "Erica Sho",
+        "date": "Junior Class December, First Half",
+        "grade": "Pre-OP",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 1000
+    },
+    "Hanshin Juvenile Fillies": {
+        "name": "Hanshin Juvenile Fillies",
+        "date": "Junior Class December, First Half",
+        "grade": "G1",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 6500
+    },
+    "Hiiragi Sho": {
+        "name": "Hiiragi Sho",
+        "date": "Junior Class December, First Half",
+        "grade": "Pre-OP",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 1000
+    },
+    "Kantsubaki Sho": {
+        "name": "Kantsubaki Sho",
+        "date": "Junior Class December, First Half",
+        "grade": "Pre-OP",
+        "terrain": "Dirt",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 1000
+    },
+    "Kuromatsu Sho": {
+        "name": "Kuromatsu Sho",
+        "date": "Junior Class December, First Half",
+        "grade": "Pre-OP",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 1000
+    },
+    "Manryo Sho": {
+        "name": "Manryo Sho",
+        "date": "Junior Class December, First Half",
+        "grade": "Pre-OP",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 1000
+    },
+    "Sazanka Sho": {
+        "name": "Sazanka Sho",
+        "date": "Junior Class December, First Half",
+        "grade": "Pre-OP",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 1000
+    },
+    "Tsuwabuki Sho": {
+        "name": "Tsuwabuki Sho",
+        "date": "Junior Class December, First Half",
+        "grade": "Pre-OP",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 1000
+    },
+    "Christmas Rose Stakes": {
+        "name": "Christmas Rose Stakes",
+        "date": "Junior Class December, Second Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 1600
+    },
+    "Hopeful Stakes": {
+        "name": "Hopeful Stakes",
+        "date": "Junior Class December, Second Half",
+        "grade": "G1",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 7000
+    },
+    "Senryo Sho": {
+        "name": "Senryo Sho",
+        "date": "Junior Class December, Second Half",
+        "grade": "Pre-OP",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 1000
+    },
+    "Fairy Stakes": {
+        "name": "Fairy Stakes",
+        "date": "Classic Class January, First Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 3500
+    },
+    "Junior Cup": {
+        "name": "Junior Cup",
+        "date": "Classic Class January, First Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 2000
+    },
+    "Keisei Hai": {
+        "name": "Keisei Hai",
+        "date": "Classic Class January, First Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 3800
+    },
+    "Kobai Stakes": {
+        "name": "Kobai Stakes",
+        "date": "Classic Class January, First Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 2000
+    },
+    "Shinzan Kinen": {
+        "name": "Shinzan Kinen",
+        "date": "Classic Class January, First Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 3800
+    },
+    "Crocus Stakes": {
+        "name": "Crocus Stakes",
+        "date": "Classic Class January, Second Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 2000
+    },
+    "Wakagoma Stakes": {
+        "name": "Wakagoma Stakes",
+        "date": "Classic Class January, Second Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 2000
+    },
+    "Elfin Stakes": {
+        "name": "Elfin Stakes",
+        "date": "Classic Class February, First Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 2000
+    },
+    "Kisaragi Sho": {
+        "name": "Kisaragi Sho",
+        "date": "Classic Class February, First Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 3800
+    },
+    "Kyodo News Hai": {
+        "name": "Kyodo News Hai",
+        "date": "Classic Class February, First Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 3800
+    },
+    "Queen Cup": {
+        "name": "Queen Cup",
+        "date": "Classic Class February, First Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 3500
+    },
+    "Hyacinth Stakes": {
+        "name": "Hyacinth Stakes",
+        "date": "Classic Class February, Second Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 1900
+    },
+    "Marguerite Stakes": {
+        "name": "Marguerite Stakes",
+        "date": "Classic Class February, Second Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 2000
+    },
+    "Sumire Stakes": {
+        "name": "Sumire Stakes",
+        "date": "Classic Class February, Second Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2200,
+        "fans": 2000
+    },
+    "Anemone Stakes": {
+        "name": "Anemone Stakes",
+        "date": "Classic Class March, First Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 2000
+    },
+    "Fillies' Revue": {
+        "name": "Fillies' Revue",
+        "date": "Classic Class March, First Half",
+        "grade": "G2",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 5200
+    },
+    "Shoryu Stakes": {
+        "name": "Shoryu Stakes",
+        "date": "Classic Class March, First Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 1800
+    },
+    "Tulip Sho": {
+        "name": "Tulip Sho",
+        "date": "Classic Class March, First Half",
+        "grade": "G2",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 5200
+    },
+    "Yayoi Sho": {
+        "name": "Yayoi Sho",
+        "date": "Classic Class March, First Half",
+        "grade": "G2",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 5400
+    },
+    "Falcon Stakes": {
+        "name": "Falcon Stakes",
+        "date": "Classic Class March, Second Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 3800
+    },
+    "Flower Cup": {
+        "name": "Flower Cup",
+        "date": "Classic Class March, Second Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 3500
+    },
+    "Mainichi Hai": {
+        "name": "Mainichi Hai",
+        "date": "Classic Class March, Second Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 3800
+    },
+    "Spring Stakes": {
+        "name": "Spring Stakes",
+        "date": "Classic Class March, Second Half",
+        "grade": "G2",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 5400
+    },
+    "Wakaba Stakes": {
+        "name": "Wakaba Stakes",
+        "date": "Classic Class March, Second Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 2000
+    },
+    "Arlington Cup": {
+        "name": "Arlington Cup",
+        "date": "Classic Class April, First Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 3800
+    },
+    "Fukuryu Stakes": {
+        "name": "Fukuryu Stakes",
+        "date": "Classic Class April, First Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 1800
+    },
+    "New Zealand Trophy": {
+        "name": "New Zealand Trophy",
+        "date": "Classic Class April, First Half",
+        "grade": "G2",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 5400
+    },
+    "Oka Sho": {
+        "name": "Oka Sho",
+        "date": "Classic Class April, First Half",
+        "grade": "G1",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 10500
+    },
+    "Satsuki Sho": {
+        "name": "Satsuki Sho",
+        "date": "Classic Class April, First Half",
+        "grade": "G1",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 11000
+    },
+    "Wasurenagusa Sho": {
+        "name": "Wasurenagusa Sho",
+        "date": "Classic Class April, First Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 2000
+    },
+    "Aoba Sho": {
+        "name": "Aoba Sho",
+        "date": "Classic Class April, Second Half",
+        "grade": "G2",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2400,
+        "fans": 5400
+    },
+    "Flora Stakes": {
+        "name": "Flora Stakes",
+        "date": "Classic Class April, Second Half",
+        "grade": "G2",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 5200
+    },
+    "Sweetpea Stakes": {
+        "name": "Sweetpea Stakes",
+        "date": "Classic Class April, Second Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 2000
+    },
+    "Tachibana Stakes": {
+        "name": "Tachibana Stakes",
+        "date": "Classic Class April, Second Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 2000
+    },
+    "Tango Stakes": {
+        "name": "Tango Stakes",
+        "date": "Classic Class April, Second Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 1800
+    },
+    "Kyoto Shimbun Hai": {
+        "name": "Kyoto Shimbun Hai",
+        "date": "Classic Class May, First Half",
+        "grade": "G2",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2200,
+        "fans": 5400
+    },
+    "NHK Mile Cup": {
+        "name": "NHK Mile Cup",
+        "date": "Classic Class May, First Half",
+        "grade": "G1",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 10500
+    },
+    "Principal Stakes": {
+        "name": "Principal Stakes",
+        "date": "Classic Class May, First Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 2000
+    },
+    "Seiryu Stakes": {
+        "name": "Seiryu Stakes",
+        "date": "Classic Class May, First Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 1800
+    },
+    "Aoi Stakes": {
+        "name": "Aoi Stakes",
+        "date": "Classic Class May, Second Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 3800
+    },
+    "Hosu Stakes": {
+        "name": "Hosu Stakes",
+        "date": "Classic Class May, Second Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 1900
+    },
+    "Japanese Oaks": {
+        "name": "Japanese Oaks",
+        "date": "Classic Class May, Second Half",
+        "grade": "G1",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2400,
+        "fans": 11000
+    },
+    "Shirayuri Stakes": {
+        "name": "Shirayuri Stakes",
+        "date": "Classic Class May, Second Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 2000
+    },
+    "Tokyo Yushun (Japanese Derby)": {
+        "name": "Tokyo Yushun (Japanese Derby)",
+        "date": "Classic Class May, Second Half",
+        "grade": "G1",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2400,
+        "fans": 20000
+    },
+    "Epsom Cup": {
+        "name": "Epsom Cup",
+        "date": "Classic Class June, First Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 4100
+    },
+    "Mermaid Stakes": {
+        "name": "Mermaid Stakes",
+        "date": "Classic Class June, First Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 3600
+    },
+    "Naruo Kinen": {
+        "name": "Naruo Kinen",
+        "date": "Classic Class June, First Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 4100
+    },
+    "Sleipnir Stakes": {
+        "name": "Sleipnir Stakes",
+        "date": "Classic Class June, First Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Medium",
+        "distanceMeters": 2100,
+        "fans": 2200
+    },
+    "Tempozan Stakes": {
+        "name": "Tempozan Stakes",
+        "date": "Classic Class June, First Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 2200
+    },
+    "Yasuda Kinen": {
+        "name": "Yasuda Kinen",
+        "date": "Classic Class June, First Half",
+        "grade": "G1",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 13000
+    },
+    "Akhalteke Stakes": {
+        "name": "Akhalteke Stakes",
+        "date": "Classic Class June, Second Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 2200
+    },
+    "Hakodate Sprint Stakes": {
+        "name": "Hakodate Sprint Stakes",
+        "date": "Classic Class June, Second Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 3900
+    },
+    "Onuma Stakes": {
+        "name": "Onuma Stakes",
+        "date": "Classic Class June, Second Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Mile",
+        "distanceMeters": 1700,
+        "fans": 2300
+    },
+    "Paradise Stakes": {
+        "name": "Paradise Stakes",
+        "date": "Classic Class June, Second Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 2500
+    },
+    "Sannomiya Stakes": {
+        "name": "Sannomiya Stakes",
+        "date": "Classic Class June, Second Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 2200
+    },
+    "Takarazuka Kinen": {
+        "name": "Takarazuka Kinen",
+        "date": "Classic Class June, Second Half",
+        "grade": "G1",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2200,
+        "fans": 15000
+    },
+    "Unicorn Stakes": {
+        "name": "Unicorn Stakes",
+        "date": "Classic Class June, Second Half",
+        "grade": "G3",
+        "terrain": "Dirt",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 3500
+    },
+    "Yonago Stakes": {
+        "name": "Yonago Stakes",
+        "date": "Classic Class June, Second Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 2500
+    },
+    "CBC Sho": {
+        "name": "CBC Sho",
+        "date": "Classic Class July, First Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 3900
+    },
+    "Hakodate Kinen": {
+        "name": "Hakodate Kinen",
+        "date": "Classic Class July, First Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 4100
+    },
+    "Japan Dirt Derby": {
+        "name": "Japan Dirt Derby",
+        "date": "Classic Class July, First Half",
+        "grade": "G1",
+        "terrain": "Dirt",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 4500
+    },
+    "Marine Stakes": {
+        "name": "Marine Stakes",
+        "date": "Classic Class July, First Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Mile",
+        "distanceMeters": 1700,
+        "fans": 2200
+    },
+    "Meitetsu Hai": {
+        "name": "Meitetsu Hai",
+        "date": "Classic Class July, First Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 2300
+    },
+    "Procyon Stakes": {
+        "name": "Procyon Stakes",
+        "date": "Classic Class July, First Half",
+        "grade": "G3",
+        "terrain": "Dirt",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 3600
+    },
+    "Radio Nikkei Sho": {
+        "name": "Radio Nikkei Sho",
+        "date": "Classic Class July, First Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 3800
+    },
+    "Tanabata Sho": {
+        "name": "Tanabata Sho",
+        "date": "Classic Class July, First Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 4100
+    },
+    "Tomoe Sho": {
+        "name": "Tomoe Sho",
+        "date": "Classic Class July, First Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 2400
+    },
+    "Chukyo Kinen": {
+        "name": "Chukyo Kinen",
+        "date": "Classic Class July, Second Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 3900
+    },
+    "Fukushima TV Open": {
+        "name": "Fukushima TV Open",
+        "date": "Classic Class July, Second Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 2300
+    },
+    "Ibis Summer Dash": {
+        "name": "Ibis Summer Dash",
+        "date": "Classic Class July, Second Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1000,
+        "fans": 3900
+    },
+    "Queen Stakes": {
+        "name": "Queen Stakes",
+        "date": "Classic Class July, Second Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 3600
+    },
+    "Aso Stakes": {
+        "name": "Aso Stakes",
+        "date": "Classic Class August, First Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Mile",
+        "distanceMeters": 1700,
+        "fans": 2200
+    },
+    "Elm Stakes": {
+        "name": "Elm Stakes",
+        "date": "Classic Class August, First Half",
+        "grade": "G3",
+        "terrain": "Dirt",
+        "distanceType": "Mile",
+        "distanceMeters": 1700,
+        "fans": 3600
+    },
+    "Kanetsu Stakes": {
+        "name": "Kanetsu Stakes",
+        "date": "Classic Class August, First Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 2400
+    },
+    "Kokura Kinen": {
+        "name": "Kokura Kinen",
+        "date": "Classic Class August, First Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 4100
+    },
+    "Leopard Stakes": {
+        "name": "Leopard Stakes",
+        "date": "Classic Class August, First Half",
+        "grade": "G3",
+        "terrain": "Dirt",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 4000
+    },
+    "Sapporo Nikkei Open": {
+        "name": "Sapporo Nikkei Open",
+        "date": "Classic Class August, First Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Long",
+        "distanceMeters": 2600,
+        "fans": 2600
+    },
+    "Sekiya Kinen": {
+        "name": "Sekiya Kinen",
+        "date": "Classic Class August, First Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 3900
+    },
+    "UHB Sho": {
+        "name": "UHB Sho",
+        "date": "Classic Class August, First Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 2300
+    },
+    "BSN Sho": {
+        "name": "BSN Sho",
+        "date": "Classic Class August, Second Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 2300
+    },
+    "Keeneland Cup": {
+        "name": "Keeneland Cup",
+        "date": "Classic Class August, Second Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 4100
+    },
+    "Kitakyushu Kinen": {
+        "name": "Kitakyushu Kinen",
+        "date": "Classic Class August, Second Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 3900
+    },
+    "Kokura Nikkei Open": {
+        "name": "Kokura Nikkei Open",
+        "date": "Classic Class August, Second Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 2400
+    },
+    "NST Sho": {
+        "name": "NST Sho",
+        "date": "Classic Class August, Second Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 2200
+    },
+    "Sapporo Kinen": {
+        "name": "Sapporo Kinen",
+        "date": "Classic Class August, Second Half",
+        "grade": "G2",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 7000
+    },
+    "Toki Stakes": {
+        "name": "Toki Stakes",
+        "date": "Classic Class August, Second Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 2500
+    },
+    "Centaur Stakes": {
+        "name": "Centaur Stakes",
+        "date": "Classic Class September, First Half",
+        "grade": "G2",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 5900
+    },
+    "Enif Stakes": {
+        "name": "Enif Stakes",
+        "date": "Classic Class September, First Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 2300
+    },
+    "Keisei Hai Autumn Handicap": {
+        "name": "Keisei Hai Autumn Handicap",
+        "date": "Classic Class September, First Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 3900
+    },
+    "Niigata Kinen": {
+        "name": "Niigata Kinen",
+        "date": "Classic Class September, First Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 4100
+    },
+    "Radio Nippon Sho": {
+        "name": "Radio Nippon Sho",
+        "date": "Classic Class September, First Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 2200
+    },
+    "Rose Stakes": {
+        "name": "Rose Stakes",
+        "date": "Classic Class September, First Half",
+        "grade": "G2",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 5200
+    },
+    "Shion Stakes": {
+        "name": "Shion Stakes",
+        "date": "Classic Class September, First Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 3500
+    },
+    "Tancho Stakes": {
+        "name": "Tancho Stakes",
+        "date": "Classic Class September, First Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Long",
+        "distanceMeters": 2600,
+        "fans": 2400
+    },
+    "All Comers": {
+        "name": "All Comers",
+        "date": "Classic Class September, Second Half",
+        "grade": "G2",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2200,
+        "fans": 6700
+    },
+    "Kobe Shimbun Hai": {
+        "name": "Kobe Shimbun Hai",
+        "date": "Classic Class September, Second Half",
+        "grade": "G2",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2400,
+        "fans": 5400
+    },
+    "Nagatsuki Stakes": {
+        "name": "Nagatsuki Stakes",
+        "date": "Classic Class September, Second Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 2200
+    },
+    "Port Island Stakes": {
+        "name": "Port Island Stakes",
+        "date": "Classic Class September, Second Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 2500
+    },
+    "Sirius Stakes": {
+        "name": "Sirius Stakes",
+        "date": "Classic Class September, Second Half",
+        "grade": "G3",
+        "terrain": "Dirt",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 3600
+    },
+    "Sprinters Stakes": {
+        "name": "Sprinters Stakes",
+        "date": "Classic Class September, Second Half",
+        "grade": "G1",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 13000
+    },
+    "St. Lite Kinen": {
+        "name": "St. Lite Kinen",
+        "date": "Classic Class September, Second Half",
+        "grade": "G2",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2200,
+        "fans": 5400
+    },
+    "Fuchu Umamusume Stakes": {
+        "name": "Fuchu Umamusume Stakes",
+        "date": "Classic Class October, First Half",
+        "grade": "G2",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 5500
+    },
+    "Green Channel Cup": {
+        "name": "Green Channel Cup",
+        "date": "Classic Class October, First Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 2300
+    },
+    "Kyoto Daishoten": {
+        "name": "Kyoto Daishoten",
+        "date": "Classic Class October, First Half",
+        "grade": "G2",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2400,
+        "fans": 6700
+    },
+    "Mainichi Okan": {
+        "name": "Mainichi Okan",
+        "date": "Classic Class October, First Half",
+        "grade": "G2",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 6700
+    },
+    "October Stakes": {
+        "name": "October Stakes",
+        "date": "Classic Class October, First Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 2600
+    },
+    "Opal Stakes": {
+        "name": "Opal Stakes",
+        "date": "Classic Class October, First Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 2500
+    },
+    "Shinetsu Stakes": {
+        "name": "Shinetsu Stakes",
+        "date": "Classic Class October, First Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 2500
+    },
+    "Uzumasa Stakes": {
+        "name": "Uzumasa Stakes",
+        "date": "Classic Class October, First Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 2200
+    },
+    "Brazil Cup": {
+        "name": "Brazil Cup",
+        "date": "Classic Class October, Second Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Medium",
+        "distanceMeters": 2100,
+        "fans": 2300
+    },
+    "Cassiopeia Stakes": {
+        "name": "Cassiopeia Stakes",
+        "date": "Classic Class October, Second Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 2600
+    },
+    "Fuji Stakes": {
+        "name": "Fuji Stakes",
+        "date": "Classic Class October, Second Half",
+        "grade": "G2",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 5900
+    },
+    "Kikuka Sho": {
+        "name": "Kikuka Sho",
+        "date": "Classic Class October, Second Half",
+        "grade": "G1",
+        "terrain": "Turf",
+        "distanceType": "Long",
+        "distanceMeters": 3000,
+        "fans": 12000
+    },
+    "Lumiere Autumn Dash": {
+        "name": "Lumiere Autumn Dash",
+        "date": "Classic Class October, Second Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1000,
+        "fans": 2500
+    },
+    "Muromachi Stakes": {
+        "name": "Muromachi Stakes",
+        "date": "Classic Class October, Second Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 2200
+    },
+    "Shuka Sho": {
+        "name": "Shuka Sho",
+        "date": "Classic Class October, Second Half",
+        "grade": "G1",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 10000
+    },
+    "Swan Stakes": {
+        "name": "Swan Stakes",
+        "date": "Classic Class October, Second Half",
+        "grade": "G2",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 5900
+    },
+    "Tenno Sho (Autumn)": {
+        "name": "Tenno Sho (Autumn)",
+        "date": "Classic Class October, Second Half",
+        "grade": "G1",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 15000
+    },
+    "Copa Republica Argentina": {
+        "name": "Copa Republica Argentina",
+        "date": "Classic Class November, First Half",
+        "grade": "G2",
+        "terrain": "Turf",
+        "distanceType": "Long",
+        "distanceMeters": 2500,
+        "fans": 5700
+    },
+    "Fukushima Kinen": {
+        "name": "Fukushima Kinen",
+        "date": "Classic Class November, First Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 4100
+    },
+    "JBC Classic": {
+        "name": "JBC Classic",
+        "date": "Classic Class November, First Half",
+        "grade": "G1",
+        "terrain": "Dirt",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 8000
+    },
+    "JBC Ladies’ Classic": {
+        "name": "JBC Ladies’ Classic",
+        "date": "Classic Class November, First Half",
+        "grade": "G1",
+        "terrain": "Dirt",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 4100
+    },
+    "JBC Sprint": {
+        "name": "JBC Sprint",
+        "date": "Classic Class November, First Half",
+        "grade": "G1",
+        "terrain": "Dirt",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 6000
+    },
+    "Miyako Stakes": {
+        "name": "Miyako Stakes",
+        "date": "Classic Class November, First Half",
+        "grade": "G3",
+        "terrain": "Dirt",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 3800
+    },
+    "Musashino Stakes": {
+        "name": "Musashino Stakes",
+        "date": "Classic Class November, First Half",
+        "grade": "G3",
+        "terrain": "Dirt",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 3800
+    },
+    "Oro Cup": {
+        "name": "Oro Cup",
+        "date": "Classic Class November, First Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 2500
+    },
+    "Queen Elizabeth II Cup": {
+        "name": "Queen Elizabeth II Cup",
+        "date": "Classic Class November, First Half",
+        "grade": "G1",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2200,
+        "fans": 10500
+    },
+    "Andromeda Stakes": {
+        "name": "Andromeda Stakes",
+        "date": "Classic Class November, Second Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 2600
+    },
+    "Autumn Leaf Stakes": {
+        "name": "Autumn Leaf Stakes",
+        "date": "Classic Class November, Second Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 2200
+    },
+    "Capital Stakes": {
+        "name": "Capital Stakes",
+        "date": "Classic Class November, Second Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 2500
+    },
+    "Fukushima Minyu Cup": {
+        "name": "Fukushima Minyu Cup",
+        "date": "Classic Class November, Second Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Mile",
+        "distanceMeters": 1700,
+        "fans": 2300
+    },
+    "Japan Cup": {
+        "name": "Japan Cup",
+        "date": "Classic Class November, Second Half",
+        "grade": "G1",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2400,
+        "fans": 30000
+    },
+    "Keihan Hai": {
+        "name": "Keihan Hai",
+        "date": "Classic Class November, Second Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 3900
+    },
+    "Mile Championship": {
+        "name": "Mile Championship",
+        "date": "Classic Class November, Second Half",
+        "grade": "G1",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 11000
+    },
+    "Shimotsuki Stakes": {
+        "name": "Shimotsuki Stakes",
+        "date": "Classic Class November, Second Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 2200
+    },
+    "Capella Stakes": {
+        "name": "Capella Stakes",
+        "date": "Classic Class December, First Half",
+        "grade": "G3",
+        "terrain": "Dirt",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 3600
+    },
+    "Challenge Cup": {
+        "name": "Challenge Cup",
+        "date": "Classic Class December, First Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 4100
+    },
+    "Champions Cup": {
+        "name": "Champions Cup",
+        "date": "Classic Class December, First Half",
+        "grade": "G1",
+        "terrain": "Dirt",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 10000
+    },
+    "Chunichi Shimbun Hai": {
+        "name": "Chunichi Shimbun Hai",
+        "date": "Classic Class December, First Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 4100
+    },
+    "December Stakes": {
+        "name": "December Stakes",
+        "date": "Classic Class December, First Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 2600
+    },
+    "Lapis Lazuli Stakes": {
+        "name": "Lapis Lazuli Stakes",
+        "date": "Classic Class December, First Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 2500
+    },
+    "Rigel Stakes": {
+        "name": "Rigel Stakes",
+        "date": "Classic Class December, First Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 2500
+    },
+    "Shiwasu Stakes": {
+        "name": "Shiwasu Stakes",
+        "date": "Classic Class December, First Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 2300
+    },
+    "Stayers Stakes": {
+        "name": "Stayers Stakes",
+        "date": "Classic Class December, First Half",
+        "grade": "G2",
+        "terrain": "Turf",
+        "distanceType": "Long",
+        "distanceMeters": 3600,
+        "fans": 6200
+    },
+    "Tanzanite Stakes": {
+        "name": "Tanzanite Stakes",
+        "date": "Classic Class December, First Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 2300
+    },
+    "Turquoise Stakes": {
+        "name": "Turquoise Stakes",
+        "date": "Classic Class December, First Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 3600
+    },
+    "Arima Kinen": {
+        "name": "Arima Kinen",
+        "date": "Classic Class December, Second Half",
+        "grade": "G1",
+        "terrain": "Turf",
+        "distanceType": "Long",
+        "distanceMeters": 2500,
+        "fans": 30000
+    },
+    "Betelgeuse Stakes": {
+        "name": "Betelgeuse Stakes",
+        "date": "Classic Class December, Second Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 2200
+    },
+    "Galaxy Stakes": {
+        "name": "Galaxy Stakes",
+        "date": "Classic Class December, Second Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 2200
+    },
+    "Hanshin Cup": {
+        "name": "Hanshin Cup",
+        "date": "Classic Class December, Second Half",
+        "grade": "G2",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 6700
+    },
+    "Tokyo Daishoten": {
+        "name": "Tokyo Daishoten",
+        "date": "Classic Class December, Second Half",
+        "grade": "G1",
+        "terrain": "Dirt",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 8000
+    },
+    "Aichi Hai": {
+        "name": "Aichi Hai",
+        "date": "Senior Class January, First Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 3600
+    },
+    "Carbuncle Stakes": {
+        "name": "Carbuncle Stakes",
+        "date": "Senior Class January, First Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 2300
+    },
+    "January Stakes": {
+        "name": "January Stakes",
+        "date": "Senior Class January, First Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 2200
+    },
+    "Kyoto Kimpai": {
+        "name": "Kyoto Kimpai",
+        "date": "Senior Class January, First Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 4100
+    },
+    "Manyo Stakes": {
+        "name": "Manyo Stakes",
+        "date": "Senior Class January, First Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Long",
+        "distanceMeters": 3000,
+        "fans": 2400
+    },
+    "Nakayama Kimpai": {
+        "name": "Nakayama Kimpai",
+        "date": "Senior Class January, First Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 4100
+    },
+    "New Year Stakes": {
+        "name": "New Year Stakes",
+        "date": "Senior Class January, First Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 2500
+    },
+    "Nikkei Shinshun Hai": {
+        "name": "Nikkei Shinshun Hai",
+        "date": "Senior Class January, First Half",
+        "grade": "G2",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2400,
+        "fans": 5700
+    },
+    "Pollux Stakes": {
+        "name": "Pollux Stakes",
+        "date": "Senior Class January, First Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 2200
+    },
+    "Yodo Tankyori Stakes": {
+        "name": "Yodo Tankyori Stakes",
+        "date": "Senior Class January, First Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 2500
+    },
+    "American JCC": {
+        "name": "American JCC",
+        "date": "Senior Class January, Second Half",
+        "grade": "G2",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2200,
+        "fans": 6200
+    },
+    "Negishi Stakes": {
+        "name": "Negishi Stakes",
+        "date": "Senior Class January, Second Half",
+        "grade": "G3",
+        "terrain": "Dirt",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 3800
+    },
+    "Shirafuji Stakes": {
+        "name": "Shirafuji Stakes",
+        "date": "Senior Class January, Second Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 2600
+    },
+    "Silk Road Stakes": {
+        "name": "Silk Road Stakes",
+        "date": "Senior Class January, Second Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 3900
+    },
+    "Subaru Stakes": {
+        "name": "Subaru Stakes",
+        "date": "Senior Class January, Second Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 2300
+    },
+    "Tokai Stakes": {
+        "name": "Tokai Stakes",
+        "date": "Senior Class January, Second Half",
+        "grade": "G2",
+        "terrain": "Dirt",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 5500
+    },
+    "Aldebaran Stakes": {
+        "name": "Aldebaran Stakes",
+        "date": "Senior Class February, First Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Medium",
+        "distanceMeters": 1900,
+        "fans": 2200
+    },
+    "Kyoto Kinen": {
+        "name": "Kyoto Kinen",
+        "date": "Senior Class February, First Half",
+        "grade": "G2",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2200,
+        "fans": 6200
+    },
+    "Rakuyo Stakes": {
+        "name": "Rakuyo Stakes",
+        "date": "Senior Class February, First Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 2500
+    },
+    "Tokyo Shimbun Hai": {
+        "name": "Tokyo Shimbun Hai",
+        "date": "Senior Class February, First Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 3900
+    },
+    "Valentine Stakes": {
+        "name": "Valentine Stakes",
+        "date": "Senior Class February, First Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 2200
+    },
+    "Yamato Stakes": {
+        "name": "Yamato Stakes",
+        "date": "Senior Class February, First Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 2200
+    },
+    "Diamond Stakes": {
+        "name": "Diamond Stakes",
+        "date": "Senior Class February, Second Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Long",
+        "distanceMeters": 3400,
+        "fans": 4100
+    },
+    "February Stakes": {
+        "name": "February Stakes",
+        "date": "Senior Class February, Second Half",
+        "grade": "G1",
+        "terrain": "Dirt",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 10000
+    },
+    "Hankyu Hai": {
+        "name": "Hankyu Hai",
+        "date": "Senior Class February, Second Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 4100
+    },
+    "Kitakyushu Tankyori Stakes": {
+        "name": "Kitakyushu Tankyori Stakes",
+        "date": "Senior Class February, Second Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 2300
+    },
+    "Kokura Daishoten": {
+        "name": "Kokura Daishoten",
+        "date": "Senior Class February, Second Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 4100
+    },
+    "Kyoto Umamusume Stakes": {
+        "name": "Kyoto Umamusume Stakes",
+        "date": "Senior Class February, Second Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 3600
+    },
+    "Nakayama Kinen": {
+        "name": "Nakayama Kinen",
+        "date": "Senior Class February, Second Half",
+        "grade": "G2",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 6700
+    },
+    "Sobu Stakes": {
+        "name": "Sobu Stakes",
+        "date": "Senior Class February, Second Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 2200
+    },
+    "Kinko Sho": {
+        "name": "Kinko Sho",
+        "date": "Senior Class March, First Half",
+        "grade": "G2",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 6700
+    },
+    "Kochi Stakes": {
+        "name": "Kochi Stakes",
+        "date": "Senior Class March, First Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 2500
+    },
+    "Nakayama Umamusume Stakes": {
+        "name": "Nakayama Umamusume Stakes",
+        "date": "Senior Class March, First Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 3600
+    },
+    "Nigawa Stakes": {
+        "name": "Nigawa Stakes",
+        "date": "Senior Class March, First Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 2300
+    },
+    "Ocean Stakes": {
+        "name": "Ocean Stakes",
+        "date": "Senior Class March, First Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 4100
+    },
+    "Osakajo Stakes": {
+        "name": "Osakajo Stakes",
+        "date": "Senior Class March, First Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 2600
+    },
+    "Polaris Stakes": {
+        "name": "Polaris Stakes",
+        "date": "Senior Class March, First Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 2200
+    },
+    "Chiba Stakes": {
+        "name": "Chiba Stakes",
+        "date": "Senior Class March, Second Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 2200
+    },
+    "Hanshin Daishoten": {
+        "name": "Hanshin Daishoten",
+        "date": "Senior Class March, Second Half",
+        "grade": "G2",
+        "terrain": "Turf",
+        "distanceType": "Long",
+        "distanceMeters": 3000,
+        "fans": 6700
+    },
+    "March Stakes": {
+        "name": "March Stakes",
+        "date": "Senior Class March, Second Half",
+        "grade": "G3",
+        "terrain": "Dirt",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 3600
+    },
+    "Nikkei Sho": {
+        "name": "Nikkei Sho",
+        "date": "Senior Class March, Second Half",
+        "grade": "G2",
+        "terrain": "Turf",
+        "distanceType": "Long",
+        "distanceMeters": 2500,
+        "fans": 6700
+    },
+    "Osaka Hai": {
+        "name": "Osaka Hai",
+        "date": "Senior Class March, Second Half",
+        "grade": "G1",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 13500
+    },
+    "Rokko Stakes": {
+        "name": "Rokko Stakes",
+        "date": "Senior Class March, Second Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 2500
+    },
+    "Takamatsunomiya Kinen": {
+        "name": "Takamatsunomiya Kinen",
+        "date": "Senior Class March, Second Half",
+        "grade": "G1",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 13000
+    },
+    "Antares Stakes": {
+        "name": "Antares Stakes",
+        "date": "Senior Class April, First Half",
+        "grade": "G3",
+        "terrain": "Dirt",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 3600
+    },
+    "Azumakofuji Stakes": {
+        "name": "Azumakofuji Stakes",
+        "date": "Senior Class April, First Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Mile",
+        "distanceMeters": 1700,
+        "fans": 2200
+    },
+    "Coral Stakes": {
+        "name": "Coral Stakes",
+        "date": "Senior Class April, First Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 2300
+    },
+    "Fukushima Mimpo Hai": {
+        "name": "Fukushima Mimpo Hai",
+        "date": "Senior Class April, First Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 2600
+    },
+    "Hanshin Umamusume Stakes": {
+        "name": "Hanshin Umamusume Stakes",
+        "date": "Senior Class April, First Half",
+        "grade": "G2",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 5500
+    },
+    "Keiyo Stakes": {
+        "name": "Keiyo Stakes",
+        "date": "Senior Class April, First Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 2300
+    },
+    "Lord Derby Challenge Trophy": {
+        "name": "Lord Derby Challenge Trophy",
+        "date": "Senior Class April, First Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 3900
+    },
+    "Shunrai Stakes": {
+        "name": "Shunrai Stakes",
+        "date": "Senior Class April, First Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 2500
+    },
+    "Fukushima Umamusume Stakes": {
+        "name": "Fukushima Umamusume Stakes",
+        "date": "Senior Class April, Second Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 3800
+    },
+    "Milers Cup": {
+        "name": "Milers Cup",
+        "date": "Senior Class April, Second Half",
+        "grade": "G2",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 5900
+    },
+    "Oasis Stakes": {
+        "name": "Oasis Stakes",
+        "date": "Senior Class April, Second Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 2300
+    },
+    "Tenno Sho (Spring)": {
+        "name": "Tenno Sho (Spring)",
+        "date": "Senior Class April, Second Half",
+        "grade": "G1",
+        "terrain": "Turf",
+        "distanceType": "Long",
+        "distanceMeters": 3200,
+        "fans": 15000
+    },
+    "Tennozan Stakes": {
+        "name": "Tennozan Stakes",
+        "date": "Senior Class April, Second Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 2200
+    },
+    "Brilliant Stakes": {
+        "name": "Brilliant Stakes",
+        "date": "Senior Class May, First Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Medium",
+        "distanceMeters": 2100,
+        "fans": 2300
+    },
+    "Keio Hai Spring Cup": {
+        "name": "Keio Hai Spring Cup",
+        "date": "Senior Class May, First Half",
+        "grade": "G2",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 5900
+    },
+    "Kurama Stakes": {
+        "name": "Kurama Stakes",
+        "date": "Senior Class May, First Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1200,
+        "fans": 2300
+    },
+    "Metropolitan Stakes": {
+        "name": "Metropolitan Stakes",
+        "date": "Senior Class May, First Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2400,
+        "fans": 2600
+    },
+    "Miyakooji Stakes": {
+        "name": "Miyakooji Stakes",
+        "date": "Senior Class May, First Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 2600
+    },
+    "Niigata Daishoten": {
+        "name": "Niigata Daishoten",
+        "date": "Senior Class May, First Half",
+        "grade": "G3",
+        "terrain": "Turf",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 4100
+    },
+    "Ritto Stakes": {
+        "name": "Ritto Stakes",
+        "date": "Senior Class May, First Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 2300
+    },
+    "Tanigawadake Stakes": {
+        "name": "Tanigawadake Stakes",
+        "date": "Senior Class May, First Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 2500
+    },
+    "Victoria Mile": {
+        "name": "Victoria Mile",
+        "date": "Senior Class May, First Half",
+        "grade": "G1",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1600,
+        "fans": 10500
+    },
+    "Azuchijo Stakes": {
+        "name": "Azuchijo Stakes",
+        "date": "Senior Class May, Second Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 2500
+    },
+    "Heian Stakes": {
+        "name": "Heian Stakes",
+        "date": "Senior Class May, Second Half",
+        "grade": "G3",
+        "terrain": "Dirt",
+        "distanceType": "Medium",
+        "distanceMeters": 1900,
+        "fans": 3600
+    },
+    "Idaten Stakes": {
+        "name": "Idaten Stakes",
+        "date": "Senior Class May, Second Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Short",
+        "distanceMeters": 1000,
+        "fans": 2300
+    },
+    "Keyaki Stakes": {
+        "name": "Keyaki Stakes",
+        "date": "Senior Class May, Second Half",
+        "grade": "OP",
+        "terrain": "Dirt",
+        "distanceType": "Short",
+        "distanceMeters": 1400,
+        "fans": 2200
+    },
+    "May Stakes": {
+        "name": "May Stakes",
+        "date": "Senior Class May, Second Half",
+        "grade": "OP",
+        "terrain": "Turf",
+        "distanceType": "Mile",
+        "distanceMeters": 1800,
+        "fans": 2400
+    },
+    "Meguro Kinen": {
+        "name": "Meguro Kinen",
+        "date": "Senior Class May, Second Half",
+        "grade": "G2",
+        "terrain": "Turf",
+        "distanceType": "Long",
+        "distanceMeters": 2500,
+        "fans": 5700
+    },
+    "Teio Sho": {
+        "name": "Teio Sho",
+        "date": "Senior Class June, Second Half",
+        "grade": "G1",
+        "terrain": "Dirt",
+        "distanceType": "Medium",
+        "distanceMeters": 2000,
+        "fans": 6000
+    }
+}
