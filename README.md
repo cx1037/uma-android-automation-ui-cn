@@ -17,7 +17,7 @@ This project is purely for educational purposes to learn about Android automatio
 -   Android Device or Emulator (Nougat 7.0+)
     -   For the best performance and stability on phones, the device needs to be at 1080p display resolution. The speed is also best at 1080p and for other resolutions, it becomes dependent on the manual scale that you can set in the settings. Right now it defaults to 1.0 which uses 1080p as the baseline. You can determine what scales may be good for you with the template match test that you can enable in the settings as well.
         -   If you change the display resolution while the overlay button is still active, you will need to restart the app in order for the display changes to persist to the `MediaProjection` service.
-    -   Tested emulator was on Bluestacks 5 (Pie 64-bit). The following setup is required:
+    -   Tested emulator was on Bluestacks 5 (Pie 64-bit). Later versions of Bluestacks also should work. The following setup is required:
         -   Portrait Mode needs to be forced on always.
         -   Bluestacks itself needs to be updated to the latest version to avoid Uma Musume crashing.
         -   In the Bluestacks Settings > Phone, the predefined profile needs to be set to a modern high-end phone like the Samsung Galaxy S22.
