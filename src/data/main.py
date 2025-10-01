@@ -1,6 +1,6 @@
 import undetected_chromedriver as uc
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException, WebDriverException
 from selenium.webdriver.remote.webelement import WebElement
 import json
 import re
@@ -30,7 +30,31 @@ class BaseScraper:
         self.output_filename = output_filename
         self.data = {}
         self.cookie_accepted = False
+
+    def safe_click(self, driver: uc.Chrome, element: WebElement, retries: int = 3, delay: float = 0.5):
+        """Try clicking an element normally and falls back to JS click if blocked by ads/overlays.
         
+        Args:
+            driver (uc.Chrome): The Chrome driver.
+            element (WebElement): The web element to interact with.
+            retries (int, optional): How many times to retry if intercepted.
+            delay (float, optional): Seconds to wait between retries
+        """
+        for _ in range(retries):
+            try:
+                element.click()
+                return True
+            except ElementClickInterceptedException:
+                # Fallback to scrolling + JS click.
+                try:
+                    driver.execute_script("arguments[0].scrollIntoView(true);", element)
+                    driver.execute_script("arguments[0].click();", element)
+                    return True
+                except WebDriverException as _:
+                    # If JS click fails, wait a bit and retry.
+                    time.sleep(delay)
+        return False
+
     def save_data(self):
         """Saves the scraped data to a file."""
         with open(self.output_filename, "w", encoding="utf-8") as f:
@@ -123,7 +147,7 @@ class BaseScraper:
         ad_banner_closed = False
 
         for j, training_event in enumerate(all_training_events):
-            training_event.click()
+            self.safe_click(driver, training_event)
             time.sleep(0.3)
 
             tooltip = driver.find_element(By.XPATH, "//div[@data-tippy-root]")
