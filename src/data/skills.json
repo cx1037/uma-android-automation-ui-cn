@@ -514,206 +514,6 @@
         "englishName": "Super Lucky Seven",
         "englishDescription": "Good things may happen when in bracket 7."
     },
-    "Corner Recovery ○": {
-        "id": 200352,
-        "englishName": "Corner Recovery ○",
-        "englishDescription": "Slightly recover endurance on a corner with efficient turning."
-    },
-    "Straightaway Recovery": {
-        "id": 200382,
-        "englishName": "Straightaway Recovery",
-        "englishDescription": "Slightly recover endurance on a straight."
-    },
-    "Lay Low": {
-        "id": 200442,
-        "englishName": "Lay Low",
-        "englishDescription": "Slightly recover endurance when the way ahead is jammed early-race."
-    },
-    "Pace Strategy": {
-        "id": 200472,
-        "englishName": "Pace Strategy",
-        "englishDescription": "Slightly recover endurance when passed by another runner mid-race."
-    },
-    "Calm in a Crowd": {
-        "id": 200482,
-        "englishName": "Calm in a Crowd",
-        "englishDescription": "Slightly recover endurance when surrounded mid-race."
-    },
-    "Stamina to Spare": {
-        "id": 200562,
-        "englishName": "Stamina to Spare",
-        "englishDescription": "Slightly decrease fatigue early-race. (Pace Chaser)"
-    },
-    "Preferred Position": {
-        "id": 200572,
-        "englishName": "Preferred Position",
-        "englishDescription": "Slightly decrease fatigue mid-race. (Pace Chaser)"
-    },
-    "Standing By": {
-        "id": 200622,
-        "englishName": "Standing By",
-        "englishDescription": "Slightly decrease fatigue mid-race. (End Closer)"
-    },
-    "Wait-and-See": {
-        "id": 200662,
-        "englishName": "Wait-and-See",
-        "englishDescription": "Slightly decrease fatigue when positioned toward the back mid-race. (Sprint)"
-    },
-    "Watchful Eye": {
-        "id": 200692,
-        "englishName": "Watchful Eye",
-        "englishDescription": "Slightly decrease fatigue when positioned toward the back early-race. (Mile)"
-    },
-    "Rosy Outlook": {
-        "id": 200712,
-        "englishName": "Rosy Outlook",
-        "englishDescription": "Slightly decrease fatigue when in the lead mid-race. (Medium)"
-    },
-    "Deep Breaths": {
-        "id": 200742,
-        "englishName": "Deep Breaths",
-        "englishDescription": "Slightly decrease fatigue by taking a breather upon entering a straight. (Long)"
-    },
-    "Extra Tank": {
-        "id": 200762,
-        "englishName": "Extra Tank",
-        "englishDescription": "Slightly regain the energy to run after exhausting strength. (Long)"
-    },
-    "Soft Step": {
-        "id": 201142,
-        "englishName": "Soft Step",
-        "englishDescription": "Slightly decrease fatigue when moving sideways. (Medium)"
-    },
-    "Passing Pro": {
-        "id": 201202,
-        "englishName": "Passing Pro",
-        "englishDescription": "Slightly decrease fatigue when determined to pass another runner. (Long)"
-    },
-    "Moxie": {
-        "id": 201282,
-        "englishName": "Moxie",
-        "englishDescription": "Slightly reduce fatigue on an uphill. (Front Runner)"
-    },
-    "Hydrate": {
-        "id": 201352,
-        "englishName": "Hydrate",
-        "englishDescription": "Slightly recover endurance mid-race. (Pace Chaser)"
-    },
-    "A Small Breather": {
-        "id": 201422,
-        "englishName": "A Small Breather",
-        "englishDescription": "Slightly recover endurance late-race. (Late Surger)"
-    },
-    "After-School Stroll": {
-        "id": 201482,
-        "englishName": "After-School Stroll",
-        "englishDescription": "Slightly reduce fatigue on a downhill. (End Closer)"
-    },
-    "Levelheaded": {
-        "id": 201492,
-        "englishName": "Levelheaded",
-        "englishDescription": "Slightly regain composure by calming down when the way ahead is jammed. (End Closer)"
-    },
-    "Triple 7s": {
-        "id": 201571,
-        "englishName": "Triple 7s",
-        "englishDescription": "Slightly gain energy with 777m remaining."
-    },
-    "Shake It Out": {
-        "id": 201621,
-        "englishName": "Shake It Out",
-        "englishDescription": "Slightly recover endurance after activating many skills late-race."
-    },
-    "Swinging Maestro": {
-        "id": 200351,
-        "englishName": "Swinging Maestro",
-        "englishDescription": "Recover endurance on a corner with efficient turning."
-    },
-    "Breath of Fresh Air": {
-        "id": 200381,
-        "englishName": "Breath of Fresh Air",
-        "englishDescription": "Recover endurance on a straight."
-    },
-    "Iron Will": {
-        "id": 200441,
-        "englishName": "Iron Will",
-        "englishDescription": "Recover endurance when the way ahead is jammed early-race."
-    },
-    "Indomitable": {
-        "id": 200471,
-        "englishName": "Indomitable",
-        "englishDescription": "Recover endurance when passed by another runner mid-race."
-    },
-    "Unruffled": {
-        "id": 200481,
-        "englishName": "Unruffled",
-        "englishDescription": "Recover endurance when surrounded mid-race."
-    },
-    "Calm and Collected": {
-        "id": 200561,
-        "englishName": "Calm and Collected",
-        "englishDescription": "Decrease fatigue early-race. (Pace Chaser)"
-    },
-    "Race Planner": {
-        "id": 200571,
-        "englishName": "Race Planner",
-        "englishDescription": "Decrease fatigue mid-race. (Pace Chaser)"
-    },
-    "Sleeping Lion": {
-        "id": 200621,
-        "englishName": "Sleeping Lion",
-        "englishDescription": "Decrease fatigue mid-race. (End Closer)"
-    },
-    "Keen Eye": {
-        "id": 200691,
-        "englishName": "Keen Eye",
-        "englishDescription": "Decrease fatigue when positioned toward the back early-race. (Mile)"
-    },
-    "Trackblazer": {
-        "id": 200711,
-        "englishName": "Trackblazer",
-        "englishDescription": "Decrease fatigue when in the lead mid-race. (Medium)"
-    },
-    "Cooldown": {
-        "id": 200741,
-        "englishName": "Cooldown",
-        "englishDescription": "Decrease fatigue by taking a breather upon entering a straight. (Long)"
-    },
-    "Adrenaline Rush": {
-        "id": 200761,
-        "englishName": "Adrenaline Rush",
-        "englishDescription": "Regain the energy to run after exhausting strength. (Long)"
-    },
-    "Miraculous Step": {
-        "id": 201141,
-        "englishName": "Miraculous Step",
-        "englishDescription": "Decrease fatigue when moving sideways. (Medium)"
-    },
-    "Restless": {
-        "id": 201281,
-        "englishName": "Restless",
-        "englishDescription": "Reduce fatigue on an uphill. (Front Runner)"
-    },
-    "Gourmand": {
-        "id": 201351,
-        "englishName": "Gourmand",
-        "englishDescription": "Recover endurance mid-race. (Pace Chaser)"
-    },
-    "Relax": {
-        "id": 201421,
-        "englishName": "Relax",
-        "englishDescription": "Recover endurance late-race. (Late Surger)"
-    },
-    "Go-Home Specialist": {
-        "id": 201481,
-        "englishName": "Go-Home Specialist",
-        "englishDescription": "Reduce fatigue on a downhill. (End Closer)"
-    },
-    "Serenity": {
-        "id": 201491,
-        "englishName": "Serenity",
-        "englishDescription": "Regain composure by calming down when the way ahead is jammed. (End Closer)"
-    },
     "Introduction to Physiology": {
         "id": 10321,
         "englishName": "Introduction to Physiology",
@@ -744,20 +544,30 @@
         "englishName": "Super-Duper Climax",
         "englishDescription": "Recover endurance with a glance at nearby runners when positioned toward the back on the final corner."
     },
-    "Superior Heal": {
-        "id": 110111,
-        "englishName": "Superior Heal",
-        "englishDescription": "Recover endurance with a gentle light when dropping down toward the back mid-race."
+    "Swinging Maestro": {
+        "id": 200351,
+        "englishName": "Swinging Maestro",
+        "englishDescription": "Recover endurance on a corner with efficient turning."
     },
-    "Dazzl'n ♪ Diver": {
-        "id": 110011,
-        "englishName": "Dazzl'n ♪ Diver",
-        "englishDescription": "Recover endurance by relaxing after activating 2 skills mid-race."
+    "Corner Recovery ○": {
+        "id": 200352,
+        "englishName": "Corner Recovery ○",
+        "englishDescription": "Slightly recover endurance on a corner with efficient turning."
     },
     "Corner Recovery ×": {
         "id": 200353,
         "englishName": "Corner Recovery ×",
         "englishDescription": "Moderately lose endurance on a corner with inefficient turning."
+    },
+    "Breath of Fresh Air": {
+        "id": 200381,
+        "englishName": "Breath of Fresh Air",
+        "englishDescription": "Recover endurance on a straight."
+    },
+    "Straightaway Recovery": {
+        "id": 200382,
+        "englishName": "Straightaway Recovery",
+        "englishDescription": "Slightly recover endurance on a straight."
     },
     "Ramp Revulsion": {
         "id": 200391,
@@ -769,10 +579,200 @@
         "englishName": "Packphobia",
         "englishDescription": "Moderately lose endurance when surrounded."
     },
+    "Iron Will": {
+        "id": 200441,
+        "englishName": "Iron Will",
+        "englishDescription": "Recover endurance when the way ahead is jammed early-race."
+    },
+    "Lay Low": {
+        "id": 200442,
+        "englishName": "Lay Low",
+        "englishDescription": "Slightly recover endurance when the way ahead is jammed early-race."
+    },
+    "Indomitable": {
+        "id": 200471,
+        "englishName": "Indomitable",
+        "englishDescription": "Recover endurance when passed by another runner mid-race."
+    },
+    "Pace Strategy": {
+        "id": 200472,
+        "englishName": "Pace Strategy",
+        "englishDescription": "Slightly recover endurance when passed by another runner mid-race."
+    },
+    "Unruffled": {
+        "id": 200481,
+        "englishName": "Unruffled",
+        "englishDescription": "Recover endurance when surrounded mid-race."
+    },
+    "Calm in a Crowd": {
+        "id": 200482,
+        "englishName": "Calm in a Crowd",
+        "englishDescription": "Slightly recover endurance when surrounded mid-race."
+    },
     "Running Idle": {
         "id": 200521,
         "englishName": "Running Idle",
         "englishDescription": "Moderately increase fatigue when in the lead by too large of a margin."
+    },
+    "Calm and Collected": {
+        "id": 200561,
+        "englishName": "Calm and Collected",
+        "englishDescription": "Decrease fatigue early-race. (Pace Chaser)"
+    },
+    "Stamina to Spare": {
+        "id": 200562,
+        "englishName": "Stamina to Spare",
+        "englishDescription": "Slightly decrease fatigue early-race. (Pace Chaser)"
+    },
+    "Race Planner": {
+        "id": 200571,
+        "englishName": "Race Planner",
+        "englishDescription": "Decrease fatigue mid-race. (Pace Chaser)"
+    },
+    "Preferred Position": {
+        "id": 200572,
+        "englishName": "Preferred Position",
+        "englishDescription": "Slightly decrease fatigue mid-race. (Pace Chaser)"
+    },
+    "Sleeping Lion": {
+        "id": 200621,
+        "englishName": "Sleeping Lion",
+        "englishDescription": "Decrease fatigue mid-race. (End Closer)"
+    },
+    "Standing By": {
+        "id": 200622,
+        "englishName": "Standing By",
+        "englishDescription": "Slightly decrease fatigue mid-race. (End Closer)"
+    },
+    "Wait-and-See": {
+        "id": 200662,
+        "englishName": "Wait-and-See",
+        "englishDescription": "Slightly decrease fatigue when positioned toward the back mid-race. (Sprint)"
+    },
+    "Keen Eye": {
+        "id": 200691,
+        "englishName": "Keen Eye",
+        "englishDescription": "Decrease fatigue when positioned toward the back early-race. (Mile)"
+    },
+    "Watchful Eye": {
+        "id": 200692,
+        "englishName": "Watchful Eye",
+        "englishDescription": "Slightly decrease fatigue when positioned toward the back early-race. (Mile)"
+    },
+    "Trackblazer": {
+        "id": 200711,
+        "englishName": "Trackblazer",
+        "englishDescription": "Decrease fatigue when in the lead mid-race. (Medium)"
+    },
+    "Rosy Outlook": {
+        "id": 200712,
+        "englishName": "Rosy Outlook",
+        "englishDescription": "Slightly decrease fatigue when in the lead mid-race. (Medium)"
+    },
+    "Cooldown": {
+        "id": 200741,
+        "englishName": "Cooldown",
+        "englishDescription": "Decrease fatigue by taking a breather upon entering a straight. (Long)"
+    },
+    "Deep Breaths": {
+        "id": 200742,
+        "englishName": "Deep Breaths",
+        "englishDescription": "Slightly decrease fatigue by taking a breather upon entering a straight. (Long)"
+    },
+    "Adrenaline Rush": {
+        "id": 200761,
+        "englishName": "Adrenaline Rush",
+        "englishDescription": "Regain the energy to run after exhausting strength. (Long)"
+    },
+    "Extra Tank": {
+        "id": 200762,
+        "englishName": "Extra Tank",
+        "englishDescription": "Slightly regain the energy to run after exhausting strength. (Long)"
+    },
+    "Miraculous Step": {
+        "id": 201141,
+        "englishName": "Miraculous Step",
+        "englishDescription": "Decrease fatigue when moving sideways. (Medium)"
+    },
+    "Soft Step": {
+        "id": 201142,
+        "englishName": "Soft Step",
+        "englishDescription": "Slightly decrease fatigue when moving sideways. (Medium)"
+    },
+    "Passing Pro": {
+        "id": 201202,
+        "englishName": "Passing Pro",
+        "englishDescription": "Slightly decrease fatigue when determined to pass another runner. (Long)"
+    },
+    "Restless": {
+        "id": 201281,
+        "englishName": "Restless",
+        "englishDescription": "Reduce fatigue on an uphill. (Front Runner)"
+    },
+    "Moxie": {
+        "id": 201282,
+        "englishName": "Moxie",
+        "englishDescription": "Slightly reduce fatigue on an uphill. (Front Runner)"
+    },
+    "Gourmand": {
+        "id": 201351,
+        "englishName": "Gourmand",
+        "englishDescription": "Recover endurance mid-race. (Pace Chaser)"
+    },
+    "Hydrate": {
+        "id": 201352,
+        "englishName": "Hydrate",
+        "englishDescription": "Slightly recover endurance mid-race. (Pace Chaser)"
+    },
+    "Relax": {
+        "id": 201421,
+        "englishName": "Relax",
+        "englishDescription": "Recover endurance late-race. (Late Surger)"
+    },
+    "A Small Breather": {
+        "id": 201422,
+        "englishName": "A Small Breather",
+        "englishDescription": "Slightly recover endurance late-race. (Late Surger)"
+    },
+    "Go-Home Specialist": {
+        "id": 201481,
+        "englishName": "Go-Home Specialist",
+        "englishDescription": "Reduce fatigue on a downhill. (End Closer)"
+    },
+    "After-School Stroll": {
+        "id": 201482,
+        "englishName": "After-School Stroll",
+        "englishDescription": "Slightly reduce fatigue on a downhill. (End Closer)"
+    },
+    "Serenity": {
+        "id": 201491,
+        "englishName": "Serenity",
+        "englishDescription": "Regain composure by calming down when the way ahead is jammed. (End Closer)"
+    },
+    "Levelheaded": {
+        "id": 201492,
+        "englishName": "Levelheaded",
+        "englishDescription": "Slightly regain composure by calming down when the way ahead is jammed. (End Closer)"
+    },
+    "Triple 7s": {
+        "id": 201571,
+        "englishName": "Triple 7s",
+        "englishDescription": "Slightly gain energy with 777m remaining."
+    },
+    "Shake It Out": {
+        "id": 201621,
+        "englishName": "Shake It Out",
+        "englishDescription": "Slightly recover endurance after activating many skills late-race."
+    },
+    "Superior Heal": {
+        "id": 110111,
+        "englishName": "Superior Heal",
+        "englishDescription": "Recover endurance with a gentle light when dropping down toward the back mid-race."
+    },
+    "Dazzl'n ♪ Diver": {
+        "id": 110011,
+        "englishName": "Dazzl'n ♪ Diver",
+        "englishDescription": "Recover endurance by relaxing after activating 2 skills mid-race."
     },
     "Corner Adept ○": {
         "id": 200332,
@@ -1392,7 +1392,7 @@
     "KEEP IT REAL.": {
         "id": 100401,
         "englishName": "KEEP IT REAL.",
-        "englishDescription": "Moderately increase acceleration steadily with a captivating performance when starting to make a move from midpack in the second half of the race."
+        "englishDescription": "Moderately increase acceleration steadily with a wink when starting to make a move from midpack in the second half of the race."
     },
     "A Kiss for Courage": {
         "id": 110041,

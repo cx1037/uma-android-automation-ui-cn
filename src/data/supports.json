@@ -1,4 +1,145 @@
 {
+    "Seiun Sky": {
+        "(❯) Sudden Murder Mystery! Part 1": [
+            "Wit +5\nSkill points +10\nSeiun Sky bond +5",
+            "Energy +10\nSeiun Sky bond +5"
+        ],
+        "(❯❯) Sudden Murder Mystery! Part 2": [
+            "Wit +5\nFrenzied Pace Chasers hint +1\nSeiun Sky bond +5",
+            "Energy +5\nSkill points +10\nSeiun Sky bond +5"
+        ],
+        "(❯❯❯) Sudden Murder Mystery! Part 3": [
+            "Wit +5/+10\nVanguard Spirit hint +1/+3\nSeiun Sky bond +5",
+            "Energy +10\nStamina +10\nSkill points +15"
+        ],
+        "Recruiting Cat Catchers": [
+            "Energy +10\nWit +5\nSeiun Sky bond +5",
+            "Energy -10\nSpeed +15\nStamina +5\nSeiun Sky bond +5"
+        ],
+        "Recruiting Advisors": [
+            "Wit +15\nSeiun Sky bond +5",
+            "Keeping the Lead hint +1\nSeiun Sky bond +5"
+        ],
+        "(❯) Be Strategic ☆": [
+            "Energy +10\nWit +5\nSeiun Sky bond +5",
+            "Skill points +30\nSecond Wind hint +1\nSeiun Sky bond -5\nEvent chain ended"
+        ]
+    },
+    "King Halo": {
+        "(❯) A Captivating Invitation": [
+            "Power +10\nKing Halo bond +5",
+            "Guts +10\nKing Halo bond +5"
+        ],
+        "(❯❯) Dancer's Pride": [
+            "Energy -5\nStamina +10\nPower +5\nSkill points +5\nKing Halo bond +5",
+            "Energy +15\nSkill points +5\nKing Halo bond +5"
+        ],
+        "You May Socialize With Me!": [
+            "Energy -20\nSpeed +10\nPower +10\nWit +5\nKing Halo bond +5",
+            "Mood -1\nGuts +25\nKing Halo bond +5"
+        ],
+        "You May Advise Me!": [
+            "Guts +10\nWit +5\nKing Halo bond +5",
+            "Homestretch Haste hint +1\nKing Halo bond +5"
+        ]
+    },
+    "Gold Ship": {
+        "(❯) Raising the Uma Lord's Castle": [
+            "Maximum Energy +4\nGold Ship bond +5",
+            "Speed +10\nGold Ship bond +5"
+        ],
+        "(❯❯❯) Assembling the Uma Lord's Minions": [
+            "Randomly either\n----------\nEnergy -10\nSpeed +5\nStamina +5\nInside Scoop hint +3\nGold Ship bond +5\n----------\nEnergy -10\nSpeed +10\nStamina +10\nInnate Experience hint +3\nGold Ship bond +5",
+            "Energy +10\nMaverick ○ hint +1"
+        ],
+        "Adventurer Gold Ship": [
+            "Stamina +15\nGold Ship bond +5",
+            "Guts +10\nSkill points +15\nGold Ship bond +5"
+        ],
+        "Revive the Brand! Golshi's Yakisoba": [
+            "Mood +1\nStamina +5",
+            "Hanshin Racecourse ○ hint +1\nGold Ship bond +5"
+        ]
+    },
+    "Bamboo Memory": {
+        "(❯❯) No One Is Above Discipline!": [
+            "Randomly either\n----------\nMaximum Energy +4\nEnergy -10\nStamina +10\nPower +10\nGuts +5\nHomestretch Haste hint +1\nBamboo Memory bond +5\n----------\nEnergy -20\nStamina +10\nPower +10\nGuts +5\nBamboo Memory bond +5\n----------\nEnergy -20\nStamina +10\nGuts +10\nObtain Running Idle skill",
+            "Energy -10\nMood +1\nStamina +5\nPower +5\nBamboo Memory bond +5",
+            "Energy +30\nHesitant Late Surgers hint +1\nEvent chain ended"
+        ],
+        "Overthrow the Rival!": [
+            "Guts +10\nBamboo Memory bond +5",
+            "Maximum Energy +4\nEnergy -5\nBamboo Memory bond +5"
+        ],
+        "Tons of Trouble!": [
+            "Stamina +5\nGuts +5\nBamboo Memory bond +5",
+            "Energy -10\nStandard Distance ○ hint +5\nBamboo Memory bond +5"
+        ]
+    },
+    "Kawakami Princess": {
+        "(❯) Modestly! Boldly!": [
+            "Mood +1\nSpeed +5\nKawakami Princess bond +5",
+            "Skill points +10\nTether hint +1\nKawakami Princess bond +5"
+        ],
+        "(❯❯❯) Hit It! Princess Road!": [
+            "Speed +15\nGuts +15\nCenter Stage hint +1\nKawakami Princess bond +5",
+            "Energy +25\nSkill points +25"
+        ],
+        "Princess Punch!": [
+            "Guts +10\nKawakami Princess bond +5",
+            "Mood +1\nKawakami Princess bond +5"
+        ],
+        "Princess Escape!": [
+            "Energy +10\nKawakami Princess bond +5",
+            "Steadfast hint +1\nKawakami Princess bond +5"
+        ]
+    },
+    "Hishi Akebono": {
+        "(❯❯) Let's Go... Buono ☆": [
+            "Energy +30\nGuts +5\nHishi Akebono bond +5\n(random) Get Slow Metabolism status",
+            "Stamina +5\nPower +5\nHishi Akebono bond +5"
+        ],
+        "Eat Up ♪": [
+            "Energy +10\nHishi Akebono bond +5",
+            "Energy -5\nPower +15\nHishi Akebono bond +5"
+        ],
+        "Leave It to Me ♪": [
+            "Stamina +10\nHishi Akebono bond +5",
+            "Energy -15\nSprinting Gear hint +2\nHishi Akebono bond +5"
+        ]
+    },
+    "Mejiro Dober": {
+        "(❯) One Step Forward": [
+            "Energy -10\nSkill points +15/+45\nMejiro Dober bond +5",
+            "Guts +5\nWit +5\nMejiro Dober bond +5"
+        ],
+        "Give It a Try": [
+            "Energy +15\nMejiro Dober bond +5",
+            "Mood +1\nSkill points +15\nMejiro Dober bond +5"
+        ],
+        "Hope She'll Like It...": [
+            "Skill points +45\nMejiro Dober bond +5",
+            "Unyielding Spirit hint +1\nMejiro Dober bond +5"
+        ]
+    },
+    "Sakura Chiyono O": {
+        "(❯❯) Blooming Hope!": [
+            "Randomly either\n----------\nStamina +15\nHeal a negative status effect\nSakura Chiyono O bond +5\n----------\nEnergy -10\nGuts +15\nSakura Chiyono O bond +5",
+            "Energy +10\nMood +1\nSakura Chiyono O bond +5"
+        ],
+        "(❯❯❯) Someday, I'll Bloom!": [
+            "Randomly either\n----------\nEnergy -15\nStamina +20\nSkill points +10\nSpeed Star hint +3\nSakura Chiyono O bond +5\n----------\nEnergy -15\nStamina +10\nSkill points +5\nPrepared to Pass hint +3\nSakura Chiyono O bond +5",
+            "Speed +5\nStamina +10\nPower +5\nSkill points +30\nSakura Chiyono O bond +5"
+        ],
+        "Today's Words of Wisdom!": [
+            "Energy -10\nPower +20\nSakura Chiyono O bond +5",
+            "Energy +5\nSkill points +10\nSakura Chiyono O bond +5"
+        ],
+        "Until I Bloom...": [
+            "Energy +5\nStamina +5\nSakura Chiyono O bond +5",
+            "Spring Runner ○ hint +1\nSakura Chiyono O bond +5"
+        ]
+    },
     "Yaeno Muteki": {
         "(❯❯) A Reasonable Diet vs. an Explosive Diet": [
             "Energy +10\nSkill points +10\nYaeno Muteki bond +5",
@@ -192,16 +333,6 @@
             "Pace Chaser Straightaways ○ hint +1\nTokai Teio bond +5"
         ]
     },
-    "Gold Ship": {
-        "Adventurer Gold Ship": [
-            "Stamina +15\nGold Ship bond +5",
-            "Guts +10\nSkill points +15\nGold Ship bond +5"
-        ],
-        "Revive the Brand! Golshi's Yakisoba": [
-            "Mood +1\nStamina +5",
-            "Hanshin Racecourse ○ hint +1\nGold Ship bond +5"
-        ]
-    },
     "Vodka": {
         "The Coolest Line": [
             "Power +10\nVodka bond +5",
@@ -238,20 +369,6 @@
         "Secret Notebook!": [
             "Power +10\nEl Condor Pasa bond +5",
             "Sunny Days ○ hint +1\nEl Condor Pasa bond +5"
-        ]
-    },
-    "Seiun Sky": {
-        "(❯) Be Strategic ☆": [
-            "Energy +10\nWit +5\nSeiun Sky bond +5",
-            "Skill points +30\nSecond Wind hint +1\nSeiun Sky bond -5\nEvent chain ended"
-        ],
-        "Recruiting Cat Catchers": [
-            "Energy +10\nWit +5\nSeiun Sky bond +5",
-            "Energy -10\nSpeed +15\nStamina +5\nSeiun Sky bond +5"
-        ],
-        "Recruiting Advisors": [
-            "Wit +15\nSeiun Sky bond +5",
-            "Keeping the Lead hint +1\nSeiun Sky bond +5"
         ]
     },
     "Tamamo Cross": {
@@ -381,20 +498,7 @@
             "Energy +30\nBiko Pegasus bond +5"
         ]
     },
-    "Tazuna Hayakawa": {
-        "(❯❯❯) Memories of Cinema": [
-            "Energy +35\nStamina +6\nMood +1\nTazuna Hayakawa bond +5",
-            "Stamina +12\nGuts +12\nMood +1\nTazuna Hayakawa bond +5"
-        ],
-        "My Chosen Way of Life": [
-            "Energy +14\nMood +1\nTazuna Hayakawa bond +5",
-            "Mood +1\nWit +6\nTazuna Hayakawa bond +5"
-        ],
-        "Enthusiastic Pair\nDating starts": [
-            "Energy +14\nWit +6\nMood +1\nTazuna Hayakawa bond +5\nCan start dating",
-            "Mood -1\nTazuna Hayakawa bond -5\nWatchful Eye hint +1\nEvent chain ended"
-        ]
-    },
+    "Tazuna Hayakawa": {},
     "Mejiro McQueen": {
         "To Maintain My Weight": [
             "Energy -10\nStamina +15\nMejiro McQueen bond +5",
@@ -406,13 +510,42 @@
         ]
     },
     "Rice Shower": {
-        "A Page of Flower Shop Assistance": [
-            "Mood +2\nRice Shower bond +5",
-            "Stamina +10\nRice Shower bond +5"
-        ],
         "A Page About Cloudy Weather": [
             "Speed +5\nGuts +5\nRice Shower bond +5",
             "Firm Conditions ○ hint +1\nRice Shower bond +5"
+        ],
+        "A Page of Flower Shop Assistance": [
+            "Mood +2\nRice Shower bond +5",
+            "Stamina +10\nRice Shower bond +5"
+        ]
+    },
+    "Shinko Windy": {
+        "(❯) Dig Here, Windy!": [
+            "Speed +10\nShinko Windy bond +5",
+            "Energy -5\nSkill points +30\nShinko Windy bond +5"
+        ],
+        "Chomp Extermination!": [
+            "Speed +3\nMood +1\nShinko Windy bond +5",
+            "Energy +10\nSkill points +5\nShinko Windy bond +5"
+        ],
+        "Chomp Attack!": [
+            "Skill points +15\nShinko Windy bond +5",
+            "Speed +3\nUnyielding Spirit hint +1\nShinko Windy bond +5"
+        ]
+    },
+    "Seeking the Pearl": {
+        "(❯) No More Words ♪ Use Body Language!": [
+            "Mood +1\nLucky Seven hint +1\nSeeking the Pearl bond +5",
+            "Power +10\nGuts +10\nSeeking the Pearl bond +5",
+            "Energy +30"
+        ],
+        "Full-Power Passion!": [
+            "Energy +10\nMood +1\nSeeking the Pearl bond +5",
+            "Power +5\nGuts +5\nSeeking the Pearl bond +5"
+        ],
+        "Full-Power Thinking!": [
+            "Wit +20\nSeeking the Pearl bond +5",
+            "Energy -10\nUma Stan hint +3\nSeeking the Pearl bond +5"
         ]
     },
     "Zenno Rob Roy": {
@@ -494,23 +627,23 @@
         ]
     },
     "Fuji Kiseki": {
-        "Sleight of Hand": [
-            "Wit +5\nSkill points +15\nFuji Kiseki bond +5",
-            "Power +5\nSkill points +15\nFuji Kiseki bond +5"
-        ],
         "Misdirection": [
             "Prepared to Pass hint +1\nFuji Kiseki bond +5",
             "Skill points +30\nFuji Kiseki bond +5"
+        ],
+        "Sleight of Hand": [
+            "Wit +5\nSkill points +15\nFuji Kiseki bond +5",
+            "Power +5\nSkill points +15\nFuji Kiseki bond +5"
         ]
     },
     "Daiwa Scarlet": {
-        "I'm Going to Win Tomorrow!": [
-            "Wit +10\nDaiwa Scarlet bond +5",
-            "Mood +1\nSkill points +15\nDaiwa Scarlet bond +5"
-        ],
         "This Is Nothing!": [
             "Stamina to Spare hint +1\nDaiwa Scarlet bond +5",
             "Energy +20\nMood +1\nDaiwa Scarlet bond +5"
+        ],
+        "I'm Going to Win Tomorrow!": [
+            "Wit +10\nDaiwa Scarlet bond +5",
+            "Mood +1\nSkill points +15\nDaiwa Scarlet bond +5"
         ]
     },
     "Hishi Amazon": {
@@ -524,23 +657,23 @@
         ]
     },
     "Air Groove": {
-        "Strict but Gracious": [
-            "Go with the Flow hint +1\nAir Groove bond +5",
-            "Energy +10\nWit +10"
-        ],
         "Agile but Strong": [
             "Power +15\nAir Groove bond +5",
             "Speed +10\nStamina +5\nAir Groove bond +5"
+        ],
+        "Strict but Gracious": [
+            "Go with the Flow hint +1\nAir Groove bond +5",
+            "Energy +10\nWit +10"
         ]
     },
     "Agnes Digital": {
-        "Umamusume Deficiency!": [
-            "Energy +5\nSpeed +5\nAgnes Digital bond +5",
-            "Speed +5\nPower +5\nAgnes Digital bond +5"
-        ],
         "Heavy Romance": [
             "Rainy Days ○ hint +1\nAgnes Digital bond +5",
             "Wet Conditions ○ hint +1\nAgnes Digital bond +5"
+        ],
+        "Umamusume Deficiency!": [
+            "Energy +5\nSpeed +5\nAgnes Digital bond +5",
+            "Speed +5\nPower +5\nAgnes Digital bond +5"
         ]
     },
     "Biwa Hayahide": {
@@ -564,13 +697,13 @@
         ]
     },
     "Manhattan Cafe": {
-        "Solo Nighttime Run": [
-            "Stamina +10\nManhattan Cafe bond +5",
-            "Energy +10\nStamina +5\nManhattan Cafe bond +5"
-        ],
         "A Taste of Silence": [
             "Stamina +5\nSkill points +15\nManhattan Cafe bond +5",
             "Non-Standard Distance ○ hint +1\nManhattan Cafe bond +5"
+        ],
+        "Solo Nighttime Run": [
+            "Stamina +10\nManhattan Cafe bond +5",
+            "Energy +10\nStamina +5\nManhattan Cafe bond +5"
         ]
     },
     "Mihono Bourbon": {
@@ -588,53 +721,53 @@
         ]
     },
     "Mejiro Ryan": {
-        "My Muscles and Me, Onward to Tomorrow!": [
-            "Energy -10\nPower +15\nMejiro Ryan bond +5",
-            "Maximum Energy +4\nPower +5\nMejiro Ryan bond +5"
-        ],
         "It's Not Like I Like Romance!": [
             "Pace Strategy hint +1\nMejiro Ryan bond +5",
             "Energy +30\nMejiro Ryan bond +5"
+        ],
+        "My Muscles and Me, Onward to Tomorrow!": [
+            "Energy -10\nPower +15\nMejiro Ryan bond +5",
+            "Maximum Energy +4\nPower +5\nMejiro Ryan bond +5"
         ]
     },
     "Agnes Tachyon": {
-        "The Correlation between Sleep and Efficiency": [
-            "Power +5\nWit +5\nAgnes Tachyon bond +5",
-            "Wit +10\nAgnes Tachyon bond +5"
-        ],
         "Happenstance Introduced Through Intervention": [
             "Late Surger Savvy ○ hint +1\nAgnes Tachyon bond +5",
+            "Wit +10\nAgnes Tachyon bond +5"
+        ],
+        "The Correlation between Sleep and Efficiency": [
+            "Power +5\nWit +5\nAgnes Tachyon bond +5",
             "Wit +10\nAgnes Tachyon bond +5"
         ]
     },
     "Eishin Flash": {
-        "Unforeseen Lunch": [
-            "Energy +15\nEishin Flash bond +5",
-            "Speed +5\nGuts +5\nEishin Flash bond +5"
-        ],
         "Responding to the Unforeseen": [
             "Guts +10\nEishin Flash bond +5",
             "Target in Sight ○ hint +1\nEishin Flash bond +5"
+        ],
+        "Unforeseen Lunch": [
+            "Energy +15\nEishin Flash bond +5",
+            "Speed +5\nGuts +5\nEishin Flash bond +5"
         ]
     },
     "Narita Taishin": {
-        "Just Leave Me Alone": [
-            "Stamina +5\nSkill points +15\nNarita Taishin bond +5",
-            "Power +5\nSkill points +15\nNarita Taishin bond +5"
-        ],
         "Just Don't Bother Me": [
             "Pressure hint +1\nNarita Taishin bond +5",
             "Skill points +30\nNarita Taishin bond +5"
+        ],
+        "Just Leave Me Alone": [
+            "Stamina +5\nSkill points +15\nNarita Taishin bond +5",
+            "Power +5\nSkill points +15\nNarita Taishin bond +5"
         ]
     },
     "Marvelous Sunday": {
-        "Marvelous, No Question ☆": [
-            "Energy +10\nSpeed +5\nMarvelous Sunday bond +5",
-            "Mood +1\nSpeed +5\nMarvelous Sunday bond +5"
-        ],
         "How To Be More Marvelous ☆": [
             "Energy +10\nMood +1\nMarvelous Sunday bond +5",
             "Hanshin Racecourse ○ hint +1\nMarvelous Sunday bond +5"
+        ],
+        "Marvelous, No Question ☆": [
+            "Energy +10\nSpeed +5\nMarvelous Sunday bond +5",
+            "Mood +1\nSpeed +5\nMarvelous Sunday bond +5"
         ]
     },
     "Matikanefukukitaru": {
@@ -663,26 +796,6 @@
         "Please... Buy Some Carrots": [
             "Energy +10\nWit +5\nMeisho Doto bond +5",
             "Pace Chaser Corners ○ hint +1\nMeisho Doto bond +5"
-        ]
-    },
-    "Mejiro Dober": {
-        "Give It a Try": [
-            "Energy +15\nMejiro Dober bond +5",
-            "Mood +1\nSkill points +15\nMejiro Dober bond +5"
-        ],
-        "Hope She'll Like It...": [
-            "Skill points +45\nMejiro Dober bond +5",
-            "Unyielding Spirit hint +1\nMejiro Dober bond +5"
-        ]
-    },
-    "King Halo": {
-        "You May Socialize With Me!": [
-            "Energy -20\nSpeed +10\nPower +10\nWit +5\nKing Halo bond +5",
-            "Mood -1\nGuts +25\nKing Halo bond +5"
-        ],
-        "You May Advise Me!": [
-            "Guts +10\nWit +5\nKing Halo bond +5",
-            "Homestretch Haste hint +1\nKing Halo bond +5"
         ]
     },
     "Aoi Kiryuin": {
