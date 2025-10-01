@@ -26,6 +26,9 @@ This project is purely for educational purposes to learn about Android automatio
             -   4GB Memory
             -   Display resolution set to Portrait 1080 x 1920
             -   Pixel density 240 DPI (Medium)
+    -   Note that other emulators like MuMu may have their 1080p at a different DPI other than 240. MuMu by default uses 480 DPI which will throw template matching and OCR off. It is highly recommended to force it to 240 DPI in the emulator settings for the best performance. The following are tested resolutions + DPIs:
+        -   1080x1920 240 DPI (from Bluestacks emulator default settings)
+        -   1080x2340 450 DPI (from native Samsung phone)
 -   The in-game graphics need to be set to `Standard` instead of `Basic` for best performance.
 
 # Features
