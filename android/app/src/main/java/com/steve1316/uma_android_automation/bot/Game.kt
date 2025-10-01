@@ -603,17 +603,17 @@ class Game(val myContext: Context) {
 				printToLog("[TRAINING] $failureChance% within acceptable range of ${maximumFailureChance}%. Proceeding to acquire all other percentages and total stat increases...")
 
 				// Iterate through every training that is not blacklisted.
-				trainings.forEachIndexed { index, training ->
-					if (blacklist.getOrElse(index) { "" } == training) {
+				for ((index, training) in trainings.withIndex()) {
+					if (!test && blacklist.getOrElse(index) { "" } == training) {
 						printToLog("[TRAINING] Skipping $training training due to being blacklisted.")
-						return@forEachIndexed
+						continue
 					}
 
 					if (singleTraining) {
 						val trainingHeader = "${training.lowercase()}_training_header"
 						if (imageUtils.findImage(trainingHeader, tries = 1, region = imageUtils.regionTopHalf, suppressError = true).first == null) {
 							// Keep iterating until the current training is found.
-							return@forEachIndexed
+							continue
 						}
 					}
 
@@ -729,7 +729,7 @@ class Game(val myContext: Context) {
 					)
 					trainingMap.put(training, newTraining)
 					if (singleTraining) {
-						return@forEachIndexed
+						break
 					}
 				}
 

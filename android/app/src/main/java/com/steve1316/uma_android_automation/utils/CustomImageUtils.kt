@@ -809,7 +809,7 @@ class CustomImageUtils(context: Context, private val game: Game) : ImageUtils(co
 
 		if (skillPointsLocation != null) {
 			// Process all stats at once using the mapping
-			statValueMapping.forEach { (statName, _) ->
+			for ((statName, _) in statValueMapping) {
 				val croppedBitmap = when (statName) {
 					"Speed" -> createSafeBitmap(sourceBitmap, relX(skillPointsLocation.x, -862), relY(skillPointsLocation.y, 25), relWidth(98), relHeight(42), "determineStatValues Speed stat")
 					"Stamina" -> createSafeBitmap(sourceBitmap, relX(skillPointsLocation.x, -862 + 170), relY(skillPointsLocation.y, 25), relWidth(98), relHeight(42), "determineStatValues Stamina stat")
@@ -818,13 +818,13 @@ class CustomImageUtils(context: Context, private val game: Game) : ImageUtils(co
 					"Wit" -> createSafeBitmap(sourceBitmap, relX(skillPointsLocation.x, -862 + 170*4), relY(skillPointsLocation.y, 25), relWidth(98), relHeight(42), "determineStatValues Wit stat")
 					else -> {
 						MessageLog.printToLog("[ERROR] determineStatValue() received an incorrect stat name of $statName.", tag = tag, isError = true)
-						return@forEach
+						continue
 					}
 				}
 				if (croppedBitmap == null) {
 					MessageLog.printToLog("[ERROR] Failed to create cropped bitmap for reading $statName stat value.", tag = tag, isError = true)
 					statValueMapping[statName] = -1
-					return@forEach
+					continue
 				}
 
 				// Make the cropped screenshot grayscale.
