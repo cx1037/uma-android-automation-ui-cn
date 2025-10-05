@@ -48,8 +48,10 @@ class MainActivity : ReactActivity() {
 		// ignore this error. OpenCV functionality is not impacted by this error.
 		OpenCVLoader.initDebug()
 
-		// Display the Lottie animated splash screen while the Javascript bundle is being loaded.
-		showSplashScreen()
+		// Only show splash screen on first launch, not when resuming from background.
+		if (savedInstanceState == null) {
+			showSplashScreen()
+		}
 	}
 
 	/**
