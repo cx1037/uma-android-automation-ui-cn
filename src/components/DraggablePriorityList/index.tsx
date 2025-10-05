@@ -131,7 +131,7 @@ const DraggablePriorityList: React.FC<DraggablePriorityListProps> = ({ items, se
                         )}
 
                         {/* Checkbox - keep same size */}
-                        <Checkbox id={`priority-${item.id}`} checked={isSelected} onCheckedChange={() => toggleItem(item.id)} />
+                        <Checkbox id={`priority-${item.id}`} checked={isSelected} onCheckedChange={() => toggleItem(item.id)} className="dark:border-gray-400" />
 
                         {/* Content - tighter spacing */}
                         <View className="flex-1 gap-1">

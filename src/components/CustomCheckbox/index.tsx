@@ -20,7 +20,7 @@ const CustomCheckbox: React.FC<CustomCheckboxProps> = ({ id = undefined, checked
 
     return (
         <View className={`flex-row items-start gap-3 ${className}`} style={style}>
-            <Checkbox id={id} checked={checked} onCheckedChange={onCheckedChange} className="dark:border-gray-400 dark:bg-gray-800" />
+            <Checkbox id={id} checked={checked} onCheckedChange={onCheckedChange} className="dark:border-gray-400" />
 
             {/* flexShrink is used to make sure the description wraps properly and not overflow past the right side of the screen. */}
             <View style={{ flexShrink: 1 }}>
