@@ -1,4 +1,4 @@
-import { useContext, useState, useMemo, useCallback } from "react"
+import { useContext, useState, useMemo, useCallback, memo } from "react"
 import { MessageLogContext } from "../../context/MessageLogContext"
 import { BotStateContext } from "../../context/BotStateContext"
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, FlatList } from "react-native"
@@ -105,6 +105,31 @@ interface LogMessage {
     text: string
     type: "normal" | "warning" | "error"
 }
+
+// Memoized LogItem component for better performance.
+const LogItem = memo(({ item, fontSize, onLongPress }: { item: LogMessage; fontSize: number; onLongPress: (message: string) => void }) => {
+    const getTextStyle = useCallback(() => {
+        const baseStyle = {
+            fontSize: fontSize,
+            lineHeight: fontSize * 1.5,
+        }
+
+        switch (item.type) {
+            case "warning":
+                return { ...styles.logTextWarning, ...baseStyle }
+            case "error":
+                return { ...styles.logTextError, ...baseStyle }
+            default:
+                return { ...styles.logText, ...baseStyle }
+        }
+    }, [item.type, fontSize])
+
+    return (
+        <TouchableOpacity style={styles.logItem} onLongPress={() => onLongPress(item.text)} delayLongPress={500}>
+            <Text style={getTextStyle()}>{item.text}</Text>
+        </TouchableOpacity>
+    )
+})
 
 const MessageLog = () => {
     const mlc = useContext(MessageLogContext)
@@ -260,26 +285,6 @@ Hide String Comparison Results: ${settings.debug.enableHideOCRComparisonResults 
         })
     }, [processedMessages, searchQuery])
 
-    // Get text style based on message type.
-    const getTextStyle = useCallback(
-        (type: "normal" | "warning" | "error") => {
-            const baseStyle = {
-                fontSize: fontSize,
-                lineHeight: fontSize * 1.5,
-            }
-
-            switch (type) {
-                case "warning":
-                    return { ...styles.logTextWarning, ...baseStyle }
-                case "error":
-                    return { ...styles.logTextError, ...baseStyle }
-                default:
-                    return { ...styles.logText, ...baseStyle }
-            }
-        },
-        [fontSize]
-    )
-
     // Font size control functions.
     const increaseFontSize = useCallback(() => {
         setFontSize((prev) => Math.min(prev + 1, 24))
@@ -317,14 +322,7 @@ Hide String Comparison Results: ${settings.debug.enableHideOCRComparisonResults 
     )
 
     // Render individual log item.
-    const renderLogItem = useCallback(
-        ({ item }: { item: LogMessage }) => (
-            <TouchableOpacity style={styles.logItem} onLongPress={() => handleLongPress(item.text)} delayLongPress={500}>
-                <Text style={getTextStyle(item.type)}>{item.text}</Text>
-            </TouchableOpacity>
-        ),
-        [handleLongPress, getTextStyle]
-    )
+    const renderLogItem = useCallback(({ item }: { item: LogMessage }) => <LogItem item={item} fontSize={fontSize} onLongPress={handleLongPress} />, [fontSize, handleLongPress])
 
     // Key extractor for FlatList.
     const keyExtractor = useCallback((item: LogMessage) => item.id, [])
@@ -382,14 +380,18 @@ Hide String Comparison Results: ${settings.debug.enableHideOCRComparisonResults 
                     keyExtractor={keyExtractor}
                     showsVerticalScrollIndicator={true}
                     removeClippedSubviews={true}
-                    maxToRenderPerBatch={50}
-                    windowSize={10}
-                    initialNumToRender={30}
+                    maxToRenderPerBatch={100}
+                    initialNumToRender={100}
                     getItemLayout={(data, index) => ({
                         length: fontSize * 1.5 + 2,
                         offset: (fontSize * 1.5 + 2) * index,
                         index,
                     })}
+                    updateCellsBatchingPeriod={10}
+                    maintainVisibleContentPosition={{
+                        minIndexForVisible: 0,
+                        autoscrollToTopThreshold: 10,
+                    }}
                 />
             </View>
 
