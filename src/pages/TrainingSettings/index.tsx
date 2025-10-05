@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react"
-import { View, Text, ScrollView, StyleSheet, Modal, TouchableOpacity, Dimensions, Platform } from "react-native"
+import { View, Text, ScrollView, StyleSheet, Modal, TouchableOpacity, Dimensions } from "react-native"
 import { useNavigation } from "@react-navigation/native"
 import { useTheme } from "../../context/ThemeContext"
 import { BotStateContext } from "../../context/BotStateContext"
@@ -12,7 +12,7 @@ import CustomAccordion from "../../components/CustomAccordion"
 import { ArrowLeft } from "lucide-react-native"
 
 const TrainingSettings = () => {
-    const { colors, isDark } = useTheme()
+    const { colors } = useTheme()
     const navigation = useNavigation()
     const bsc = useContext(BotStateContext)
     const [blacklistModalVisible, setBlacklistModalVisible] = useState(false)

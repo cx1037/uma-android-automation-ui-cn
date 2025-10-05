@@ -3,16 +3,12 @@ import { databaseManager } from "../lib/database"
 import { Settings, defaultSettings } from "../context/BotStateContext"
 import { startTiming } from "../lib/performanceLogger"
 import { logWithTimestamp, logErrorWithTimestamp } from "../lib/logger"
-import { MessageLogContext } from "../context/MessageLogContext"
 
 /**
  * Hook for managing settings persistence with SQLite.
  * Provides CRUD operations and automatic migration from JSON files.
  */
 export const useSQLiteSettings = () => {
-    const mlc = useContext(MessageLogContext)
-    const { addMessageToAsyncMessages } = mlc
-
     const [isSQLiteInitialized, setIsSQLiteInitialized] = useState(false)
     const [_, setIsSQLiteLoading] = useState(false)
     const [isSQLiteSaving, setIsSQLiteSaving] = useState(false)
@@ -96,7 +92,6 @@ export const useSQLiteSettings = () => {
             endTiming({ status: "success" })
         } catch (error) {
             logErrorWithTimestamp("[SQLite] Failed to initialize database:", error)
-            addMessageToAsyncMessages(`\n[ERROR] Failed to initialize database: ${error}`)
             endTiming({ status: "error", error: error instanceof Error ? error.message : String(error) })
             throw error
         } finally {
@@ -149,7 +144,6 @@ export const useSQLiteSettings = () => {
                     }
                 } catch (saveError) {
                     logErrorWithTimestamp("[SQLite] Failed to save default settings to database:", saveError)
-                    addMessageToAsyncMessages(`\n[WARNING] Failed to save default settings to database: ${saveError}`)
                 }
             }
 
@@ -160,7 +154,6 @@ export const useSQLiteSettings = () => {
             return mergedSettings
         } catch (error) {
             logErrorWithTimestamp("Failed to load settings from database:", error)
-            addMessageToAsyncMessages(`\n[ERROR] Failed to load settings from database: ${error}`)
             endTiming({ status: "error", error: error instanceof Error ? error.message : String(error) })
             return JSON.parse(JSON.stringify(defaultSettings))
         } finally {
@@ -236,7 +229,6 @@ export const useSQLiteSettings = () => {
                 endTiming({ status: "success", changedCategories: Object.keys(changedSettings).length, totalSettingsSaved })
             } catch (error) {
                 logErrorWithTimestamp("[SQLite] Failed to save settings to database:", error)
-                addMessageToAsyncMessages(`\n[ERROR] Failed to save settings to database: ${error}`)
                 endTiming({ status: "error", error: error instanceof Error ? error.message : String(error) })
                 throw error
             } finally {

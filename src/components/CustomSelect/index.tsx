@@ -1,7 +1,6 @@
 import React, { useRef, useState } from "react"
 import { View, LayoutChangeEvent, ViewStyle } from "react-native"
 import { Option, Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select"
-import { useTheme } from "../../context/ThemeContext"
 
 interface SelectOption {
     value: string
@@ -34,8 +33,6 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
     disabled = false,
     style,
 }) => {
-    const { colors } = useTheme()
-
     const [triggerWidth, setTriggerWidth] = useState<number>(0)
     const triggerRef = useRef<View>(null)
 
