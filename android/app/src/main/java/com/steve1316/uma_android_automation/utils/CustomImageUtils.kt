@@ -201,78 +201,34 @@ class CustomImageUtils(context: Context, private val game: Game) : ImageUtils(co
 			return -1
 		}
 
-		val croppedBitmap: Bitmap? = if (isTablet) {
-			createSafeBitmap(sourceBitmap!!, relX(trainingSelectionLocation.x, -65), relY(trainingSelectionLocation.y, 23), relWidth(130), relHeight(50), "findTrainingFailureChance tablet")
+		// Determine crop region based on device type.
+		val (offsetX, offsetY, width, height) = if (isTablet) {
+			listOf(-65, 23, relWidth(130), relHeight(50))
 		} else {
-			createSafeBitmap(sourceBitmap!!, relX(trainingSelectionLocation.x, -45), relY(trainingSelectionLocation.y, 15), relWidth(100), relHeight(37), "findTrainingFailureChance phone")
-		}
-		if (croppedBitmap == null) {
-			MessageLog.printToLog("[ERROR] Failed to create cropped bitmap for training failure chance detection.", tag = tag, isError = true)
-			return -1
+			listOf(-45, 15, relWidth(100), relHeight(37))
 		}
 
-		val resizedBitmap = croppedBitmap.scale(croppedBitmap.width * 2, croppedBitmap.height * 2)
+		// Perform OCR with 2x scaling and no thresholding.
+		val detectedText = performOCROnRegion(
+			sourceBitmap!!,
+			relX(trainingSelectionLocation.x, offsetX),
+			relY(trainingSelectionLocation.y, offsetY),
+			width,
+			height,
+			useThreshold = false,
+			useGrayscale = true,
+			scaleUp = 2,
+			ocrEngine = "mlkit",
+			debugName = "TrainingFailureChance"
+		)
 
-		// Save the cropped image for debugging purposes.
-		val tempMat = Mat()
-		Utils.bitmapToMat(resizedBitmap, tempMat)
-		Imgproc.cvtColor(tempMat, tempMat, Imgproc.COLOR_BGR2GRAY)
-		if (debugMode) Imgcodecs.imwrite("$matchFilePath/debugTrainingFailureChance_afterCrop.png", tempMat)
-
-		// Create a InputImage object for Google's ML OCR.
-		val resultBitmap = createBitmap(tempMat.cols(), tempMat.rows())
-		Utils.matToBitmap(tempMat, resultBitmap)
-		val inputImage: InputImage = InputImage.fromBitmap(resultBitmap, 0)
-
-		// Use CountDownLatch to make the async operation synchronous.
-		val latch = CountDownLatch(1)
-		var result = -1
-		var mlkitFailed = false
-
-		googleTextRecognizer.process(inputImage)
-			.addOnSuccessListener { text ->
-				if (text.textBlocks.isNotEmpty()) {
-					for (block in text.textBlocks) {
-						try {
-							// Logging has been removed to mitigate race conditions involving the message log when called from a thread.
-							result = block.text.replace("%", "").trim().toInt()
-						} catch (_: NumberFormatException) {
-						}
-					}
-				}
-				latch.countDown()
-			}
-			.addOnFailureListener {
-				MessageLog.printToLog("[ERROR] Failed to do text detection via Google's ML Kit. Falling back to Tesseract.", tag = tag, isError = true)
-				mlkitFailed = true
-				latch.countDown()
-			}
-
-		// Wait for the async operation to complete.
-		try {
-			latch.await(5, TimeUnit.SECONDS)
-		} catch (_: InterruptedException) {
-			MessageLog.printToLog("[ERROR] Google ML Kit operation timed out", tag = tag, isError = true)
-		}
-
-		// Fallback to Tesseract if ML Kit failed or didn't find result.
-		if (mlkitFailed || result == -1) {
-			tessDigitsBaseAPI.setImage(resultBitmap)
-
-			try {
-				val detectedText = tessDigitsBaseAPI.utF8Text.replace("%", "")
-				// Logging has been removed to mitigate race conditions involving the message log when called from a thread.
-				val cleanedResult = detectedText.replace(Regex("[^0-9]"), "")
-				result = cleanedResult.toInt()
-			} catch (_: NumberFormatException) {
-				MessageLog.printToLog("[ERROR] Could not convert \"${tessDigitsBaseAPI.utF8Text.replace("%", "")}\" to integer.", tag = tag, isError = true)
-				result = -1
-			} catch (e: Exception) {
-				MessageLog.printToLog("[ERROR] Cannot perform OCR using Tesseract: ${e.stackTraceToString()}", tag = tag, isError = true)
-				result = -1
-			}
-
-			tessDigitsBaseAPI.clear()
+		// Parse the result.
+		val result = try {
+			val cleanedResult = detectedText.replace("%", "").replace(Regex("[^0-9]"), "").trim()
+			cleanedResult.toInt()
+		} catch (_: NumberFormatException) {
+			MessageLog.printToLog("[ERROR] Could not convert \"$detectedText\" to integer.", tag = tag, isError = true)
+			-1
 		}
 
 		if (debugMode) {
@@ -280,8 +236,6 @@ class CustomImageUtils(context: Context, private val game: Game) : ImageUtils(co
 		} else {
 			Log.d(tag, "Failure chance detected to be at $result%.")
 		}
-
-		tempMat.release()
 
 		return result
 	}
@@ -292,102 +246,52 @@ class CustomImageUtils(context: Context, private val game: Game) : ImageUtils(co
 	 * @return Number of the day.
 	 */
 	fun determineDayForExtraRace(): Int {
-		var result = -1
 		val (energyTextLocation, sourceBitmap) = findImage("energy", tries = 1, region = regionTopHalf)
 
 		if (energyTextLocation != null) {
-			// Crop the source screenshot to only contain the day number.
-			val croppedBitmap: Bitmap? = if (game.campaign == "Ao Haru") {
+			// Determine crop region based on campaign and device type.
+			val (offsetX, offsetY, width, height) = if (game.campaign == "Ao Haru") {
 				if (isTablet) {
-					createSafeBitmap(sourceBitmap, relX(energyTextLocation.x, -(260 * 1.32).toInt()), relY(energyTextLocation.y, -(140 * 1.32).toInt()), relWidth(135), relHeight(100), "determineDayForExtraRace Ao Haru tablet")
+					listOf(-(260 * 1.32).toInt(), -(140 * 1.32).toInt(), relWidth(135), relHeight(100))
 				} else {
-					createSafeBitmap(sourceBitmap, relX(energyTextLocation.x, -260), relY(energyTextLocation.y, -140), relWidth(105), relHeight(75), "determineDayForExtraRace Ao Haru phone")
+					listOf(-260, -140, relWidth(105), relHeight(75))
 				}
 			} else {
 				if (isTablet) {
-					createSafeBitmap(sourceBitmap, relX(energyTextLocation.x, -(246 * 1.32).toInt()), relY(energyTextLocation.y, -(96 * 1.32).toInt()), relWidth(175), relHeight(116), "determineDayForExtraRace default tablet")
+					listOf(-(246 * 1.32).toInt(), -(96 * 1.32).toInt(), relWidth(175), relHeight(116))
 				} else {
-					createSafeBitmap(sourceBitmap, relX(energyTextLocation.x, -246), relY(energyTextLocation.y, -100), relWidth(140), relHeight(95), "determineDayForExtraRace default phone")
+					listOf(-246, -100, relWidth(140), relHeight(95))
 				}
 			}
-			if (croppedBitmap == null) {
-				MessageLog.printToLog("[ERROR] Failed to create cropped bitmap for day detection.", tag = tag, isError = true)
-				return -1
+
+			// Perform OCR with 2x scaling.
+			val detectedText = performOCROnRegion(
+				sourceBitmap,
+				relX(energyTextLocation.x, offsetX),
+				relY(energyTextLocation.y, offsetY),
+				width,
+				height,
+				useThreshold = true,
+				useGrayscale = true,
+				scaleUp = 2,
+				ocrEngine = "mlkit",
+				debugName = "DayForExtraRace"
+			)
+
+			// Parse the result.
+			val result = try {
+				val cleanedResult = detectedText.replace(Regex("[^0-9]"), "")
+				MessageLog.printToLog("[INFO] Detected day for extra racing: $detectedText", tag = tag)
+				cleanedResult.toInt()
+			} catch (_: NumberFormatException) {
+				MessageLog.printToLog("[ERROR] Could not convert \"$detectedText\" to integer.", tag = tag, isError = true)
+				-1
 			}
 
-			val resizedBitmap = croppedBitmap.scale(croppedBitmap.width * 2, croppedBitmap.height * 2)
-
-			// Make the cropped screenshot grayscale.
-			val cvImage = Mat()
-			Utils.bitmapToMat(resizedBitmap, cvImage)
-			Imgproc.cvtColor(cvImage, cvImage, Imgproc.COLOR_BGR2GRAY)
-			if (debugMode) Imgcodecs.imwrite("$matchFilePath/debugDayForExtraRace_afterCrop.png", cvImage)
-
-			// Thresh the grayscale cropped image to make it black and white.
-			val bwImage = Mat()
-			Imgproc.threshold(cvImage, bwImage, threshold.toDouble(), 255.0, Imgproc.THRESH_BINARY)
-			if (debugMode) Imgcodecs.imwrite("$matchFilePath/debugDayForExtraRace_afterThreshold.png", bwImage)
-
-			// Create a InputImage object for Google's ML OCR.
-			val resultBitmap = createBitmap(bwImage.cols(), bwImage.rows())
-			Utils.matToBitmap(bwImage, resultBitmap)
-			val inputImage: InputImage = InputImage.fromBitmap(resultBitmap, 0)
-
-			// Use CountDownLatch to make the async operation synchronous.
-			val latch = CountDownLatch(1)
-			var mlkitFailed = false
-
-			googleTextRecognizer.process(inputImage)
-				.addOnSuccessListener { text ->
-					if (text.textBlocks.isNotEmpty()) {
-						for (block in text.textBlocks) {
-							try {
-								MessageLog.printToLog("[INFO] Detected Day Number for Extra Race with Google ML Kit: ${block.text}", tag = tag)
-								result = block.text.toInt()
-							} catch (_: NumberFormatException) {
-							}
-						}
-					}
-					latch.countDown()
-				}
-				.addOnFailureListener {
-					MessageLog.printToLog("[ERROR] Failed to do text detection via Google's ML Kit. Falling back to Tesseract.", tag = tag, isError = true)
-					mlkitFailed = true
-					latch.countDown()
-				}
-
-			// Wait for the async operation to complete.
-			try {
-				latch.await(5, TimeUnit.SECONDS)
-			} catch (_: InterruptedException) {
-				MessageLog.printToLog("[ERROR] Google ML Kit operation timed out", tag = tag, isError = true)
-			}
-
-			// Fallback to Tesseract if ML Kit failed or didn't find result.
-			if (mlkitFailed || result == -1) {
-				tessDigitsBaseAPI.setImage(resultBitmap)
-
-				try {
-					val detectedText = tessDigitsBaseAPI.utF8Text.replace("%", "")
-					MessageLog.printToLog("[INFO] Detected day for extra racing with Tesseract: $detectedText", tag = tag)
-					val cleanedResult = detectedText.replace(Regex("[^0-9]"), "")
-					result = cleanedResult.toInt()
-				} catch (_: NumberFormatException) {
-					MessageLog.printToLog("[ERROR] Could not convert \"${tessDigitsBaseAPI.utF8Text.replace("%", "")}\" to integer.", tag = tag, isError = true)
-					result = -1
-				} catch (e: Exception) {
-					MessageLog.printToLog("[ERROR] Cannot perform OCR using Tesseract: ${e.stackTraceToString()}", tag = tag, isError = true)
-					result = -1
-				}
-
-				tessDigitsBaseAPI.clear()
-			}
-
-			cvImage.release()
-			bwImage.release()
+			return result
 		}
 
-		return result
+		return -1
 	}
 
 	/**
@@ -499,80 +403,32 @@ class CustomImageUtils(context: Context, private val game: Game) : ImageUtils(co
 		val (skillPointLocation, sourceBitmap) = findImage("skill_points", tries = 1)
 
 		return if (skillPointLocation != null) {
-			val croppedBitmap = if (isTablet) {
-				createSafeBitmap(sourceBitmap, relX(skillPointLocation.x, -75), relY(skillPointLocation.y, 45), relWidth(150), relHeight(70), "determineSkillPoints tablet")
+			// Determine crop region based on device type.
+			val (offsetX, offsetY, width, height) = if (isTablet) {
+				listOf(-75, 45, relWidth(150), relHeight(70))
 			} else {
-				createSafeBitmap(sourceBitmap, relX(skillPointLocation.x, -70), relY(skillPointLocation.y, 28), relWidth(135), relHeight(70), "determineSkillPoints phone")
-			}
-			if (croppedBitmap == null) {
-				MessageLog.printToLog("[ERROR] Failed to create cropped bitmap for skill points detection.", tag = tag, isError = true)
-				return -1
+				listOf(-70, 28, relWidth(135), relHeight(70))
 			}
 
-			// Make the cropped screenshot grayscale.
-			val cvImage = Mat()
-			Utils.bitmapToMat(croppedBitmap, cvImage)
-			Imgproc.cvtColor(cvImage, cvImage, Imgproc.COLOR_BGR2GRAY)
-			if (debugMode) Imgcodecs.imwrite("$matchFilePath/debugSkillPoints_afterCrop.png", cvImage)
+			// Perform OCR with thresholding.
+			val detectedText = performOCROnRegion(
+				sourceBitmap,
+				relX(skillPointLocation.x, offsetX),
+				relY(skillPointLocation.y, offsetY),
+				width,
+				height,
+				useThreshold = true,
+				useGrayscale = true,
+				scaleUp = 1,
+				ocrEngine = "mlkit",
+				debugName = "SkillPoints"
+			)
 
-			// Thresh the grayscale cropped image to make it black and white.
-			val bwImage = Mat()
-			Imgproc.threshold(cvImage, bwImage, threshold.toDouble(), 255.0, Imgproc.THRESH_BINARY)
-			if (debugMode) Imgcodecs.imwrite("$matchFilePath/debugSkillPoints_afterThreshold.png", bwImage)
-
-			// Create a InputImage object for Google's ML OCR.
-			val resultBitmap = createBitmap(bwImage.cols(), bwImage.rows())
-			Utils.matToBitmap(bwImage, resultBitmap)
-			val inputImage: InputImage = InputImage.fromBitmap(resultBitmap, 0)
-
-			// Use CountDownLatch to make the async operation synchronous.
-			var result = ""
-			val latch = CountDownLatch(1)
-			var mlkitFailed = false
-
-			googleTextRecognizer.process(inputImage)
-				.addOnSuccessListener { text ->
-					if (text.textBlocks.isNotEmpty()) {
-						for (block in text.textBlocks) {
-							MessageLog.printToLog("[INFO] Detected the number of skill points with Google ML Kit: ${block.text}", tag = tag)
-							result = block.text
-						}
-					}
-					latch.countDown()
-				}
-				.addOnFailureListener {
-					MessageLog.printToLog("[ERROR] Failed to do text detection via Google's ML Kit. Falling back to Tesseract.", tag = tag, isError = true)
-					mlkitFailed = true
-					latch.countDown()
-				}
-
-			// Wait for the async operation to complete.
+			// Parse the result.
+			MessageLog.printToLog("[INFO] Detected number of skill points before formatting: $detectedText", tag = tag)
 			try {
-				latch.await(5, TimeUnit.SECONDS)
-			} catch (_: InterruptedException) {
-				MessageLog.printToLog("[ERROR] Google ML Kit operation timed out", tag = tag, isError = true)
-			}
-
-			if (mlkitFailed || result == "") {
-				tessDigitsBaseAPI.setImage(resultBitmap)
-
-				try {
-					// Finally, detect text on the cropped region.
-					result = tessDigitsBaseAPI.utF8Text
-				} catch (e: Exception) {
-					MessageLog.printToLog("[ERROR] Cannot perform OCR with Tesseract: ${e.stackTraceToString()}", tag = tag, isError = true)
-				}
-
-				tessDigitsBaseAPI.clear()
-			}
-
-			cvImage.release()
-			bwImage.release()
-
-			MessageLog.printToLog("[INFO] Detected number of skill points before formatting: $result", tag = tag)
-			try {
-				Log.d(tag, "Converting $result to integer for skill points")
-				val cleanedResult = result.replace(Regex("[^0-9]"), "")
+				Log.d(tag, "Converting $detectedText to integer for skill points")
+				val cleanedResult = detectedText.replace(Regex("[^0-9]"), "")
 				cleanedResult.toInt()
 			} catch (_: NumberFormatException) {
 				-1
@@ -808,46 +664,26 @@ class CustomImageUtils(context: Context, private val game: Game) : ImageUtils(co
 		val (skillPointsLocation, sourceBitmap) = findImage("skill_points")
 
 		if (skillPointsLocation != null) {
-			// Process all stats at once using the mapping
-			for ((statName, _) in statValueMapping) {
-				val croppedBitmap = when (statName) {
-					"Speed" -> createSafeBitmap(sourceBitmap, relX(skillPointsLocation.x, -862), relY(skillPointsLocation.y, 25), relWidth(98), relHeight(42), "determineStatValues Speed stat")
-					"Stamina" -> createSafeBitmap(sourceBitmap, relX(skillPointsLocation.x, -862 + 170), relY(skillPointsLocation.y, 25), relWidth(98), relHeight(42), "determineStatValues Stamina stat")
-					"Power" -> createSafeBitmap(sourceBitmap, relX(skillPointsLocation.x, -862 + 170*2), relY(skillPointsLocation.y, 25), relWidth(98), relHeight(42), "determineStatValues Power stat")
-					"Guts" -> createSafeBitmap(sourceBitmap, relX(skillPointsLocation.x, -862 + 170*3), relY(skillPointsLocation.y, 25), relWidth(98), relHeight(42), "determineStatValues Guts stat")
-					"Wit" -> createSafeBitmap(sourceBitmap, relX(skillPointsLocation.x, -862 + 170*4), relY(skillPointsLocation.y, 25), relWidth(98), relHeight(42), "determineStatValues Wit stat")
-					else -> {
-						MessageLog.printToLog("[ERROR] determineStatValue() received an incorrect stat name of $statName.", tag = tag, isError = true)
-						continue
-					}
-				}
-				if (croppedBitmap == null) {
-					MessageLog.printToLog("[ERROR] Failed to create cropped bitmap for reading $statName stat value.", tag = tag, isError = true)
-					statValueMapping[statName] = -1
-					continue
-				}
+			// Process all stats at once using the mapping.
+			statValueMapping.keys.forEachIndexed { index, statName ->
+				// Each stat is evenly spaced at 170 pixel intervals starting at offset -862.
+				val offsetX = -862 + (index * 170)
 
-				// Make the cropped screenshot grayscale.
-				val cvImage = Mat()
-				Utils.bitmapToMat(croppedBitmap, cvImage)
-				Imgproc.cvtColor(cvImage, cvImage, Imgproc.COLOR_BGR2GRAY)
-				if (debugMode) Imgcodecs.imwrite("$matchFilePath/debug${statName}StatValue_afterCrop.png", cvImage)
+				// Perform OCR with no thresholding (stats are on solid background).
+				val result = performOCROnRegion(
+					sourceBitmap,
+					relX(skillPointsLocation.x, offsetX),
+					relY(skillPointsLocation.y, 25),
+					relWidth(98),
+					relHeight(42),
+					useThreshold = false,
+					useGrayscale = true,
+					scaleUp = 1,
+					ocrEngine = "tesseract_digits",
+					debugName = "${statName}StatValue"
+				)
 
-				val resultBitmap = createBitmap(cvImage.cols(), cvImage.rows())
-				Utils.matToBitmap(cvImage, resultBitmap)
-				tessDigitsBaseAPI.setImage(resultBitmap)
-
-				var result = "empty!"
-				try {
-					// Finally, detect text on the cropped region.
-					result = tessDigitsBaseAPI.utF8Text
-				} catch (e: Exception) {
-					MessageLog.printToLog("[ERROR] Cannot perform OCR with Tesseract: ${e.stackTraceToString()}", tag = tag, isError = true)
-				}
-
-				tessDigitsBaseAPI.clear()
-				cvImage.release()
-
+				// Parse the result.
 				MessageLog.printToLog("[INFO] Detected number of stats for $statName from Tesseract before formatting: $result", tag = tag)
 				if (result.lowercase().contains("max") || result.lowercase().contains("ax")) {
 					MessageLog.printToLog("[INFO] $statName seems to be maxed out. Setting it to 1200.", tag = tag)
@@ -876,77 +712,36 @@ class CustomImageUtils(context: Context, private val game: Game) : ImageUtils(co
 	 */
 	fun determineDayNumber(): String {
 		val (energyLocation, sourceBitmap) = findImage("energy")
-		var result = ""
+		
 		if (energyLocation != null) {
-			val croppedBitmap = createSafeBitmap(sourceBitmap, relX(energyLocation.x, -268), relY(energyLocation.y, -180), relWidth(308), relHeight(35), "determineDayNumber")
-			if (croppedBitmap == null) {
-				MessageLog.printToLog("[ERROR] Failed to create cropped bitmap for day number detection.", tag = tag, isError = true)
-				return ""
-			}
+			// Perform OCR with no thresholding (date text is on solid background).
+			val result = performOCROnRegion(
+				sourceBitmap,
+				relX(energyLocation.x, -268),
+				relY(energyLocation.y, -180),
+				relWidth(308),
+				relHeight(35),
+				useThreshold = false,
+				useGrayscale = true,
+				scaleUp = 1,
+				ocrEngine = "mlkit",
+				debugName = "dateString"
+			)
 
-			// Make the cropped screenshot grayscale.
-			val cvImage = Mat()
-			Utils.bitmapToMat(croppedBitmap, cvImage)
-			Imgproc.cvtColor(cvImage, cvImage, Imgproc.COLOR_BGR2GRAY)
-			if (debugMode) Imgcodecs.imwrite("$matchFilePath/debug_dateString_afterCrop.png", cvImage)
-
-			// Create a InputImage object for Google's ML OCR.
-			val resultBitmap = createBitmap(cvImage.cols(), cvImage.rows())
-			Utils.matToBitmap(cvImage, resultBitmap)
-			val inputImage: InputImage = InputImage.fromBitmap(resultBitmap, 0)
-
-			// Use CountDownLatch to make the async operation synchronous.
-			val latch = CountDownLatch(1)
-			var mlkitFailed = false
-
-			googleTextRecognizer.process(inputImage)
-				.addOnSuccessListener { text ->
-					if (text.textBlocks.isNotEmpty()) {
-						for (block in text.textBlocks) {
-							MessageLog.printToLog("[INFO] Detected the date with Google ML Kit: ${block.text}", tag = tag)
-							result = block.text
-						}
-					}
-					latch.countDown()
-				}
-				.addOnFailureListener {
-					MessageLog.printToLog("[ERROR] Failed to do text detection via Google's ML Kit. Falling back to Tesseract.", tag = tag, isError = true)
-					mlkitFailed = true
-					latch.countDown()
-				}
-
-			// Wait for the async operation to complete.
-			try {
-				latch.await(5, TimeUnit.SECONDS)
-			} catch (_: InterruptedException) {
-				MessageLog.printToLog("[ERROR] Google ML Kit operation timed out", tag = tag, isError = true)
-			}
-
-			// Fallback to Tesseract if ML Kit failed or didn't find result.
-			if (mlkitFailed || result == "") {
-				tessDigitsBaseAPI.setImage(resultBitmap)
-
-				try {
-					result = tessDigitsBaseAPI.utF8Text
-					MessageLog.printToLog("[INFO] Detected date with Tesseract: $result", tag = tag)
-				} catch (e: Exception) {
-					MessageLog.printToLog("[ERROR] Cannot perform OCR using Tesseract: ${e.stackTraceToString()}", tag = tag, isError = true)
-					result = ""
-				}
-
-				tessDigitsBaseAPI.clear()
-			}
-
+			MessageLog.printToLog("[INFO] Detected date: $result", tag = tag)
+			
 			if (debugMode) {
 				MessageLog.printToLog("[DEBUG] Date string detected to be at \"$result\".", tag = tag)
 			} else {
 				Log.d(tag, "Date string detected to be at \"$result\".")
 			}
+
+			return result
 		} else {
 			MessageLog.printToLog("[ERROR] Could not start the process of detecting the date string.", tag = tag, isError = true)
 		}
 
-		return result
+		return ""
 	}
 
 	/**
@@ -1449,5 +1244,214 @@ class CustomImageUtils(context: Context, private val game: Game) : ImageUtils(co
 
 		// Return the correlation coefficient, handling division by zero.
 		return if (den == 0.0) 0.0 else num / den
+	}
+
+	////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////
+	// Helper functions for OCR operations.
+
+	/**
+	 * Performs OCR using Tesseract on the provided bitmap.
+	 *
+	 * @param bitmap The bitmap to perform OCR on.
+	 * @return The detected text string or empty string if OCR fails.
+	 */
+	private fun performTesseractOCR(bitmap: Bitmap): String {
+		tessBaseAPI.setImage(bitmap)
+		return try {
+			val result = tessBaseAPI.utF8Text
+			tessBaseAPI.clear()
+			result
+		} catch (e: Exception) {
+			MessageLog.printToLog("[ERROR] Cannot perform OCR with Tesseract: ${e.stackTraceToString()}", tag = tag, isError = true)
+			tessBaseAPI.clear()
+			""
+		}
+	}
+
+	/**
+	 * Performs OCR using Tesseract with digits-only training data on the provided bitmap.
+	 *
+	 * @param bitmap The bitmap to perform OCR on.
+	 * @return The detected text string or empty string if OCR fails.
+	 */
+	private fun performTesseractDigitsOCR(bitmap: Bitmap): String {
+		tessDigitsBaseAPI.setImage(bitmap)
+		return try {
+			val result = tessDigitsBaseAPI.utF8Text
+			tessDigitsBaseAPI.clear()
+			result
+		} catch (e: Exception) {
+			MessageLog.printToLog("[ERROR] Cannot perform OCR with Tesseract Digits: ${e.stackTraceToString()}", tag = tag, isError = true)
+			tessDigitsBaseAPI.clear()
+			""
+		}
+	}
+
+	/**
+	 * Performs OCR using Google ML Kit on the provided bitmap with fallback to Tesseract.
+	 *
+	 * @param bitmap The bitmap to perform OCR on.
+	 * @param fallbackToTesseract Whether to fallback to Tesseract if ML Kit fails. Defaults to true.
+	 * @return The detected text string or empty string if OCR fails.
+	 */
+	private fun performMLKitOCR(bitmap: Bitmap, fallbackToTesseract: Boolean = true): String {
+		val inputImage: InputImage = InputImage.fromBitmap(bitmap, 0)
+		val latch = CountDownLatch(1)
+		var result = ""
+		var mlkitFailed = false
+
+		googleTextRecognizer.process(inputImage)
+			.addOnSuccessListener { text ->
+				if (text.textBlocks.isNotEmpty()) {
+					for (block in text.textBlocks) {
+						result = block.text
+					}
+				}
+				latch.countDown()
+			}
+			.addOnFailureListener {
+				MessageLog.printToLog("[ERROR] Failed to do text detection via Google's ML Kit.", tag = tag, isError = true)
+				mlkitFailed = true
+				latch.countDown()
+			}
+
+		// Wait for the async operation to complete.
+		try {
+			latch.await(5, TimeUnit.SECONDS)
+		} catch (_: InterruptedException) {
+			MessageLog.printToLog("[ERROR] Google ML Kit operation timed out.", tag = tag, isError = true)
+		}
+
+		// Fallback to Tesseract if ML Kit failed or didn't find result.
+		if (fallbackToTesseract && (mlkitFailed || result.isEmpty())) {
+			MessageLog.printToLog("[INFO] Falling back to Tesseract OCR.", tag = tag)
+			return performTesseractDigitsOCR(bitmap)
+		}
+
+		return result
+	}
+
+	/**
+	 * Performs OCR on a cropped region of a source bitmap with optional preprocessing.
+	 * 
+	 * @param sourceBitmap The source image to crop from.
+	 * @param x The x-coordinate of the crop region.
+	 * @param y The y-coordinate of the crop region.
+	 * @param width The width of the crop region.
+	 * @param height The height of the crop region.
+	 * @param useThreshold Whether to apply binary thresholding. Defaults to true.
+	 * @param useGrayscale Whether to convert to grayscale first. Defaults to true.
+	 * @param scaleUp Factor to scale up the cropped image before OCR. Defaults to 1 (no scaling).
+	 * @param ocrEngine The OCR engine to use ("tesseract", "mlkit", or "tesseract_digits"). Defaults to "tesseract".
+	 * @param debugName Optional name for debug image saving.
+	 * 
+	 * @return The detected text string or empty string if OCR fails.
+	 */
+	fun performOCROnRegion(
+		sourceBitmap: Bitmap,
+		x: Int,
+		y: Int,
+		width: Int,
+		height: Int,
+		useThreshold: Boolean = true,
+		useGrayscale: Boolean = true,
+		scaleUp: Int = 1,
+		ocrEngine: String = "tesseract",
+		debugName: String = ""
+	): String {
+		val croppedBitmap = createSafeBitmap(sourceBitmap, x, y, width, height, debugName) 
+			?: return ""
+		
+		val cvImage = Mat()
+		Utils.bitmapToMat(croppedBitmap, cvImage)
+		
+		// Apply grayscale if needed.
+		if (useGrayscale) {
+			Imgproc.cvtColor(cvImage, cvImage, Imgproc.COLOR_BGR2GRAY)
+			if (debugMode && debugName.isNotEmpty()) {
+				Imgcodecs.imwrite("$matchFilePath/debug_${debugName}_afterGrayscale.png", cvImage)
+			}
+		}
+		
+		// Apply thresholding if needed.
+		val processedImage = if (useThreshold) {
+			val bwImage = Mat()
+			Imgproc.threshold(cvImage, bwImage, threshold.toDouble(), 255.0, Imgproc.THRESH_BINARY)
+			if (debugMode && debugName.isNotEmpty()) {
+				Imgcodecs.imwrite("$matchFilePath/debug_${debugName}_afterThreshold.png", bwImage)
+			}
+			cvImage.release()
+			bwImage
+		} else {
+			cvImage
+		}
+		
+		// Scale up if needed.
+		val finalBitmap = if (scaleUp > 1) {
+			val resultBitmap = createBitmap(processedImage.cols(), processedImage.rows())
+			Utils.matToBitmap(processedImage, resultBitmap)
+			resultBitmap.scale(resultBitmap.width * scaleUp, resultBitmap.height * scaleUp)
+		} else {
+			val resultBitmap = createBitmap(processedImage.cols(), processedImage.rows())
+			Utils.matToBitmap(processedImage, resultBitmap)
+			resultBitmap
+		}
+		
+		// Perform OCR based on selected engine.
+		val result = when (ocrEngine) {
+			"mlkit" -> performMLKitOCR(finalBitmap)
+			"tesseract_digits" -> performTesseractDigitsOCR(finalBitmap)
+			else -> performTesseractOCR(finalBitmap)
+		}
+		
+		processedImage.release()
+		return result
+	}
+
+	/**
+	 * Performs OCR on a custom region using a reference point.
+	 * 
+	 * @param referencePoint The point to base the crop region on.
+	 * @param offsetX Offset from reference point x-coordinate.
+	 * @param offsetY Offset from reference point y-coordinate.
+	 * @param width Width of the crop region.
+	 * @param height Height of the crop region.
+	 * @param useThreshold Whether to apply binary thresholding. Defaults to true.
+	 * @param useGrayscale Whether to convert to grayscale first. Defaults to true.
+	 * @param scaleUp Factor to scale up the cropped image before OCR. Defaults to 1.
+	 * @param ocrEngine The OCR engine to use. Defaults to "tesseract".
+	 * @param debugName Optional name for debug image saving.
+	 * 
+	 * @return The detected text string or empty string if OCR fails.
+	 */
+	fun performOCRFromReference(
+		referencePoint: Point,
+		offsetX: Int,
+		offsetY: Int,
+		width: Int,
+		height: Int,
+		useThreshold: Boolean = true,
+		useGrayscale: Boolean = true,
+		scaleUp: Int = 1,
+		ocrEngine: String = "tesseract",
+		debugName: String = ""
+	): String {
+		val sourceBitmap = getSourceBitmap()
+		val finalX = relX(referencePoint.x, offsetX)
+		val finalY = relY(referencePoint.y, offsetY)
+		
+		return performOCROnRegion(
+			sourceBitmap,
+			finalX,
+			finalY,
+			width,
+			height,
+			useThreshold,
+			useGrayscale,
+			scaleUp,
+			ocrEngine,
+			debugName
+		)
 	}
 }
