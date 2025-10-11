@@ -1,21 +1,19 @@
 package com.steve1316.uma_android_automation.utils
 
-import android.content.Context
 import org.json.JSONObject
 
 /**
  * Utility class for printing SQLite settings in a consistent format.
- * Can be used by both HomeFragment and Game.kt to display current bot configuration.
+ * Can be used by Game.kt to display current bot configuration.
  */
 object SettingsPrinter {
 	
 	/**
-	 * Print all current SQLite settings for debugging purposes.
-	 * 
-	 * @param context The application context
+	 * Print all current SQLite settings.
+	 *
 	 * @param printToLog Function to handle logging
 	 */
-	fun printCurrentSettings(context: Context, printToLog: ((String) -> Unit)? = null): String {
+	fun printCurrentSettings(printToLog: ((String) -> Unit)? = null): String {
 		
 		// Main Settings
 		val campaign: String = SettingsHelper.getStringSetting("general", "scenario")
@@ -31,7 +29,7 @@ object SettingsPrinter {
 		
 		// Training Settings
 		val trainingBlacklist: List<String> = SettingsHelper.getStringArraySetting("training", "trainingBlacklist")
-		var statPrioritization: List<String> = SettingsHelper.getStringArraySetting("training", "statPrioritization")
+		val statPrioritization: List<String> = SettingsHelper.getStringArraySetting("training", "statPrioritization")
 		val maximumFailureChance: Int = SettingsHelper.getIntSetting("training", "maximumFailureChance")
 		val disableTrainingOnMaxedStat: Boolean = SettingsHelper.getBooleanSetting("training", "disableTrainingOnMaxedStat")
 		val focusOnSparkStatTarget: Boolean = SettingsHelper.getBooleanSetting("training", "focusOnSparkStatTarget")
@@ -86,7 +84,7 @@ object SettingsPrinter {
 		////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 		// Construct display strings.
-		val campaignString: String = if (campaign != "") {
+		val campaignString = if (campaign != "") {
 			"🎯 $campaign"
 		} else {
 			"⚠️ Please select one in the Select Campaign option"
@@ -100,11 +98,11 @@ object SettingsPrinter {
 			} else {
 				emptyList()
 			}
-		} catch (e: Exception) {
+		} catch (_: Exception) {
 			emptyList()
 		}
 		
-		val characterString: String = if (selectAllCharacters) {
+		val characterString = if (selectAllCharacters) {
 			"👥 All Characters Selected"
 		} else if (characterNames.isEmpty()) {
 			"⚠️ Please select one in the Training Event Settings"
@@ -120,11 +118,11 @@ object SettingsPrinter {
 			} else {
 				emptyList()
 			}
-		} catch (e: Exception) {
+		} catch (_: Exception) {
 			emptyList()
 		}
 		
-		val supportCardListString: String = if (selectAllSupportCards) {
+		val supportCardListString = if (selectAllSupportCards) {
 			"🃏 All Support Cards Selected"
 		} else if (supportCardNames.isEmpty()) {
 			"⚠️ None Selected"
@@ -132,7 +130,7 @@ object SettingsPrinter {
 			"🃏 ${supportCardNames.joinToString(", ")}"
 		}
 		
-		val trainingBlacklistString: String = if (trainingBlacklist.isEmpty()) {
+		val trainingBlacklistString = if (trainingBlacklist.isEmpty()) {
 			"✅ No Trainings blacklisted"
 		} else {
 			val defaultTrainingOrder = listOf("Speed", "Stamina", "Power", "Guts", "Wit")
@@ -140,7 +138,7 @@ object SettingsPrinter {
 			"🚫 ${sortedBlacklist.joinToString(", ")}"
 		}
 		
-		val statPrioritizationString: String = "📊 Stat Prioritization: ${statPrioritization.joinToString(", ")}"
+		val statPrioritizationString = "📊 Stat Prioritization: ${statPrioritization.joinToString(", ")}"
 		
 		val focusOnSparkString: String = if (focusOnSparkStatTarget) {
 			"✨ Focus on Sparks for Stat Targets: ✅"
@@ -224,11 +222,9 @@ object SettingsPrinter {
 	
 	/**
 	 * Get the formatted settings string for display in UI components.
-	 * 
-	 * @param context The application context
 	 * @return Formatted string containing all current settings
 	 */
-	fun getSettingsString(context: Context): String {
-		return printCurrentSettings(context)
+	fun getSettingsString(): String {
+		return printCurrentSettings()
 	}
 }
