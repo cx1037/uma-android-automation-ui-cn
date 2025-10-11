@@ -8,8 +8,12 @@ import net.ricecode.similarity.JaroWinklerStrategy
 import net.ricecode.similarity.StringSimilarityServiceImpl
 import org.json.JSONObject
 
-class TextDetection(private val game: Game, private val imageUtils: CustomImageUtils) {
-	private val tag: String = "[${MainActivity.loggerTag}]TextDetection"
+/**
+ * Recognizes training events by performing OCR on event titles and matching them against
+ * known character and support card event data using string similarity algorithms.
+ */
+class TrainingEventRecognizer(private val game: Game, private val imageUtils: CustomImageUtils) {
+	private val tag: String = "[${MainActivity.loggerTag}]TrainingEventRecognizer"
 	
 	private var result = ""
 	private var confidence = 0.0
@@ -65,14 +69,14 @@ class TextDetection(private val game: Game, private val imageUtils: CustomImageU
 	 * Fix incorrect characters determined by OCR by replacing them with their Japanese equivalents.
 	 */
 	private fun fixIncorrectCharacters() {
-		game.printToLog("\n[TEXT-DETECTION] Now attempting to fix incorrect characters in: $result", tag = tag)
+		game.printToLog("\n[EVENT-RECOGNIZER] Now attempting to fix incorrect characters in: $result", tag = tag)
 		
 		if (result.last() == '/') {
 			result = result.replace("/", "！")
 		}
 		
 		result = result.replace("(", "（").replace(")", "）")
-		game.printToLog("[TEXT-DETECTION] Finished attempting to fix incorrect characters: $result", tag = tag)
+		game.printToLog("[EVENT-RECOGNIZER] Finished attempting to fix incorrect characters: $result", tag = tag)
 	}
 	
 	/**
@@ -80,9 +84,9 @@ class TextDetection(private val game: Game, private val imageUtils: CustomImageU
 	 */
 	private fun findMostSimilarString() {
 		if (!hideComparisonResults) {
-			game.printToLog("\n[TEXT-DETECTION] Now starting process to find most similar string to: $result\n", tag = tag)
+			game.printToLog("\n[EVENT-RECOGNIZER] Now starting process to find most similar string to: $result\n", tag = tag)
 		} else {
-			game.printToLog("\n[TEXT-DETECTION] Now starting process to find most similar string to: $result", tag = tag)
+			game.printToLog("\n[EVENT-RECOGNIZER] Now starting process to find most similar string to: $result", tag = tag)
 		}
 		
 		// Remove any detected whitespaces.
@@ -202,11 +206,11 @@ class TextDetection(private val game: Game, private val imageUtils: CustomImageU
 		}
 		
 		if (!hideComparisonResults) {
-			game.printToLog("\n[TEXT-DETECTION] Finished process to find similar string.", tag = tag)
+			game.printToLog("\n[EVENT-RECOGNIZER] Finished process to find similar string.", tag = tag)
 		} else {
-			game.printToLog("[TEXT-DETECTION] Finished process to find similar string.", tag = tag)
+			game.printToLog("[EVENT-RECOGNIZER] Finished process to find similar string.", tag = tag)
 		}
-		game.printToLog("[TEXT-DETECTION] Event data fetched for \"${eventTitle}\".")
+		game.printToLog("[EVENT-RECOGNIZER] Event data fetched for \"${eventTitle}\".")
 	}
 
 	/**
@@ -381,7 +385,7 @@ class TextDetection(private val game: Game, private val imageUtils: CustomImageU
 		}
 		
 		val endTime: Long = System.currentTimeMillis()
-		Log.d(tag, "Total Runtime for detecting Text: ${endTime - startTime}ms")
+		Log.d(tag, "Total Runtime for recognizing training event: ${endTime - startTime}ms")
 		
 		return Pair(eventOptionRewards, confidence)
 	}
