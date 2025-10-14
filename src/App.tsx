@@ -55,6 +55,7 @@ function AppWithBootstrap({ theme, colors }: { theme: string; colors: any }) {
                             }
                         },
                         headerShown: false,
+                        animation: "fade",
                     })}
                 >
                     <Tab.Screen name="Home" component={Home} />
