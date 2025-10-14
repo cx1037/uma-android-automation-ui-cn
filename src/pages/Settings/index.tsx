@@ -123,7 +123,7 @@ const Settings = () => {
         return (
             <NavigationLink
                 title="Go to Training Settings"
-                description="Configure which stats to train, set priorities, and customize training behavior"
+                description="Configure which stats to train, set priorities, and customize training behavior."
                 onPress={() => navigation.navigate("TrainingSettings" as never)}
             />
         )
@@ -133,7 +133,7 @@ const Settings = () => {
         return (
             <NavigationLink
                 title="Go to Training Event Settings"
-                description="Configure training event preferences, energy management, and event selection behavior"
+                description="Configure training event preferences and event selection behavior."
                 onPress={() => navigation.navigate("TrainingEventSettings" as never)}
             />
         )
@@ -143,7 +143,7 @@ const Settings = () => {
         return (
             <NavigationLink
                 title="Go to OCR Settings"
-                description="Configure OCR text detection parameters, threshold settings, and retry behavior"
+                description="Configure OCR text detection parameters, threshold settings, and retry behavior."
                 onPress={() => navigation.navigate("OCRSettings" as never)}
             />
         )
@@ -153,7 +153,7 @@ const Settings = () => {
         return (
             <NavigationLink
                 title="Go to Racing Settings"
-                description="Configure racing behavior, fan farming, retry settings, and mandatory race handling"
+                description="Configure racing behavior, retry settings, mandatory race handling, and more."
                 onPress={() => navigation.navigate("RacingSettings" as never)}
             />
         )
