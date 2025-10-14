@@ -17,6 +17,12 @@ export interface Settings {
         disableRaceRetries: boolean
         enableStopOnMandatoryRaces: boolean
         enableForceRacing: boolean
+        enableRacingPlan: boolean
+        racingPlan: string
+        racingPlanData: string
+        minFansThreshold: number
+        preferredTerrain: string
+        preferredGrades: string[]
     }
 
     // Training Event settings
@@ -106,6 +112,12 @@ export const defaultSettings: Settings = {
         disableRaceRetries: false,
         enableStopOnMandatoryRaces: false,
         enableForceRacing: false,
+        enableRacingPlan: false,
+        racingPlan: "[]",
+        racingPlanData: "",
+        minFansThreshold: 0,
+        preferredTerrain: "Any",
+        preferredGrades: ["G1", "G2", "G3"],
     },
     trainingEvent: {
         enablePrioritizeEnergyOptions: false,
@@ -188,7 +200,7 @@ export const BotStateProvider = ({ children }: any): React.ReactElement => {
     // Wrapped setSettings with performance logging.
     const setSettingsWithLogging = (newSettings: Settings) => {
         const endTiming = startTiming("bot_state_set_settings", "state")
-        
+
         try {
             setSettings(newSettings)
             endTiming({ status: "success" })
