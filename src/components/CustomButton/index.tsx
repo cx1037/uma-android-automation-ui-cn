@@ -1,5 +1,5 @@
 import React from "react"
-import { PressableProps, ViewStyle, ActivityIndicator } from "react-native"
+import { PressableProps, ViewStyle, ActivityIndicator, View } from "react-native"
 import { Button } from "../ui/button"
 import { Text } from "../ui/text"
 import { useTheme } from "../../context/ThemeContext"
@@ -12,10 +12,24 @@ interface CustomButtonProps extends PressableProps {
     disabled?: boolean
     isLoading?: boolean
     fontSize?: number
+    icon?: React.ReactElement
+    iconPosition?: "left" | "right"
     children: React.ReactNode
 }
 
-const CustomButton: React.FC<CustomButtonProps> = ({ variant = "default", size = "default", style, className = "", disabled = false, isLoading = false, fontSize, children, ...props }) => {
+const CustomButton: React.FC<CustomButtonProps> = ({
+    variant = "default",
+    size = "default",
+    style,
+    className = "",
+    disabled = false,
+    isLoading = false,
+    fontSize,
+    icon,
+    iconPosition = "left",
+    children,
+    ...props
+}) => {
     const { colors, isDark } = useTheme()
 
     // Determine the background color based on variant and theme.
@@ -75,7 +89,11 @@ const CustomButton: React.FC<CustomButtonProps> = ({ variant = "default", size =
     return (
         <Button variant={variant} size={size} style={[getBackgroundColor(), getCustomStyle(), style]} disabled={disabled} {...props}>
             {isLoading && <ActivityIndicator size="small" color="#ffffff" />}
-            <Text style={[getTextColor(), fontSize ? { fontSize: fontSize } : undefined]}>{children}</Text>
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                {icon && iconPosition === "left" && icon}
+                <Text style={[getTextColor(), fontSize ? { fontSize: fontSize } : undefined]}>{children}</Text>
+                {icon && iconPosition === "right" && icon}
+            </View>
         </Button>
     )
 }
