@@ -430,13 +430,12 @@ const Settings = () => {
 
     return (
         <View style={styles.root}>
-            <ScrollView nestedScrollEnabled={true} contentContainerStyle={{ flexGrow: 1 }}>
+            <View style={styles.header}>
+                <Text style={styles.title}>Settings</Text>
+                <ThemeToggle />
+            </View>
+            <ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1 }}>
                 <View className="m-1">
-                    <View style={styles.header}>
-                        <Text style={styles.title}>Settings</Text>
-                        <ThemeToggle />
-                    </View>
-
                     {renderCampaignPicker()}
                     {renderTrainingLink()}
                     {renderTrainingEventLink()}

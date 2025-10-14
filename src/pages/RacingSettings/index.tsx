@@ -101,15 +101,14 @@ const RacingSettings = () => {
 
     return (
         <View style={styles.root}>
-            <ScrollView nestedScrollEnabled={true} contentContainerStyle={{ flexGrow: 1 }}>
+            <View style={styles.header}>
+                <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                    <ArrowLeft size={24} color={colors.primary} />
+                </TouchableOpacity>
+                <Text style={styles.title}>Racing Settings</Text>
+            </View>
+            <ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1 }}>
                 <View className="m-1">
-                    <View style={styles.header}>
-                        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-                            <ArrowLeft size={24} color={colors.primary} />
-                        </TouchableOpacity>
-                        <Text style={styles.title}>Racing Settings</Text>
-                    </View>
-
                     <View style={styles.section}>
                         <CustomCheckbox
                             id="enable-farming-fans"
