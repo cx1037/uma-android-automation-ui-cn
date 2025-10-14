@@ -5,6 +5,7 @@ import { useTheme } from "../../context/ThemeContext"
 import { BotStateContext } from "../../context/BotStateContext"
 import CustomCheckbox from "../../components/CustomCheckbox"
 import { Input } from "../../components/ui/input"
+import NavigationLink from "../../components/NavigationLink"
 import { ArrowLeft } from "lucide-react-native"
 
 const RacingSettings = () => {
@@ -177,6 +178,13 @@ const RacingSettings = () => {
                             </View>
                         )}
                     </View>
+
+                    <NavigationLink
+                        title="Go to Racing Plan Settings"
+                        description="Configure prioritized races to target including enabling additional filters for race selection."
+                        onPress={() => navigation.navigate("RacingPlanSettings" as never)}
+                        style={{ ...styles.section, marginTop: 0 }}
+                    />
                 </View>
             </ScrollView>
         </View>
