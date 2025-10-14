@@ -1,11 +1,12 @@
 import { useContext, useState, useMemo, useCallback, memo } from "react"
 import { MessageLogContext } from "../../context/MessageLogContext"
 import { BotStateContext } from "../../context/BotStateContext"
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, FlatList } from "react-native"
+import { StyleSheet, Text, View, TextInput, TouchableOpacity } from "react-native"
 import * as Clipboard from "expo-clipboard"
 import { Copy, Plus, Minus, Type, X } from "lucide-react-native"
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "../ui/alert-dialog"
+import { CustomScrollView } from "../CustomScrollView"
 
 const styles = StyleSheet.create({
     logInnerContainer: {
@@ -374,23 +375,12 @@ Hide String Comparison Results: ${settings.debug.enableHideOCRComparisonResults 
 
             {/* Log Messages */}
             <View style={styles.logContainer}>
-                <FlatList
-                    data={filteredMessages}
-                    renderItem={renderLogItem}
-                    keyExtractor={keyExtractor}
-                    showsVerticalScrollIndicator={true}
-                    removeClippedSubviews={true}
-                    maxToRenderPerBatch={100}
-                    initialNumToRender={100}
-                    getItemLayout={(data, index) => ({
-                        length: fontSize * 1.5 + 2,
-                        offset: (fontSize * 1.5 + 2) * index,
-                        index,
-                    })}
-                    updateCellsBatchingPeriod={10}
-                    maintainVisibleContentPosition={{
-                        minIndexForVisible: 0,
-                        autoscrollToTopThreshold: 10,
+                <CustomScrollView
+                    targetProps={{
+                        data: filteredMessages,
+                        renderItem: renderLogItem,
+                        keyExtractor: keyExtractor,
+                        removeClippedSubviews: true,
                     }}
                 />
             </View>
