@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef, useContext } from "react"
 import { databaseManager } from "../lib/database"
 import { Settings, defaultSettings } from "../context/BotStateContext"
 import { startTiming } from "../lib/performanceLogger"
-import { logWithTimestamp, logErrorWithTimestamp } from "../lib/logger"
+import { logWithTimestamp, logErrorWithTimestamp, logWarningWithTimestamp } from "../lib/logger"
 
 /**
  * Hook for managing settings persistence with SQLite.
@@ -124,26 +124,35 @@ export const useSQLiteSettings = () => {
                 }
             })
 
-            // If database is empty, save default settings to it.
-            if (!hasSettings) {
-                logWithTimestamp("[SQLite] Database is empty, initializing with default settings...")
-                try {
-                    // Prepare batch save data for all default settings including marking their categories.
-                    const batchSettings: Array<{ category: string; key: string; value: any }> = []
-                    for (const [category, categorySettings] of Object.entries(defaultSettings)) {
-                        for (const [key, value] of Object.entries(categorySettings)) {
-                            batchSettings.push({ category, key, value })
-                        }
-                    }
+            // Check for missing settings and add them to the database.
+            const missingSettings: Array<{ category: string; key: string; value: any }> = []
 
-                    // Save all default settings in a single batch transaction.
-                    if (batchSettings.length > 0) {
-                        logWithTimestamp(`[SQLite] Saving ${batchSettings.length} default settings to database...`)
-                        await databaseManager.saveSettingsBatch(batchSettings)
-                        logWithTimestamp("[SQLite] Default settings saved to database successfully.")
+            // Compare default settings with what's in the database to find missing settings.
+            for (const [category, categorySettings] of Object.entries(defaultSettings)) {
+                const dbCategorySettings = dbSettings[category] || {}
+                for (const [key, defaultValue] of Object.entries(categorySettings)) {
+                    if (!(key in dbCategorySettings)) {
+                        logWarningWithTimestamp(`[SQLite] Missing setting detected: ${category}.${key} = ${JSON.stringify(defaultValue)}`)
+                        missingSettings.push({ category, key, value: defaultValue })
+                    }
+                }
+            }
+
+            // If database is empty or has missing settings, save them.
+            if (!hasSettings || missingSettings.length > 0) {
+                const settingsToSave = !hasSettings
+                    ? Object.entries(defaultSettings).flatMap(([category, categorySettings]) => Object.entries(categorySettings).map(([key, value]) => ({ category, key, value })))
+                    : missingSettings
+
+                logWarningWithTimestamp(`[SQLite] ${!hasSettings ? "Database is empty, initializing with" : "Found missing settings, adding"} ${settingsToSave.length} settings to database...`)
+                try {
+                    // Save all settings in a single batch transaction.
+                    if (settingsToSave.length > 0) {
+                        await databaseManager.saveSettingsBatch(settingsToSave)
+                        logWarningWithTimestamp(`[SQLite] ${!hasSettings ? "Default" : "Missing"} settings saved to database successfully.`)
                     }
                 } catch (saveError) {
-                    logErrorWithTimestamp("[SQLite] Failed to save default settings to database:", saveError)
+                    logErrorWithTimestamp(`[SQLite] Failed to save ${!hasSettings ? "default" : "missing"} settings to database:`, saveError)
                 }
             }
 
