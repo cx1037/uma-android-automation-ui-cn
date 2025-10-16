@@ -486,27 +486,47 @@ class RaceScraper(BaseScraper):
             # Acquire the elements needed to scrape the race information.
             dialog = driver.find_element(By.XPATH, "//div[@role='dialog']").find_element(By.XPATH, ".//div[contains(@class, 'races_det_wrapper')]")
             dialog_infobox = dialog.find_element(By.XPATH, ".//div[contains(@class, 'races_det_infobox')]")
-            dialog_schedule = dialog.find_element(By.XPATH, ".//div[contains(@class, 'races_det_schedule')]")
-            dialog_schedule_items = dialog_schedule.find_elements(By.XPATH, ".//div[contains(@class, 'races_schedule_item')]")
+            dialog_schedules = dialog.find_elements(By.XPATH, ".//div[contains(@class, 'races_det_schedule')]")
+            for dialog_schedule in dialog_schedules:
+                dialog_schedule_items = dialog_schedule.find_elements(By.XPATH, ".//div[contains(@class, 'races_schedule_item')]")
 
-            # Extract all caption-value pairs for the elements.
-            captions = dialog_infobox.find_elements(By.XPATH, ".//div[contains(@class, 'races_det_item_caption')]")
-            values = dialog_infobox.find_elements(By.XPATH, ".//div[contains(@class, 'races_det_item__')]")
-            info_map = {}
-            for cap, val in zip(captions, values):
-                info_map[cap.text.strip()] = val.text.strip()
+                # Extract all caption-value pairs for the elements.
+                captions = dialog_infobox.find_elements(By.XPATH, ".//div[contains(@class, 'races_det_item_caption')]")
+                values = dialog_infobox.find_elements(By.XPATH, ".//div[contains(@class, 'races_det_item__')]")
+                info_map = {}
+                for cap, val in zip(captions, values):
+                    info_map[cap.text.strip()] = val.text.strip()
 
-            race_data = {
-                "name": dialog.find_element(By.XPATH, ".//div[contains(@class, 'races_det_header')]").text,
-                "date": dialog.find_element(By.XPATH, ".//div[contains(@class, 'races_schedule_header')]").text.replace("\n", " "),
-                "grade": info_map.get("Grade"),
-                "terrain": info_map.get("Terrain"),
-                "distanceType": info_map.get("Distance (type)"),
-                "distanceMeters": int(info_map.get("Distance (meters)")),
-                "fans": int(dialog_schedule_items[-1].text.replace("Fans gained", "").replace("for 1st place", "").replace("See all", "").strip())
-            }
+                race_data = {
+                    "name": dialog.find_element(By.XPATH, ".//div[contains(@class, 'races_det_header')]").text,
+                    "date": dialog_schedule.find_element(By.XPATH, ".//div[contains(@class, 'races_schedule_header')]").text.replace("\n", " "),
+                    "raceTrack": info_map.get("Racetrack"),
+                    "course": info_map.get("Course"),
+                    "direction": "Right" if info_map.get("Direction") and info_map.get("Direction") == "Clockwise" else "Left",
+                    "grade": info_map.get("Grade"),
+                    "terrain": info_map.get("Terrain"),
+                    "distanceType": info_map.get("Distance (type)"),
+                    "distanceMeters": int(info_map.get("Distance (meters)")),
+                    "fans": int(
+                        dialog_schedule_items[-1].text.replace("Fans gained", "").replace("for 1st place", "").replace("See all", "").strip()
+                    ),
+                }
 
-            self.data[race_data["name"]] = race_data
+                # Calculate turn number based on the race date.
+                race_data["turnNumber"] = calculate_turn_number(race_data["date"])
+
+                # Construct the in-game formatted name of the race.
+                race_data["nameFormatted"] = (
+                    f"{race_data['raceTrack']} {race_data['terrain']} {race_data['distanceMeters']}m ({race_data['distanceType']}) {race_data['direction']}"
+                )
+                if race_data["course"]:
+                    race_data["nameFormatted"] += f" / {race_data['course']}"
+
+                logging.info(f"Race data: {race_data}")
+
+                # Create a unique key that combines race name and date to handle duplicate race names.
+                unique_key = f"{race_data['name']} ({race_data['date']})"
+                self.data[unique_key] = race_data
 
             # Close the dialog.
             dialog_close_button = driver.find_element(By.XPATH, "//div[contains(@class, 'sc-f83b4a49-1')]")
