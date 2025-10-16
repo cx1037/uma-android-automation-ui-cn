@@ -132,6 +132,7 @@ class BaseScraper:
         url (str): The URL to scrape.
         output_filename (str): The filename to save the scraped data to.
     """
+
     def __init__(self, url: str, output_filename: str):
         self.url = url
         self.output_filename = output_filename
@@ -140,7 +141,7 @@ class BaseScraper:
 
     def safe_click(self, driver: uc.Chrome, element: WebElement, retries: int = 3, delay: float = 0.5):
         """Try clicking an element normally and falls back to JS click if blocked by ads/overlays.
-        
+
         Args:
             driver (uc.Chrome): The Chrome driver.
             element (WebElement): The web element to interact with.
@@ -167,7 +168,7 @@ class BaseScraper:
         with open(self.output_filename, "w", encoding="utf-8") as f:
             json.dump(self.data, f, ensure_ascii=False, indent=4)
         logging.info(f"Saved {len(self.data)} items to {self.output_filename}")
-        
+
     def handle_cookie_consent(self, driver: uc.Chrome):
         """Handles the cookie consent.
 
@@ -186,7 +187,7 @@ class BaseScraper:
                 logging.info("No cookie consent button found.")
                 self.cookie_accepted = True
 
-    def handle_ad_banner(self, driver: uc.Chrome, skip = False):
+    def handle_ad_banner(self, driver: uc.Chrome, skip=False):
         if not skip:
             try:
                 ad_banner_button = driver.find_element(By.XPATH, "//div[contains(@class, 'publift-widget-sticky_footer-button')]")
@@ -239,7 +240,7 @@ class BaseScraper:
             option_text = option_text.replace("Wisdom", "Wit")
             options.append(option_text)
         return options
-    
+
     def process_training_events(self, driver: uc.Chrome, item_name: str, data_dict: Dict[str, List[str]]):
         """Processes the training events for the given item.
 
@@ -277,8 +278,10 @@ class BaseScraper:
 
             ad_banner_closed = self.handle_ad_banner(driver, ad_banner_closed)
 
+
 class SkillScraper(BaseScraper):
     """Scrapes the skills from the website."""
+
     def __init__(self):
         super().__init__("https://gametora.com/umamusume/skills", "skills.json")
 
@@ -287,11 +290,13 @@ class SkillScraper(BaseScraper):
         driver = create_chromedriver()
         driver.get(self.url)
         time.sleep(5)
-        
+
         self.handle_cookie_consent(driver)
 
         # Show the Settings dropdown and toggle "Show skill IDs" and "For character-specific skills..."
-        show_settings_button = driver.find_element(By.XPATH, "//div[contains(@class, 'utils_padbottom_half')]//button[contains(@class, 'filters_button_moreless')]")
+        show_settings_button = driver.find_element(
+            By.XPATH, "//div[contains(@class, 'utils_padbottom_half')]//button[contains(@class, 'filters_button_moreless')]"
+        )
         show_settings_button.click()
         time.sleep(0.1)
         show_skill_ids_checkbox = driver.find_element(By.XPATH, "//input[contains(@id, 'showIdCheckbox')]")
@@ -310,23 +315,21 @@ class SkillScraper(BaseScraper):
             skill_description = skill_row.find_element(By.XPATH, ".//div[contains(@class, 'skills_table_desc')]").text
 
             # Strip the skill ID from the description.
-            skill_id_match = re.search(r'\((\d+)\)$', skill_description)
+            skill_id_match = re.search(r"\((\d+)\)$", skill_description)
             skill_id = skill_id_match.group(1) if skill_id_match else None
-            clean_description = re.sub(r'\s*\(\d+\)$', '', skill_description) if skill_id else skill_description
+            clean_description = re.sub(r"\s*\(\d+\)$", "", skill_description) if skill_id else skill_description
 
             if skill_name and skill_name not in self.data:
                 logging.info(f"Scraped skill ({i + 1}/{len(all_skill_rows)}): {skill_name}")
-                self.data[skill_name] = {
-                    "id": int(skill_id),
-                    "englishName": skill_name,
-                    "englishDescription": clean_description
-                }
+                self.data[skill_name] = {"id": int(skill_id), "englishName": skill_name, "englishDescription": clean_description}
 
         self.save_data()
         driver.quit()
 
+
 class CharacterScraper(BaseScraper):
     """Scrapes the characters from the website."""
+
     def __init__(self):
         super().__init__("https://gametora.com/umamusume/characters", "characters.json")
 
@@ -335,7 +338,7 @@ class CharacterScraper(BaseScraper):
         driver = create_chromedriver()
         driver.get(self.url)
         time.sleep(5)
-        
+
         self.handle_cookie_consent(driver)
 
         # Sort the characters by ascending order.
@@ -359,7 +362,7 @@ class CharacterScraper(BaseScraper):
             character_name = driver.find_element(By.XPATH, "//h1[contains(@class, 'utils_headingXl')]").text
             character_name = character_name.replace("(Original)", "").strip()
             # Remove any other parentheses that denote different forms of the character like "Wedding" or "Swimsuit".
-            character_name = re.sub(r'\s*\(.*?\)', '', character_name).strip()
+            character_name = re.sub(r"\s*\(.*?\)", "", character_name).strip()
 
             # Initialize an empty object to store the following character data if it doesn't exist yet.
             if character_name not in self.data:
@@ -394,8 +397,10 @@ class CharacterScraper(BaseScraper):
         ascending_option.click()
         time.sleep(0.1)
 
+
 class SupportCardScraper(BaseScraper):
     """Scrapes the support cards from the website."""
+
     def __init__(self):
         super().__init__("https://gametora.com/umamusume/supports", "supports.json")
 
@@ -425,14 +430,14 @@ class SupportCardScraper(BaseScraper):
             support_card_name = driver.find_element(By.XPATH, "//h1[contains(@class, 'utils_headingXl')]").text
             support_card_name = support_card_name.replace("Support Card", "").strip()
             # Remove any other parentheses that denote different forms of the support card.
-            support_card_name = re.sub(r'\s*\(.*?\)', '', support_card_name).strip()
+            support_card_name = re.sub(r"\s*\(.*?\)", "", support_card_name).strip()
 
             # Initialize an empty object to store the following support card data if it doesn't exist yet.
             if support_card_name not in self.data:
                 self.data[support_card_name] = {}
 
             # Extract the rarity from the parentheses.
-            rarity_match = re.search(r'\((SSR|SR|R)\)', support_card_name)
+            rarity_match = re.search(r"\((SSR|SR|R)\)", support_card_name)
             if rarity_match:
                 support_card_rarity = rarity_match.group(1)
                 support_card_name = support_card_name.replace(f" ({support_card_rarity})", "").strip()
@@ -446,8 +451,10 @@ class SupportCardScraper(BaseScraper):
         self.save_data()
         driver.quit()
 
+
 class RaceScraper(BaseScraper):
     """Scrapes the races from the website."""
+
     def __init__(self):
         super().__init__("https://gametora.com/umamusume/races", "races.json")
 
@@ -471,14 +478,19 @@ class RaceScraper(BaseScraper):
 
         logging.info(f"Found {len(race_items)} races.")
 
-        race_details_links = [item.find_element(By.XPATH, ".//div[contains(@class, 'races_ribbon')]").find_element(By.XPATH, ".//div[contains(@class, 'utils_linkcolor')]") for item in race_items]
+        race_details_links = [
+            item.find_element(By.XPATH, ".//div[contains(@class, 'races_ribbon')]").find_element(
+                By.XPATH, ".//div[contains(@class, 'utils_linkcolor')]"
+            )
+            for item in race_items
+        ]
 
         ad_banner_closed = False
 
         # Iterate through each race.
         for i, link in enumerate(race_details_links):
             ad_banner_closed = self.handle_ad_banner(driver, ad_banner_closed)
-            
+
             logging.info(f"Opening race ({i + 1}/{len(race_details_links)})")
             link.click()
             time.sleep(0.5)
@@ -536,8 +548,9 @@ class RaceScraper(BaseScraper):
         self.save_data()
         driver.quit()
 
-if __name__ == '__main__':
-    logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
+
+if __name__ == "__main__":
+    logging.basicConfig(format="%(asctime)s - %(levelname)s - %(message)s", level=logging.INFO)
     start_time = time.time()
 
     skill_scraper = SkillScraper()
@@ -548,7 +561,7 @@ if __name__ == '__main__':
 
     support_card_scraper = SupportCardScraper()
     support_card_scraper.start()
-    
+
     race_scraper = RaceScraper()
     race_scraper.start()
 
