@@ -7,6 +7,7 @@ import re
 import time
 import logging
 from typing import List, Dict
+from difflib import SequenceMatcher
 
 
 def create_chromedriver():
@@ -17,6 +18,112 @@ def create_chromedriver():
     """
     driver = uc.Chrome(headless=True, use_subprocess=True)
     return driver
+
+
+def calculate_turn_number(date_string: str) -> int:
+    """Calculates the turn number for a race based on its date string.
+
+    This function parses race date strings in the format "Senior Class January, Second Half"
+    and converts them to turn numbers using the same logic as the Kotlin GameDateParser.
+
+    Args:
+        date_string: The date string to parse (e.g., "Senior Class January, Second Half").
+
+    Returns:
+        The calculated turn number for the race.
+    """
+    if not date_string or date_string.strip() == "":
+        logging.warning("Received empty date string, defaulting to Senior Year Early Jan (turn 49).")
+        return 49
+
+    # Handle Pre-Debut dates (though they shouldn't appear in race data).
+    if "debut" in date_string.lower():
+        logging.warning("Pre-Debut date detected in race data, this shouldn't happen.")
+        return 1
+
+    # Define mappings for years and months.
+    years = {"Junior Class": 1, "Classic Class": 2, "Senior Class": 3}
+
+    months = {
+        "January": 1,
+        "Jan": 1,
+        "February": 2,
+        "Feb": 2,
+        "March": 3,
+        "Mar": 3,
+        "April": 4,
+        "Apr": 4,
+        "May": 5,
+        "June": 6,
+        "Jun": 6,
+        "July": 7,
+        "Jul": 7,
+        "August": 8,
+        "Aug": 8,
+        "September": 9,
+        "Sep": 9,
+        "October": 10,
+        "Oct": 10,
+        "November": 11,
+        "Nov": 11,
+        "December": 12,
+        "Dec": 12,
+    }
+
+    # Parse the date string.
+    # Expected format: "Senior Class January, Second Half"
+    parts = date_string.strip().split()
+    if len(parts) < 3:
+        logging.warning(f"Invalid date string format: {date_string}, defaulting to Senior Year Early Jan (turn 49).")
+        return 49
+
+    # Extract year part (first two words).
+    year_part = f"{parts[0]} {parts[1]}"
+    month_part = parts[2].rstrip(",")  # Remove trailing comma if present.
+
+    # Extract phase part (last two words combined).
+    phase_part = f"{parts[-2]} {parts[-1]}"  # "First Half" or "Second Half"
+
+    # Find the best match for year using similarity scoring.
+    year = years.get(year_part)
+    if year is None:
+        best_year_score = 0.0
+        best_year = 3  # Default to Senior Year.
+
+        for year_key in years.keys():
+            score = SequenceMatcher(None, year_part, year_key).ratio()
+            if score > best_year_score:
+                best_year_score = score
+                best_year = years[year_key]
+
+        logging.info(f"Year not found in mapping, using best match: {year_part} -> {best_year}")
+        year = best_year
+
+    # Find the best match for month using similarity scoring.
+    month = months.get(month_part)
+    if month is None:
+        best_month_score = 0.0
+        best_month = 1  # Default to January.
+
+        for month_key in months.keys():
+            score = SequenceMatcher(None, month_part, month_key).ratio()
+            if score > best_month_score:
+                best_month_score = score
+                best_month = months[month_key]
+
+        logging.info(f"Month not found in mapping, using best match: {month_part} -> {best_month}")
+        month = best_month
+
+    # Determine phase (Early = First Half, Late = Second Half).
+    phase = "Early" if "First" in phase_part else "Late"
+
+    # Calculate the turn number.
+    # Each year has 24 turns (12 months x 2 phases each).
+    # Each month has 2 turns (Early and Late).
+    turn_number = ((year - 1) * 24) + ((month - 1) * 2) + (1 if phase == "Early" else 2)
+
+    return turn_number
+
 
 class BaseScraper:
     """Base class for scraping data from the website.
