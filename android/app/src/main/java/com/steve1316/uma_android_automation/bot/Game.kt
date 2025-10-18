@@ -234,6 +234,15 @@ class Game(val myContext: Context) {
 		}
 	}
 
+	/**
+	 * Handles the test to perform OCR on the current date and elapsed turn number.
+	 */
+	fun startDateOCRTest() {
+		printToLog("\n[TEST] Now beginning Single Training OCR test on the Training screen for the current training on display.")
+		printToLog("[TEST] Note that this test is dependent on having the correct scale.")
+		updateDate()
+	}
+
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Helper functions to check what screen the bot is at.
@@ -412,8 +421,8 @@ class Game(val myContext: Context) {
 	 * Updates the stored date in memory by keeping track of the current year, phase, month and current turn number.
 	 */
 	fun updateDate() {
-		printToLog("\n[DATE] Updating the current turn number.")
-		val dateString = imageUtils.determineDayNumber()
+		printToLog("\n[DATE] Updating the current date.")
+		val dateString = imageUtils.determineDayString()
 		currentDate = gameDateParser.parseDateString(dateString, imageUtils, this)
 		printToLog("\n[DATE] It is currently $currentDate.")
 	}
@@ -607,6 +616,8 @@ class Game(val myContext: Context) {
 			training.startSingleTrainingOCRTest()
 		} else if (SettingsHelper.getBooleanSetting("debug", "debugMode_startComprehensiveTrainingOCRTest")) {
 			training.startComprehensiveTrainingOCRTest()
+		} else if (SettingsHelper.getBooleanSetting("debug", "debugMode_startDateOCRTest")) {
+			startDateOCRTest()
 		} else {
 			// Update the stat targets by distances.
 			training.setStatTargetsByDistances()
