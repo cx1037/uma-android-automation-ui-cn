@@ -97,7 +97,7 @@ export class DatabaseManager {
     /**
      * Save settings to database by category and key.
      */
-    async saveSetting(category: string, key: string, value: any): Promise<void> {
+    async saveSetting(category: string, key: string, value: any, suppressLogging: boolean = false): Promise<void> {
         const endTiming = startTiming("database_save_setting", "database")
 
         if (!this.db) {
@@ -108,14 +108,17 @@ export class DatabaseManager {
 
         try {
             const valueString = typeof value === "string" ? value : JSON.stringify(value)
-            logWithTimestamp(`[DB] Saving setting: ${category}.${key} = ${valueString.substring(0, 100)}...`)
-
+            if (!suppressLogging) {
+                logWithTimestamp(`[DB] Saving setting: ${category}.${key} = ${valueString.substring(0, 100)}...`)
+            }
             await this.db.runAsync(
                 `INSERT OR REPLACE INTO settings (category, key, value, updated_at) 
                  VALUES (?, ?, ?, CURRENT_TIMESTAMP)`,
                 [category, key, valueString]
             )
-            logWithTimestamp(`[DB] Successfully saved setting: ${category}.${key}`)
+            if (!suppressLogging) {
+                logWithTimestamp(`[DB] Successfully saved setting: ${category}.${key}`)
+            }
             endTiming({ status: "success", category, key })
         } catch (error) {
             logErrorWithTimestamp(`[DB] Failed to save setting ${category}.${key}:`, error)
