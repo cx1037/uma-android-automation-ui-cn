@@ -47,10 +47,10 @@ class AoHaru(game: Game) : Campaign(game) {
 				tutorialChances = 0
 			} else {
 				tutorialChances -= 1
-				game.handleTrainingEvent()
+				game.trainingEvent.handleTrainingEvent()
 			}
 		} else {
-			game.handleTrainingEvent()
+			game.trainingEvent.handleTrainingEvent()
 		}
 	}
 	
