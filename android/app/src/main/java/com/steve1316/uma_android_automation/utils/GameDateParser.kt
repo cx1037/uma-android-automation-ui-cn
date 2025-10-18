@@ -7,7 +7,7 @@ import net.ricecode.similarity.StringSimilarityServiceImpl
 /**
  * Utility class for parsing game date strings and converting them to structured Game.Date objects.
  */
-object GameDateParser {
+class GameDateParser {
 	/**
 	 * Parses a date string from the game and converts it to a structured Game.Date object.
 	 * 
