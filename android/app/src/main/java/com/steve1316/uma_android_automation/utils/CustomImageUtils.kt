@@ -706,28 +706,49 @@ class CustomImageUtils(context: Context, private val game: Game) : ImageUtils(co
 	}
 
 	/**
-	 * Performs OCR on the date region of the game screen to extract the current date string.
+	 * Performs OCR on the date region from either the Race List screen or the Main screen to extract the current date string.
 	 *
 	 * @return The detected date string from the game screen, or empty string if detection fails.
 	 */
-	fun determineDayNumber(): String {
-		val (energyLocation, sourceBitmap) = findImage("energy")
-		
-		if (energyLocation != null) {
-			// Perform OCR with no thresholding (date text is on solid background).
-			val result = performOCROnRegion(
+	fun determineDayString(): String {
+		var result = ""
+		val (raceStatusLocation, sourceBitmap) = findImage("race_status", tries = 1)
+		if (raceStatusLocation != null) {
+			// Perform OCR with thresholding (date text is on solid white background).
+			game.printToLog("[INFO] Detecting date from the Race List screen.", tag = tag)
+			result = performOCROnRegion(
 				sourceBitmap,
-				relX(energyLocation.x, -268),
-				relY(energyLocation.y, -180),
-				relWidth(308),
-				relHeight(35),
-				useThreshold = false,
+				relX(raceStatusLocation.x, -170),
+				relY(raceStatusLocation.y, 105),
+				relWidth(640),
+				relHeight(70),
+				useThreshold = true,
 				useGrayscale = true,
 				scaleUp = 1,
 				ocrEngine = "mlkit",
 				debugName = "dateString"
 			)
+		} else {
+			val (energyLocation, _) = findImage("energy")
+			if (energyLocation != null) {
+				// Perform OCR with no thresholding (date text is on moving background).
+				game.printToLog("[INFO] Detecting date from the Main screen.", tag = tag)
+				result = performOCROnRegion(
+					sourceBitmap,
+					relX(energyLocation.x, -268),
+					relY(energyLocation.y, -180),
+					relWidth(308),
+					relHeight(35),
+					useThreshold = false,
+					useGrayscale = true,
+					scaleUp = 1,
+					ocrEngine = "mlkit",
+					debugName = "dateString"
+				)
+			}
+		}
 
+		if (result != "") {
 			MessageLog.printToLog("[INFO] Detected date: $result", tag = tag)
 			
 			if (debugMode) {
