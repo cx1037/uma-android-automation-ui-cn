@@ -32,10 +32,9 @@ class TrainingEventRecognizer(private val game: Game, private val imageUtils: Cu
 		} else {
 			null
 		}
-	} catch (e: Exception) {
+	} catch (_: Exception) {
 		null
 	}
-
 	
 	// Get support event data from settings.
 	private val supportEventData: JSONObject? = try {
@@ -45,17 +44,17 @@ class TrainingEventRecognizer(private val game: Game, private val imageUtils: Cu
 		} else {
 			null
 		}
-	} catch (e: Exception) {
+	} catch (_: Exception) {
 		null
 	}
 	
 	private val supportCards: List<String> = try {
 		if (supportEventData != null) {
-			supportEventData!!.keys().asSequence().toList()
+			supportEventData.keys().asSequence().toList()
 		} else {
 			emptyList()
 		}
-	} catch (e: Exception) {
+	} catch (_: Exception) {
 		emptyList()
 	}
 	private val hideComparisonResults: Boolean = SettingsHelper.getBooleanSetting("debug", "enableHideOCRComparisonResults")
@@ -99,8 +98,8 @@ class TrainingEventRecognizer(private val game: Game, private val imageUtils: Cu
 		if (characterEventData != null) {
 			if (selectAllCharacters) {
 				// Check all characters in the event data.
-				characterEventData!!.keys().forEach { characterKey ->
-					val characterEvents = characterEventData!!.getJSONObject(characterKey)
+				characterEventData.keys().forEach { characterKey ->
+					val characterEvents = characterEventData.getJSONObject(characterKey)
 					characterEvents.keys().forEach { eventName ->
 						val eventOptionsArray = characterEvents.getJSONArray(eventName)
 						val eventOptions = ArrayList<String>()
@@ -124,8 +123,8 @@ class TrainingEventRecognizer(private val game: Game, private val imageUtils: Cu
 				}
 			} else {
 				// Check only the specific character if it exists in the event data.
-				if (character.isNotEmpty() && characterEventData!!.has(character)) {
-					val characterEvents = characterEventData!!.getJSONObject(character)
+				if (character.isNotEmpty() && characterEventData.has(character)) {
+					val characterEvents = characterEventData.getJSONObject(character)
 					characterEvents.keys().forEach { eventName ->
 						val eventOptionsArray = characterEvents.getJSONArray(eventName)
 						val eventOptions = ArrayList<String>()
@@ -153,8 +152,8 @@ class TrainingEventRecognizer(private val game: Game, private val imageUtils: Cu
 		if (supportEventData != null) {
 			if (!selectAllSupportCards) {
 				supportCards.forEach { supportCardName ->
-					if (supportEventData!!.has(supportCardName)) {
-						val supportEvents = supportEventData!!.getJSONObject(supportCardName)
+					if (supportEventData.has(supportCardName)) {
+						val supportEvents = supportEventData.getJSONObject(supportCardName)
 						supportEvents.keys().forEach { eventName ->
 							val eventOptionsArray = supportEvents.getJSONArray(eventName)
 							val eventOptions = ArrayList<String>()
@@ -179,8 +178,8 @@ class TrainingEventRecognizer(private val game: Game, private val imageUtils: Cu
 				}
 			} else {
 				// Check all support cards in the event data.
-				supportEventData!!.keys().forEach { supportName ->
-					val supportEvents = supportEventData!!.getJSONObject(supportName)
+				supportEventData.keys().forEach { supportName ->
+					val supportEvents = supportEventData.getJSONObject(supportName)
 					supportEvents.keys().forEach { eventName ->
 						val eventOptionsArray = supportEvents.getJSONArray(eventName)
 						val eventOptions = ArrayList<String>()
