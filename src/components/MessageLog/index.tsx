@@ -230,6 +230,7 @@ Custom Scale: ${settings.debug.templateMatchCustomScale / 100}
 Start Template Matching Test: ${settings.debug.debugMode_startTemplateMatchingTest ? "✅" : "❌"}
 Start Single Training OCR Test: ${settings.debug.debugMode_startSingleTrainingOCRTest ? "✅" : "❌"}
 Start Comprehensive Training OCR Test: ${settings.debug.debugMode_startComprehensiveTrainingOCRTest ? "✅" : "❌"}
+Start Date OCR Test: ${settings.debug.debugMode_startDateOCRTest ? "✅" : "❌"}
 Hide String Comparison Results: ${settings.debug.enableHideOCRComparisonResults ? "✅" : "❌"}
 
 ****************************************`

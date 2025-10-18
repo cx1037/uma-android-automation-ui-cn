@@ -356,6 +356,7 @@ const Settings = () => {
                                     debugMode_startTemplateMatchingTest: true,
                                     debugMode_startSingleTrainingOCRTest: false,
                                     debugMode_startComprehensiveTrainingOCRTest: false,
+                                    debugMode_startDateOCRTest: false,
                                 },
                             })
                         } else {
@@ -382,6 +383,7 @@ const Settings = () => {
                                     debugMode_startTemplateMatchingTest: false,
                                     debugMode_startSingleTrainingOCRTest: true,
                                     debugMode_startComprehensiveTrainingOCRTest: false,
+                                    debugMode_startDateOCRTest: false,
                                 },
                             })
                         } else {
@@ -408,6 +410,7 @@ const Settings = () => {
                                     debugMode_startTemplateMatchingTest: false,
                                     debugMode_startSingleTrainingOCRTest: false,
                                     debugMode_startComprehensiveTrainingOCRTest: true,
+                                    debugMode_startDateOCRTest: false,
                                 },
                             })
                         } else {
@@ -419,6 +422,33 @@ const Settings = () => {
                     }}
                     label="Start Comprehensive Training OCR Test"
                     description="Disables normal bot operations and starts the comprehensive training OCR test. Only on the Training screen and tests all 5 trainings for their stat gains and failure chances."
+                    style={{ marginTop: 10 }}
+                />
+
+                <CustomCheckbox
+                    checked={bsc.settings.debug.debugMode_startDateOCRTest}
+                    onCheckedChange={(checked) => {
+                        if (checked) {
+                            // Disable other tests when enabling this one.
+                            bsc.setSettings({
+                                ...bsc.settings,
+                                debug: {
+                                    ...bsc.settings.debug,
+                                    debugMode_startTemplateMatchingTest: false,
+                                    debugMode_startSingleTrainingOCRTest: false,
+                                    debugMode_startComprehensiveTrainingOCRTest: false,
+                                    debugMode_startDateOCRTest: true,
+                                },
+                            })
+                        } else {
+                            bsc.setSettings({
+                                ...bsc.settings,
+                                debug: { ...bsc.settings.debug, debugMode_startDateOCRTest: false },
+                            })
+                        }
+                    }}
+                    label="Start Date OCR Test"
+                    description="Disables normal bot operations and starts the date OCR test. Only on the Main screen and the Race List screen and tests detecting the current date."
                     style={{ marginTop: 10 }}
                 />
             </View>
