@@ -116,6 +116,29 @@ class Training(private val game: Game) {
 	}
 
 	/**
+	 * Handles the test to perform OCR on the current training on display for stat gains and failure chance.
+	 */
+	fun startSingleTrainingOCRTest() {
+		game.printToLog("\n[TEST] Now beginning Single Training OCR test on the Training screen for the current training on display.")
+		game.printToLog("[TEST] Note that this test is dependent on having the correct scale.")
+		analyzeTrainings(test = true, singleTraining = true)
+		printTrainingMap()
+	}
+
+	/**
+	 * Handles the test to perform OCR on all 5 trainings on display for stat gains and failure chances.
+	 */
+	fun startComprehensiveTrainingOCRTest() {
+		game.printToLog("\n[TEST] Now beginning Comprehensive Training OCR test on the Training screen for all 5 trainings on display.")
+		game.printToLog("[TEST] Note that this test is dependent on having the correct scale.")
+		analyzeTrainings(test = true)
+		printTrainingMap()
+	}
+
+	////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////
+
+	/**
 	 * The entry point for handling Training.
 	 */
 	fun handleTraining() {
@@ -151,32 +174,6 @@ class Training(private val game: Game) {
 			game.printToLog("[ERROR] Cannot start the Training process. Moving on...", isError = true)
 		}
 	}
-
-	/**
-	 * Handles the test to perform OCR on the current training on display for stat gains and failure chance.
-	 */
-	fun startSingleTrainingOCRTest() {
-		game.printToLog("\n[TEST] Now beginning Single Training OCR test on the Training screen for the current training on display.")
-		game.printToLog("[TEST] Note that this test is dependent on having the correct scale.")
-		analyzeTrainings(test = true, singleTraining = true)
-		printTrainingMap()
-	}
-
-	/**
-	 * Handles the test to perform OCR on all 5 trainings on display for stat gains and failure chances.
-	 */
-	fun startComprehensiveTrainingOCRTest() {
-		game.printToLog("\n[TEST] Now beginning Comprehensive Training OCR test on the Training screen for all 5 trainings on display.")
-		game.printToLog("[TEST] Note that this test is dependent on having the correct scale.")
-		analyzeTrainings(test = true)
-		printTrainingMap()
-	}
-
-	////////////////////////////////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////
-	// Private Training Methods
-	////////////////////////////////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////
 
 	/**
 	 * Analyze all 5 Trainings for their details including stat gains, relationship bars, etc.
