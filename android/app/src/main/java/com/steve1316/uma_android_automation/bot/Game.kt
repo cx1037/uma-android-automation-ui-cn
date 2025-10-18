@@ -571,8 +571,22 @@ class Game(val myContext: Context) {
 	 */
 	fun start(): Boolean {
 		// Print current app settings at the start of the run.
-		SettingsPrinter.printCurrentSettings(myContext) { message ->
-			printToLog(message)
+		try {
+			val formattedSettingsString = SettingsHelper.getStringSetting("misc", "formattedSettingsString")
+			printToLog("\n[SETTINGS] Current Bot Configuration:")
+			printToLog("=====================================")
+			formattedSettingsString.split("\n").forEach { line ->
+				if (line.isNotEmpty()) {
+					printToLog(line)
+				}
+			}
+			printToLog("=====================================\n")
+		} catch (e: Exception) {
+			printToLog("[WARNING] Failed to load formatted settings from SQLite: ${e.message}")
+			printToLog("[INFO] Using fallback settings display...")
+			// Fallback to basic settings display if formatted string is not available.
+			printToLog("[INFO] Campaign: $campaign")
+			printToLog("[INFO] Debug Mode: $debugMode")
 		}
 
 		// Print device and version information.

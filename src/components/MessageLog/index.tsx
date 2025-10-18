@@ -2,6 +2,7 @@ import { useContext, useState, useMemo, useCallback, memo } from "react"
 import { MessageLogContext } from "../../context/MessageLogContext"
 import { BotStateContext } from "../../context/BotStateContext"
 import { StyleSheet, Text, View, TextInput, TouchableOpacity } from "react-native"
+import { databaseManager } from "../../lib/database"
 import * as Clipboard from "expo-clipboard"
 import { Copy, Plus, Minus, Type, X } from "lucide-react-native"
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
@@ -186,11 +187,7 @@ const MessageLog = () => {
 
         const longTargetsString = `Long: \n\t\tSpeed: ${settings.trainingStatTarget.trainingLongStatTarget_speedStatTarget}\t\tStamina: ${settings.trainingStatTarget.trainingLongStatTarget_staminaStatTarget}\t\tPower: ${settings.trainingStatTarget.trainingLongStatTarget_powerStatTarget}\n\t\tGuts: ${settings.trainingStatTarget.trainingLongStatTarget_gutsStatTarget}\t\t\tWit: ${settings.trainingStatTarget.trainingLongStatTarget_witStatTarget}`
 
-        return `****************************************
-Welcome to ${bsc.appName} v${bsc.appVersion}
-****************************************
-
-Campaign Selected: ${campaignString}
+        const formattedString = `Campaign Selected: ${campaignString}
 
 ---------- Training Event Options ----------
 Character Selected: ${characterString}
@@ -236,10 +233,17 @@ Start Comprehensive Training OCR Test: ${settings.debug.debugMode_startComprehen
 Hide String Comparison Results: ${settings.debug.enableHideOCRComparisonResults ? "✅" : "❌"}
 
 ****************************************`
+
+        // Save the formatted string to SQLite.
+        databaseManager.saveSetting("misc", "formattedSettingsString", formattedString, true).catch((error) => {
+            console.error("Failed to save formatted settings string to SQLite:", error)
+        })
+
+        return formattedString
     }, [bsc.settings, bsc.appName, bsc.appVersion])
 
     const introMessage = bsc.settings.misc.enableSettingsDisplay
-        ? formatSettings()
+        ? `****************************************\nWelcome to ${bsc.appName} v${bsc.appVersion}\n****************************************\n\n${formatSettings()}`
         : `****************************************\nWelcome to ${bsc.appName} v${bsc.appVersion}\n****************************************`
 
     // Process log messages with color coding and virtualization.
