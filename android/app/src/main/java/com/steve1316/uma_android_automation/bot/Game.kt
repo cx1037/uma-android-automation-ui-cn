@@ -621,6 +621,8 @@ class Game(val myContext: Context) {
 			training.startComprehensiveTrainingOCRTest()
 		} else if (SettingsHelper.getBooleanSetting("debug", "debugMode_startDateOCRTest")) {
 			startDateOCRTest()
+		} else if (SettingsHelper.getBooleanSetting("debug", "debugMode_startRaceListDetectionTest")) {
+			racing.startRaceListDetectionTest()
 		} else {
 			// Update the stat targets by distances.
 			training.setStatTargetsByDistances()

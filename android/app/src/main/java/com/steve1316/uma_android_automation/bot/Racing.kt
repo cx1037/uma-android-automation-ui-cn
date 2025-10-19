@@ -3,6 +3,9 @@ package com.steve1316.uma_android_automation.bot
 import com.steve1316.uma_android_automation.MainActivity
 import com.steve1316.uma_android_automation.utils.SettingsHelper
 import com.steve1316.uma_android_automation.utils.CustomImageUtils.RaceDetails
+import com.steve1316.uma_android_automation.utils.SQLiteSettingsManager
+import net.ricecode.similarity.JaroWinklerStrategy
+import net.ricecode.similarity.StringSimilarityServiceImpl
 import org.opencv.core.Point
 
 class Racing (private val game: Game) {
@@ -19,6 +22,195 @@ class Racing (private val game: Game) {
 
     private val enableStopOnMandatoryRace: Boolean = SettingsHelper.getBooleanSetting("racing", "enableStopOnMandatoryRaces")
     var detectedMandatoryRaceCheck = false
+
+    // Race database constants
+    companion object {
+        private const val TABLE_RACES = "races"
+        private const val RACES_COLUMN_NAME = "name"
+        private const val RACES_COLUMN_GRADE = "grade"
+        private const val RACES_COLUMN_FANS = "fans"
+        private const val RACES_COLUMN_TURN_NUMBER = "turnNumber"
+        private const val RACES_COLUMN_NAME_FORMATTED = "nameFormatted"
+        private const val SIMILARITY_THRESHOLD = 0.7
+    }
+
+    data class RaceData(
+        val name: String,
+        val grade: String,
+        val fans: Int,
+        val nameFormatted: String
+    )
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Handles the test to detect the currently displayed races on the Race List screen.
+     */
+    fun startRaceListDetectionTest() {
+        game.printToLog("\n[TEST] Now beginning detection test on the Race List screen for the currently displayed races.", tag = tag)
+        if (game.imageUtils.findImage("race_status").first == null) {
+            game.printToLog("[TEST] Bot is not on the Race List screen. Ending the test.")
+            return
+        }
+
+        // Detect the current date first.
+        game.updateDate()
+
+        // Check for all double star predictions.
+        val doublePredictionLocations = game.imageUtils.findAll("race_extra_double_prediction")
+        game.printToLog("[TEST] Found ${doublePredictionLocations.size} races with double predictions.", tag = tag)
+        
+        doublePredictionLocations.forEachIndexed { index, location ->
+            val raceName = game.imageUtils.extractRaceName(location)
+            game.printToLog("[TEST] Race #${index + 1} - Detected name: '$raceName'", tag = tag)
+            
+            // Query database for race details
+            val raceData = getRaceByTurnAndName(game.currentDate.turnNumber, raceName)
+            
+            if (raceData != null) {
+                game.printToLog("[TEST] Race #${index + 1} - Match found:", tag = tag)
+                game.printToLog("[TEST]   Name: ${raceData.name}", tag = tag)
+                game.printToLog("[TEST]   Grade: ${raceData.grade}", tag = tag)
+                game.printToLog("[TEST]   Fans: ${raceData.fans}", tag = tag)
+                game.printToLog("[TEST]   Formatted: ${raceData.nameFormatted}", tag = tag)
+            } else {
+                game.printToLog("[TEST] Race #${index + 1} - No match found for turn ${game.currentDate.turnNumber}", tag = tag)
+            }
+        }
+    }
+
+    /**
+     * Get race data by turn number and detected name using exact and fuzzy matching.
+     * 
+     * @param turnNumber The current turn number to match against.
+     * @param detectedName The race name detected by OCR.
+     * @return RaceData if a match is found, null otherwise.
+     */
+    fun getRaceByTurnAndName(turnNumber: Int, detectedName: String): RaceData? {
+        val settingsManager = SQLiteSettingsManager(game.myContext)
+        if (!settingsManager.initialize()) {
+            game.printToLog("[ERROR] Database not available for race lookup.", tag = tag, isError = true)
+            return null
+        }
+
+        return try {
+            game.printToLog("[RACE] Looking up race for turn $turnNumber with detected name: \"$detectedName\"", tag = tag)
+            
+            // Do exact matching based on the info gathered.
+            val exactMatch = findExactMatch(settingsManager, turnNumber, detectedName)
+            if (exactMatch != null) {
+                game.printToLog("[RACE] Found exact match: ${exactMatch.name}", tag = tag)
+                settingsManager.close()
+                return exactMatch
+            }
+            
+            // Do fuzzy matching to find the most similar match using Jaro-Winkler.
+            val fuzzyMatch = findFuzzyMatch(settingsManager, turnNumber, detectedName)
+            if (fuzzyMatch != null) {
+                game.printToLog("[RACE] Found fuzzy match: ${fuzzyMatch.name}", tag = tag)
+                settingsManager.close()
+                return fuzzyMatch
+            }
+            
+            game.printToLog("[RACE] No match found for turn $turnNumber with name \"$detectedName\"", tag = tag)
+            settingsManager.close()
+            null
+        } catch (e: Exception) {
+            game.printToLog("[ERROR] Error looking up race: ${e.message}", tag = tag, isError = true)
+            settingsManager.close()
+            null
+        }
+    }
+
+    /**
+     * Find exact match on the nameFormatted field.
+     */
+    private fun findExactMatch(settingsManager: SQLiteSettingsManager, turnNumber: Int, detectedName: String): RaceData? {
+        val database = settingsManager.getDatabase()
+        if (database == null) return null
+
+        val cursor = database.query(
+            TABLE_RACES,
+            arrayOf(
+                RACES_COLUMN_NAME,
+                RACES_COLUMN_GRADE,
+                RACES_COLUMN_FANS,
+                RACES_COLUMN_NAME_FORMATTED
+            ),
+            "$RACES_COLUMN_TURN_NUMBER = ? AND $RACES_COLUMN_NAME_FORMATTED = ?",
+            arrayOf(turnNumber.toString(), detectedName),
+            null, null, null
+        )
+
+        return if (cursor.moveToFirst()) {
+            val race = RaceData(
+                name = cursor.getString(0),
+                grade = cursor.getString(1),
+                fans = cursor.getInt(2),
+                nameFormatted = cursor.getString(3)
+            )
+            cursor.close()
+            race
+        } else {
+            cursor.close()
+            null
+        }
+    }
+
+    /**
+     * Find fuzzy match using Jaro-Winkler similarity on the nameFormatted field.
+     */
+    private fun findFuzzyMatch(settingsManager: SQLiteSettingsManager, turnNumber: Int, detectedName: String): RaceData? {
+        val database = settingsManager.getDatabase()
+        if (database == null) return null
+
+        val cursor = database.query(
+            TABLE_RACES,
+            arrayOf(
+                RACES_COLUMN_NAME,
+                RACES_COLUMN_GRADE,
+                RACES_COLUMN_FANS,
+                RACES_COLUMN_NAME_FORMATTED
+            ),
+            "$RACES_COLUMN_TURN_NUMBER = ?",
+            arrayOf(turnNumber.toString()),
+            null, null, null
+        )
+
+        if (!cursor.moveToFirst()) {
+            cursor.close()
+            return null
+        }
+
+        val similarityService = StringSimilarityServiceImpl(JaroWinklerStrategy())
+        var bestMatch: RaceData? = null
+        var bestScore = 0.0
+
+        do {
+            val nameFormatted = cursor.getString(3)
+            val similarity = similarityService.score(detectedName, nameFormatted)
+            
+            if (similarity > bestScore && similarity >= SIMILARITY_THRESHOLD) {
+                bestScore = similarity
+                bestMatch = RaceData(
+                    name = cursor.getString(0),
+                    grade = cursor.getString(1),
+                    fans = cursor.getInt(2),
+                    nameFormatted = nameFormatted
+                )
+                game.printToLog("[RACE] Fuzzy match candidate: '$nameFormatted' with similarity ${game.decimalFormat.format(similarity)}", tag = tag)
+            }
+        } while (cursor.moveToNext())
+
+        cursor.close()
+        
+        if (bestMatch != null) {
+            game.printToLog("[RACE] Best fuzzy match: '${bestMatch.nameFormatted}' with similarity ${game.decimalFormat.format(bestScore)}", tag = tag)
+        }
+        
+        return bestMatch
+    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////
