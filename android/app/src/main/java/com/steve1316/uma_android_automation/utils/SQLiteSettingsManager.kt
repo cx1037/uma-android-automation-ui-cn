@@ -310,6 +310,14 @@ class SQLiteSettingsManager(private val context: Context) {
     }
 
     /**
+     * Get the database instance for direct access.
+     * This should only be used by classes that need direct database access.
+     */
+    fun getDatabase(): SQLiteDatabase? {
+        return if (isAvailable()) database else null
+    }
+
+    /**
      * Close the database connection.
      */
     fun close() {
