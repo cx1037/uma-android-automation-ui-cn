@@ -295,6 +295,35 @@ class CustomImageUtils(context: Context, private val game: Game) : ImageUtils(co
 	}
 
 	/**
+	 * Extract the race name from the extra race selection screen using OCR.
+	 *
+	 * @param extraRaceLocation Point object of the extra race's location.
+	 * @return The race name as detected by OCR, or empty string if not found.
+	 */
+	fun extractRaceName(extraRaceLocation: Point): String {
+		try {
+			val detectedText = performOCRFromReference(
+				referencePoint = extraRaceLocation,
+				offsetX = -455,
+				offsetY = -105,
+				width = relWidth(585),
+				height = relHeight(45),
+				useThreshold = true,
+				useGrayscale = true,
+				scaleUp = 2,
+				ocrEngine = "mlkit",
+				debugName = "extractRaceName"
+			)
+			
+			MessageLog.printToLog("[INFO] Extracted race name: \"$detectedText\"", tag = tag)
+			return detectedText
+		} catch (e: Exception) {
+			MessageLog.printToLog("[ERROR] Exception during race name extraction: ${e.message}", tag = tag, isError = true)
+			return ""
+		}
+	}
+
+	/**
 	 * Determine the amount of fans that the extra race will give only if it matches the double star prediction.
 	 *
 	 * @param extraRaceLocation Point object of the extra race's location.
