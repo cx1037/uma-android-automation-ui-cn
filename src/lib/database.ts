@@ -11,6 +11,23 @@ export interface DatabaseSettings {
     updated_at: string
 }
 
+export interface DatabaseRace {
+    id: number
+    key: string
+    name: string
+    date: string
+    raceTrack: string
+    course: string | null
+    direction: string
+    grade: string
+    terrain: string
+    distanceType: string
+    distanceMeters: number
+    fans: number
+    turnNumber: number
+    nameFormatted: string
+}
+
 /**
  * Database utility class for managing settings persistence with SQLite.
  * Stores settings as key-value pairs organized by category for efficient querying.
@@ -78,13 +95,43 @@ export class DatabaseManager {
             `)
             logWithTimestamp("Settings table created successfully.")
 
-            // Create index for faster queries.
-            logWithTimestamp("Creating index...")
+            // Create races table.
+            logWithTimestamp("Creating races table...")
+            await this.db.execAsync(`
+                CREATE TABLE IF NOT EXISTS races (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    key TEXT UNIQUE NOT NULL,
+                    name TEXT NOT NULL,
+                    date TEXT NOT NULL,
+                    raceTrack TEXT NOT NULL,
+                    course TEXT,
+                    direction TEXT NOT NULL,
+                    grade TEXT NOT NULL,
+                    terrain TEXT NOT NULL,
+                    distanceType TEXT NOT NULL,
+                    distanceMeters INTEGER NOT NULL,
+                    fans INTEGER NOT NULL,
+                    turnNumber INTEGER NOT NULL,
+                    nameFormatted TEXT NOT NULL
+                )
+            `)
+            logWithTimestamp("Races table created successfully.")
+
+            // Create indexes for faster queries.
+            logWithTimestamp("Creating indexes...")
             await this.db.execAsync(`
                 CREATE INDEX IF NOT EXISTS idx_settings_category_key 
                 ON settings(category, key)
             `)
-            logWithTimestamp("Index created successfully.")
+            await this.db.execAsync(`
+                CREATE INDEX IF NOT EXISTS idx_races_turn_number 
+                ON races(turnNumber)
+            `)
+            await this.db.execAsync(`
+                CREATE INDEX IF NOT EXISTS idx_races_name_formatted 
+                ON races(nameFormatted)
+            `)
+            logWithTimestamp("Indexes created successfully.")
 
             logWithTimestamp("Database initialized successfully.")
         } catch (error) {
@@ -255,6 +302,155 @@ export class DatabaseManager {
             return settings
         } catch (error) {
             logErrorWithTimestamp("Failed to load all settings:", error)
+            endTiming({ status: "error", error: error instanceof Error ? error.message : String(error) })
+            throw error
+        }
+    }
+
+    /**
+     * Save a race to the database.
+     */
+    async saveRace(race: Omit<DatabaseRace, "id">): Promise<void> {
+        const endTiming = startTiming("database_save_race", "database")
+
+        if (!this.db) {
+            logErrorWithTimestamp("Database is null when trying to save race.")
+            endTiming({ status: "error", error: "database_not_initialized" })
+            throw new Error("Database not initialized")
+        }
+
+        try {
+            logWithTimestamp(`[DB] Saving race: ${race.name} (${race.turnNumber})`)
+            await this.db.runAsync(
+                `INSERT OR REPLACE INTO races (key, name, date, raceTrack, course, direction, grade, terrain, distanceType, distanceMeters, fans, turnNumber, nameFormatted) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                [
+                    race.key,
+                    race.name,
+                    race.date,
+                    race.raceTrack,
+                    race.course,
+                    race.direction,
+                    race.grade,
+                    race.terrain,
+                    race.distanceType,
+                    race.distanceMeters,
+                    race.fans,
+                    race.turnNumber,
+                    race.nameFormatted
+                ]
+            )
+            logWithTimestamp(`[DB] Successfully saved race: ${race.name}`)
+            endTiming({ status: "success", raceName: race.name })
+        } catch (error) {
+            logErrorWithTimestamp(`[DB] Failed to save race ${race.name}:`, error)
+            endTiming({ status: "error", raceName: race.name, error: error instanceof Error ? error.message : String(error) })
+            throw error
+        }
+    }
+
+    /**
+     * Save multiple races using a single multi-value INSERT statement for better performance.
+     */
+    async saveRacesBatch(races: Array<Omit<DatabaseRace, "id">>): Promise<void> {
+        const endTiming = startTiming("database_save_races_batch", "database")
+
+        if (!this.db) {
+            logErrorWithTimestamp("Database is null when trying to save races batch.")
+            endTiming({ status: "error", error: "database_not_initialized" })
+            throw new Error("Database not initialized")
+        }
+
+        if (races.length === 0) {
+            endTiming({ status: "skipped", reason: "no_races" })
+            return
+        }
+
+        try {
+            logWithTimestamp(`[DB] Saving ${races.length} races using multi-value INSERT.`)
+
+            // Build a single multi-value INSERT statement
+            const values = races.map(race => 
+                `('${race.key.replace(/'/g, "''")}', '${race.name.replace(/'/g, "''")}', '${race.date.replace(/'/g, "''")}', '${race.raceTrack.replace(/'/g, "''")}', ${race.course ? `'${race.course.replace(/'/g, "''")}'` : 'NULL'}, '${race.direction.replace(/'/g, "''")}', '${race.grade.replace(/'/g, "''")}', '${race.terrain.replace(/'/g, "''")}', '${race.distanceType.replace(/'/g, "''")}', ${race.distanceMeters}, ${race.fans}, ${race.turnNumber}, '${race.nameFormatted.replace(/'/g, "''")}')`
+            ).join(',')
+
+            const sql = `INSERT OR REPLACE INTO races (key, name, date, raceTrack, course, direction, grade, terrain, distanceType, distanceMeters, fans, turnNumber, nameFormatted) VALUES ${values}`
+
+            await this.db.runAsync(sql)
+
+            logWithTimestamp(`[DB] Successfully saved ${races.length} races in single operation.`)
+            endTiming({ status: "success", racesCount: races.length })
+        } catch (error) {
+            logErrorWithTimestamp(`[DB] Failed to save races batch:`, error)
+            endTiming({ status: "error", racesCount: races.length, error: error instanceof Error ? error.message : String(error) })
+            throw error
+        }
+    }
+
+    /**
+     * Load all races from database.
+     */
+    async loadAllRaces(): Promise<DatabaseRace[]> {
+        const endTiming = startTiming("database_load_all_races", "database")
+
+        if (!this.db) {
+            endTiming({ status: "error", error: "database_not_initialized" })
+            throw new Error("Database not initialized")
+        }
+
+        try {
+            const results = await this.db.getAllAsync<DatabaseRace>("SELECT * FROM races ORDER BY turnNumber, name")
+            endTiming({ status: "success", totalRaces: results.length })
+            return results
+        } catch (error) {
+            logErrorWithTimestamp("Failed to load all races:", error)
+            endTiming({ status: "error", error: error instanceof Error ? error.message : String(error) })
+            throw error
+        }
+    }
+
+    /**
+     * Load races by turn number.
+     */
+    async loadRacesByTurnNumber(turnNumber: number): Promise<DatabaseRace[]> {
+        const endTiming = startTiming("database_load_races_by_turn", "database")
+
+        if (!this.db) {
+            endTiming({ status: "error", error: "database_not_initialized" })
+            throw new Error("Database not initialized")
+        }
+
+        try {
+            const results = await this.db.getAllAsync<DatabaseRace>(
+                "SELECT * FROM races WHERE turnNumber = ? ORDER BY name", 
+                [turnNumber]
+            )
+            endTiming({ status: "success", turnNumber, racesCount: results.length })
+            return results
+        } catch (error) {
+            logErrorWithTimestamp(`Failed to load races for turn ${turnNumber}:`, error)
+            endTiming({ status: "error", turnNumber, error: error instanceof Error ? error.message : String(error) })
+            throw error
+        }
+    }
+
+    /**
+     * Clear all races from the database.
+     */
+    async clearRaces(): Promise<void> {
+        const endTiming = startTiming("database_clear_races", "database")
+
+        if (!this.db) {
+            endTiming({ status: "error", error: "database_not_initialized" })
+            throw new Error("Database not initialized")
+        }
+
+        try {
+            await this.db.runAsync("DELETE FROM races")
+            logWithTimestamp("[DB] Successfully cleared all races.")
+            endTiming({ status: "success" })
+        } catch (error) {
+            logErrorWithTimestamp("Failed to clear races:", error)
             endTiming({ status: "error", error: error instanceof Error ? error.message : String(error) })
             throw error
         }

@@ -3,8 +3,10 @@ import { DeviceEventEmitter, AppState } from "react-native"
 import { BotStateContext, BotStateProviderProps } from "../context/BotStateContext"
 import { MessageLogContext, MessageLogProviderProps } from "../context/MessageLogContext"
 import { useSettings } from "../context/SettingsContext"
-import { logWithTimestamp } from "../lib/logger"
+import { logWithTimestamp, logErrorWithTimestamp } from "../lib/logger"
 import { useSQLiteSettings } from "./useSQLiteSettings"
+import { databaseManager, DatabaseRace } from "../lib/database"
+import racesData from "../data/races.json"
 
 /**
  * Manages app initialization, settings persistence, and message handling.
@@ -34,11 +36,55 @@ export const useBootstrap = () => {
     // This ensures the data layer is fully set up before allowing settings operations.
     useEffect(() => {
         if (isSQLiteInitialized) {
-            logWithTimestamp("[Bootstrap] SQLite initialized, app ready...")
-            setIsReady(true)
-            logWithTimestamp("[Bootstrap] App initialization complete")
+            logWithTimestamp("[Bootstrap] SQLite initialized, populating races data...")
+            populateRacesData().then(() => {
+                logWithTimestamp("[Bootstrap] Races data populated, app ready...")
+                setIsReady(true)
+                logWithTimestamp("[Bootstrap] App initialization complete")
+            }).catch((error) => {
+                logErrorWithTimestamp("[Bootstrap] Failed to populate races data:", error)
+                // Still mark as ready even if races population fails
+                setIsReady(true)
+            })
         }
     }, [isSQLiteInitialized])
+
+    /**
+     * Populate the races table with data from races.json.
+     */
+    const populateRacesData = async (): Promise<void> => {
+        try {
+            logWithTimestamp("[Bootstrap] Starting races data population...")
+            
+            // Convert races.json data to database format
+            const races: Array<Omit<DatabaseRace, "id">> = Object.entries(racesData).map(([key, race]) => ({
+                key,
+                name: race.name,
+                date: race.date,
+                raceTrack: race.raceTrack,
+                course: race.course,
+                direction: race.direction,
+                grade: race.grade,
+                terrain: race.terrain,
+                distanceType: race.distanceType,
+                distanceMeters: race.distanceMeters,
+                fans: race.fans,
+                turnNumber: race.turnNumber,
+                nameFormatted: race.nameFormatted
+            }))
+
+            logWithTimestamp(`[Bootstrap] Converted ${races.length} races from JSON to database format`)
+
+            // Clear existing races and populate with new data
+            await databaseManager.clearRaces()
+            await databaseManager.saveRacesBatch(races)
+            
+            logWithTimestamp(`[Bootstrap] Successfully populated ${races.length} races into database`)
+        } catch (error) {
+            logErrorWithTimestamp("[Bootstrap] Error populating races data:", error)
+            throw error
+        }
+    }
 
     // Save settings when app goes to background or is about to close.
     useEffect(() => {
