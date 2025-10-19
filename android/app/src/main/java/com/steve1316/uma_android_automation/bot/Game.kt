@@ -271,9 +271,15 @@ class Game(val myContext: Context) {
 	 * Handles the test to perform OCR on the current date and elapsed turn number.
 	 */
 	fun startDateOCRTest() {
-		printToLog("\n[TEST] Now beginning Single Training OCR test on the Training screen for the current training on display.")
+		printToLog("\n[TEST] Now beginning the Date OCR test on the Main screen.")
 		printToLog("[TEST] Note that this test is dependent on having the correct scale.")
 		updateDate()
+	}
+
+	fun startAptitudesDetectionTest() {
+		printToLog("\n[TEST] Now beginning the Aptitudes Detection test on the Main screen.")
+		printToLog("[TEST] Note that this test is dependent on having the correct scale.")
+		updateAptitudes()
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -428,12 +434,19 @@ class Game(val myContext: Context) {
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Helper functions to update game states.
 
-	fun updatePreferredDistance() {
-		printToLog("\n[STATS] Updating preferred distance.")
+	fun updateAptitudes() {
+		printToLog("\n[STATS] Updating aptitudes for the current character.")
 		if (findAndTapImage("main_status", tries = 1, region = imageUtils.regionMiddle)) {
-			training.preferredDistance = imageUtils.determinePreferredDistance()
+			aptitudes = imageUtils.determineAptitudes(aptitudes)
 			findAndTapImage("race_accept_trophy", tries = 1, region = imageUtils.regionBottomHalf)
-			printToLog("[STATS] Preferred distance set to ${training.preferredDistance}.")
+			MessageLog.printToLog("""
+                [Aptitudes]
+                Track: Turf=${aptitudes.track.turf}, Dirt=${aptitudes.track.dirt}
+                Distance: Sprint=${aptitudes.distance.sprint}, Mile=${aptitudes.distance.mile}, Medium=${aptitudes.distance.medium}, Long=${aptitudes.distance.long}
+                Style: Front=${aptitudes.style.front}, Pace=${aptitudes.style.pace}, Late=${aptitudes.style.late}, End=${aptitudes.style.end}
+                """.trimIndent(),
+				tag = tag
+			)
 		}
 	}
 
@@ -653,6 +666,8 @@ class Game(val myContext: Context) {
 			startDateOCRTest()
 		} else if (SettingsHelper.getBooleanSetting("debug", "debugMode_startRaceListDetectionTest")) {
 			racing.startRaceListDetectionTest()
+		} else if (SettingsHelper.getBooleanSetting("debug", "debugMode_startAptitudesDetectionTest")) {
+			startAptitudesDetectionTest()
 		} else {
 			// Update the stat targets by distances.
 			training.setStatTargetsByDistances()
