@@ -358,6 +358,7 @@ const Settings = () => {
                                     debugMode_startComprehensiveTrainingOCRTest: false,
                                     debugMode_startDateOCRTest: false,
                                     debugMode_startRaceListDetectionTest: false,
+                                    debugMode_startAptitudesDetectionTest: false,
                                 },
                             })
                         } else {
@@ -386,6 +387,7 @@ const Settings = () => {
                                     debugMode_startComprehensiveTrainingOCRTest: false,
                                     debugMode_startDateOCRTest: false,
                                     debugMode_startRaceListDetectionTest: false,
+                                    debugMode_startAptitudesDetectionTest: false,
                                 },
                             })
                         } else {
@@ -414,6 +416,7 @@ const Settings = () => {
                                     debugMode_startComprehensiveTrainingOCRTest: true,
                                     debugMode_startDateOCRTest: false,
                                     debugMode_startRaceListDetectionTest: false,
+                                    debugMode_startAptitudesDetectionTest: false,
                                 },
                             })
                         } else {
@@ -442,6 +445,7 @@ const Settings = () => {
                                     debugMode_startComprehensiveTrainingOCRTest: false,
                                     debugMode_startDateOCRTest: true,
                                     debugMode_startRaceListDetectionTest: false,
+                                    debugMode_startAptitudesDetectionTest: false,
                                 },
                             })
                         } else {
@@ -470,6 +474,7 @@ const Settings = () => {
                                     debugMode_startComprehensiveTrainingOCRTest: false,
                                     debugMode_startDateOCRTest: false,
                                     debugMode_startRaceListDetectionTest: true,
+                                    debugMode_startAptitudesDetectionTest: false,
                                 },
                             })
                         } else {
@@ -481,6 +486,35 @@ const Settings = () => {
                     }}
                     label="Start Race List Detection Test"
                     description="Disables normal bot operations and starts the Race List detection test. Only on the Race List screen and tests detecting the races with double star predictions currently on display."
+                    style={{ marginTop: 10 }}
+                />
+
+                <CustomCheckbox
+                    checked={bsc.settings.debug.debugMode_startAptitudesDetectionTest}
+                    onCheckedChange={(checked) => {
+                        if (checked) {
+                            // Disable other tests when enabling this one.
+                            bsc.setSettings({
+                                ...bsc.settings,
+                                debug: {
+                                    ...bsc.settings.debug,
+                                    debugMode_startTemplateMatchingTest: false,
+                                    debugMode_startSingleTrainingOCRTest: false,
+                                    debugMode_startComprehensiveTrainingOCRTest: false,
+                                    debugMode_startDateOCRTest: false,
+                                    debugMode_startRaceListDetectionTest: false,
+                                    debugMode_startAptitudesDetectionTest: true,
+                                },
+                            })
+                        } else {
+                            bsc.setSettings({
+                                ...bsc.settings,
+                                debug: { ...bsc.settings.debug, debugMode_startAptitudesDetectionTest: false },
+                            })
+                        }
+                    }}
+                    label="Start Aptitudes Detection Test"
+                    description="Disables normal bot operations and starts the Aptitudes detection test. Only on the Main screen and tests detecting the current aptitudes."
                     style={{ marginTop: 10 }}
                 />
             </View>
