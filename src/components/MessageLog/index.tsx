@@ -2,7 +2,6 @@ import { useContext, useState, useMemo, useCallback, memo } from "react"
 import { MessageLogContext } from "../../context/MessageLogContext"
 import { BotStateContext } from "../../context/BotStateContext"
 import { StyleSheet, Text, View, TextInput, TouchableOpacity } from "react-native"
-import { databaseManager } from "../../lib/database"
 import * as Clipboard from "expo-clipboard"
 import { Copy, Plus, Minus, Type, X } from "lucide-react-native"
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
@@ -235,11 +234,7 @@ Hide String Comparison Results: ${settings.debug.enableHideOCRComparisonResults 
 
 ****************************************`
 
-        // Save the formatted string to SQLite.
-        databaseManager.saveSetting("misc", "formattedSettingsString", formattedString, true).catch((error) => {
-            console.error("Failed to save formatted settings string to SQLite:", error)
-        })
-
+        bsc.setSettings({ ...bsc.settings, misc: { ...bsc.settings.misc, formattedSettingsString: formattedString } })
         return formattedString
     }, [bsc.settings, bsc.appName, bsc.appVersion])
 
