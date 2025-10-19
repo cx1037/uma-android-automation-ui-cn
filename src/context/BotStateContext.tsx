@@ -37,6 +37,7 @@ export interface Settings {
     // Misc settings
     misc: {
         enableSettingsDisplay: boolean
+        formattedSettingsString: string
     }
 
     // Training settings
@@ -129,6 +130,7 @@ export const defaultSettings: Settings = {
     },
     misc: {
         enableSettingsDisplay: false,
+        formattedSettingsString: "",
     },
     training: {
         trainingBlacklist: [],
