@@ -357,6 +357,7 @@ const Settings = () => {
                                     debugMode_startSingleTrainingOCRTest: false,
                                     debugMode_startComprehensiveTrainingOCRTest: false,
                                     debugMode_startDateOCRTest: false,
+                                    debugMode_startRaceListDetectionTest: false,
                                 },
                             })
                         } else {
@@ -384,6 +385,7 @@ const Settings = () => {
                                     debugMode_startSingleTrainingOCRTest: true,
                                     debugMode_startComprehensiveTrainingOCRTest: false,
                                     debugMode_startDateOCRTest: false,
+                                    debugMode_startRaceListDetectionTest: false,
                                 },
                             })
                         } else {
@@ -411,6 +413,7 @@ const Settings = () => {
                                     debugMode_startSingleTrainingOCRTest: false,
                                     debugMode_startComprehensiveTrainingOCRTest: true,
                                     debugMode_startDateOCRTest: false,
+                                    debugMode_startRaceListDetectionTest: false,
                                 },
                             })
                         } else {
@@ -438,6 +441,7 @@ const Settings = () => {
                                     debugMode_startSingleTrainingOCRTest: false,
                                     debugMode_startComprehensiveTrainingOCRTest: false,
                                     debugMode_startDateOCRTest: true,
+                                    debugMode_startRaceListDetectionTest: false,
                                 },
                             })
                         } else {
@@ -449,6 +453,34 @@ const Settings = () => {
                     }}
                     label="Start Date OCR Test"
                     description="Disables normal bot operations and starts the date OCR test. Only on the Main screen and the Race List screen and tests detecting the current date."
+                    style={{ marginTop: 10 }}
+                />
+
+                <CustomCheckbox
+                    checked={bsc.settings.debug.debugMode_startRaceListDetectionTest}
+                    onCheckedChange={(checked) => {
+                        if (checked) {
+                            // Disable other tests when enabling this one.
+                            bsc.setSettings({
+                                ...bsc.settings,
+                                debug: {
+                                    ...bsc.settings.debug,
+                                    debugMode_startTemplateMatchingTest: false,
+                                    debugMode_startSingleTrainingOCRTest: false,
+                                    debugMode_startComprehensiveTrainingOCRTest: false,
+                                    debugMode_startDateOCRTest: false,
+                                    debugMode_startRaceListDetectionTest: true,
+                                },
+                            })
+                        } else {
+                            bsc.setSettings({
+                                ...bsc.settings,
+                                debug: { ...bsc.settings.debug, debugMode_startRaceListDetectionTest: false },
+                            })
+                        }
+                    }}
+                    label="Start Race List Detection Test"
+                    description="Disables normal bot operations and starts the Race List detection test. Only on the Race List screen and tests detecting the races with double star predictions currently on display."
                     style={{ marginTop: 10 }}
                 />
             </View>
