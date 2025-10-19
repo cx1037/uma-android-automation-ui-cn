@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef, useContext } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { databaseManager } from "../lib/database"
 import { Settings, defaultSettings } from "../context/BotStateContext"
 import { startTiming } from "../lib/performanceLogger"
@@ -241,7 +241,6 @@ export const useSQLiteSettings = () => {
                 endTiming({ status: "error", error: error instanceof Error ? error.message : String(error) })
                 throw error
             } finally {
-                logWithTimestamp("[SQLite] Setting isSQLiteSaving to false...")
                 setIsSQLiteSaving(false)
             }
         },
@@ -286,6 +285,7 @@ export const useSQLiteSettings = () => {
     const saveSQLiteSettings = useCallback(
         async (settings: Settings): Promise<void> => {
             await debouncedSave(settings)
+            await databaseManager.flushSQLiteForKotlin()
         },
         [debouncedSave]
     )
@@ -296,6 +296,7 @@ export const useSQLiteSettings = () => {
     const saveSQLiteSettingsImmediate = useCallback(
         async (settings: Settings): Promise<void> => {
             await performSave(settings)
+            await databaseManager.flushSQLiteForKotlin()
         },
         [performSave]
     )

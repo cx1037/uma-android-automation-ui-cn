@@ -181,6 +181,23 @@ export class DatabaseManager {
     }
 
     /**
+     * Flush the SQLite database to the Kotlin layer.
+     */
+    async flushSQLiteForKotlin(): Promise<void> {
+        const endTiming = startTiming("database_flush_to_kotlin", "database")
+
+        if (this.db) {
+            await this.db.execAsync("PRAGMA wal_checkpoint(FULL);")
+            logWithTimestamp("[DB] Successfully flushed SQLite database to Kotlin layer.")
+            endTiming({ status: "success" })
+        } else {
+            logErrorWithTimestamp("Database is null when trying to flush to Kotlin layer.")
+            endTiming({ status: "error", error: "database_not_initialized" })
+            throw new Error("Database is null when trying to flush to Kotlin layer.")
+        }
+    }
+
+    /**
      * Load a specific setting from database.
      */
     async loadSetting(category: string, key: string): Promise<any> {
