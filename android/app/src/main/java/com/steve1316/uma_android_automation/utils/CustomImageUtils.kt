@@ -628,60 +628,81 @@ class CustomImageUtils(context: Context, private val game: Game) : ImageUtils(co
 	}
 
 	/**
-	 * Determines the preferred race distance based on aptitude levels (S, A, B) for each distance type on the Full Stats popup.
+	 * Determines the aptitudes of the current character based on the levels (S, A, B) on the Full Stats popup. The priority order of the aptitude levels is S > A > B.
 	 *
-	 * This function analyzes the aptitude display for four race distances: Sprint, Mile, Medium, and Long.
-	 * It uses template matching to detect S, A, and B aptitude levels and returns the distance with the
-	 * highest aptitude found. The priority order is S > A > B, with S aptitude being returned immediately
-	 * since it's the best possible outcome.
-	 *
-	 * @return The preferred distance (Sprint, Mile, Medium, or Long) or Medium as default if no aptitude is detected.
+	 * @return The aptitudes of the current character.
 	 */
-	fun determinePreferredDistance(): String {
-		val (distanceLocation, sourceBitmap) = findImage("stat_distance", tries = 1, region = regionMiddle)
-		if (distanceLocation == null) {
-			MessageLog.printToLog("[ERROR] Could not determine the preferred distance. Setting to Medium by default.", tag = tag, isError = true)
-			return "Medium"
-		}
-
+	fun determineAptitudes(currentAptitudes: Game.Aptitudes): Game.Aptitudes {
 		val (_, statAptitudeSTemplate) = getBitmaps("stat_aptitude_S")
 		val (_, statAptitudeATemplate) = getBitmaps("stat_aptitude_A")
 		val (_, statAptitudeBTemplate) = getBitmaps("stat_aptitude_B")
 
-		val distances = listOf("Sprint", "Mile", "Medium", "Long")
-		var bestAptitudeDistance = ""
-		var bestAptitudeLevel = -1 // -1 = none, 0 = B, 1 = A, 2 = S
+		val aptitudes = mutableMapOf(
+			"stat_track" to mutableMapOf("turf" to "", "dirt" to ""),
+			"stat_distance" to mutableMapOf("sprint" to "", "mile" to "", "medium" to "", "long" to ""),
+			"stat_style" to mutableMapOf("front" to "", "pace" to "", "late" to "", "end" to "")
+		)
 
-		for (i in 0 until 4) {
-			val distance = distances[i]
-			val croppedBitmap = createSafeBitmap(sourceBitmap, relX(distanceLocation.x, 108 + (i * 190)), relY(distanceLocation.y, -25), 176, 52, "determinePreferredDistance distance $distance")
-			if (croppedBitmap == null) {
-				MessageLog.printToLog("[ERROR] Failed to create cropped bitmap for distance $distance.", tag = tag, isError = true)
+		for ((templateName, keys) in aptitudes) {
+			val (aptitudeLocation, sourceBitmap) = findImage(templateName, tries = 1, region = regionMiddle)
+			if (aptitudeLocation == null) {
+				MessageLog.printToLog(
+					"[ERROR] Could not determine aptitude using $templateName. Keeping previous values.",
+					tag = tag,
+					isError = true
+				)
 				continue
 			}
 
-			when {
-				match(croppedBitmap, statAptitudeSTemplate!!, "stat_aptitude_S").first -> {
-					// S aptitude found - this is the best possible, return immediately.
-					return distance
+			keys.keys.forEachIndexed { i, key ->
+				// Only two aptitudes for Track: Turf and Dirt.
+				if (templateName == "stat_track" && i > 1) return@forEachIndexed
+
+				val croppedBitmap = createSafeBitmap(
+					sourceBitmap,
+					relX(aptitudeLocation.x, 108 + (i * 190)),
+					relY(aptitudeLocation.y, -25),
+					176,
+					52,
+					"determineAptitudes $templateName $key"
+				)
+
+				if (croppedBitmap == null) {
+					MessageLog.printToLog("[ERROR] Failed to crop bitmap for $templateName $key.", tag = tag, isError = true)
+					return@forEachIndexed
 				}
-				bestAptitudeLevel < 1 && match(croppedBitmap, statAptitudeATemplate!!, "stat_aptitude_A").first -> {
-					// A aptitude found (pick the leftmost aptitude) - better than B, but keep looking for S.
-					bestAptitudeDistance = distance
-					bestAptitudeLevel = 1
+
+				// Determine level by priority: S > A > B.
+				val level = when {
+					match(croppedBitmap, statAptitudeSTemplate!!, "stat_aptitude_S").first -> "S"
+					match(croppedBitmap, statAptitudeATemplate!!, "stat_aptitude_A").first -> "A"
+					match(croppedBitmap, statAptitudeBTemplate!!, "stat_aptitude_B").first -> "B"
+					else -> "X"
 				}
-				bestAptitudeLevel < 0 && match(croppedBitmap, statAptitudeBTemplate!!, "stat_aptitude_B").first -> {
-					// B aptitude found - only use if no A aptitude found yet.
-					bestAptitudeDistance = distance
-					bestAptitudeLevel = 0
-				}
+
+				aptitudes[templateName]?.set(key, level)
 			}
 		}
 
-		return bestAptitudeDistance.ifEmpty {
-			MessageLog.printToLog("[WARNING] Could not determine the preferred distance with at least B aptitude. Setting to Medium by default.", tag = tag, isError = true)
-			"Medium"
-		}
+		// Build updated Aptitudes object
+		return Game.Aptitudes(
+			track = Game.Track(
+				turf = aptitudes["stat_track"]?.get("turf") ?: currentAptitudes.track.turf,
+				dirt = aptitudes["stat_track"]?.get("dirt") ?: currentAptitudes.track.dirt
+			),
+			distance = Game.Distance(
+				sprint = aptitudes["stat_distance"]?.get("sprint") ?: currentAptitudes.distance.sprint,
+				mile = aptitudes["stat_distance"]?.get("mile") ?: currentAptitudes.distance.mile,
+				medium = aptitudes["stat_distance"]?.get("medium") ?: currentAptitudes.distance.medium,
+				long = aptitudes["stat_distance"]?.get("long") ?: currentAptitudes.distance.long
+			),
+			style = Game.Style(
+				front = aptitudes["stat_style"]?.get("front") ?: currentAptitudes.style.front,
+				pace = aptitudes["stat_style"]?.get("pace") ?: currentAptitudes.style.pace,
+				late = aptitudes["stat_style"]?.get("late") ?: currentAptitudes.style.late,
+				end = aptitudes["stat_style"]?.get("end") ?: currentAptitudes.style.end
+			)
+		)
 	}
 
 	/**
