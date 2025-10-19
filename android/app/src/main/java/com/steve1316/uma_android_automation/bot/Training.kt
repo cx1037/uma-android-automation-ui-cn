@@ -6,15 +6,12 @@ import com.steve1316.uma_android_automation.utils.SettingsHelper
 import com.steve1316.uma_android_automation.utils.CustomImageUtils
 import com.steve1316.automation_library.utils.MessageLog
 import com.steve1316.automation_library.data.SharedData
-import java.text.DecimalFormat
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import kotlin.intArrayOf
 
 class Training(private val game: Game) {
 	private val tag: String = "[${MainActivity.loggerTag}]Training"
-
-	private val decimalFormat = DecimalFormat("#.##")
 
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
@@ -407,7 +404,7 @@ class Training(private val game: Game) {
 				score += contribution
 			}
 
-			game.printToLog("[TRAINING] ${training.name} Training has a score of ${decimalFormat.format(score)} with a focus on building relationship bars.")
+			game.printToLog("[TRAINING] ${training.name} Training has a score of ${game.decimalFormat.format(score)} with a focus on building relationship bars.")
 			return score
 		}
 
@@ -658,14 +655,14 @@ class Training(private val game: Game) {
 
 			game.printToLog(
 				"[TRAINING] Scores | Current Stat: ${currentStatsMap[training.name]}, Target Stat: ${target[trainings.indexOf(training.name)]}, " +
-					"Stat Efficiency: ${decimalFormat.format(statScore)}, Relationship: ${decimalFormat.format(relationshipScore)}, " +
-					"Context: ${decimalFormat.format(contextScore)}"
+					"Stat Efficiency: ${game.decimalFormat.format(statScore)}, Relationship: ${game.decimalFormat.format(relationshipScore)}, " +
+					"Context: ${game.decimalFormat.format(contextScore)}"
 			)
 
 			// Normalize the score.
 			val normalizedScore = (totalScore / maxPossibleScore * 100.0).coerceIn(1.0, 1000.0)
 
-			game.printToLog("[TRAINING] Enhanced final score for ${training.name} Training: ${decimalFormat.format(normalizedScore)}/1000.0")
+			game.printToLog("[TRAINING] Enhanced final score for ${training.name} Training: ${game.decimalFormat.format(normalizedScore)}/1000.0")
 
 			return normalizedScore
 		}

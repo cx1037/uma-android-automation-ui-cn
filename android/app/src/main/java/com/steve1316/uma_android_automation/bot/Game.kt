@@ -15,6 +15,7 @@ import com.steve1316.uma_android_automation.utils.GameDateParser
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.opencv.core.Point
+import java.text.DecimalFormat
 import kotlin.intArrayOf
 
 /**
@@ -27,6 +28,8 @@ class Game(val myContext: Context) {
 	val imageUtils: CustomImageUtils = CustomImageUtils(myContext, this)
 	val gestureUtils: MyAccessibilityService = MyAccessibilityService.getInstance()
 	val gameDateParser: GameDateParser = GameDateParser()
+
+	val decimalFormat = DecimalFormat("#.##")
 
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
