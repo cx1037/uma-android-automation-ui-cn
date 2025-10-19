@@ -37,61 +37,47 @@ class SQLiteSettingsManager(private val context: Context) {
             return true
         }
 
-        // Try multiple possible database locations.
-        val possiblePaths = listOf(
-            File(context.filesDir, "SQLite/$DATABASE_NAME"),
-            File(context.filesDir, DATABASE_NAME),
-            File(context.filesDir, "databases/$DATABASE_NAME"),
-            context.getDatabasePath(DATABASE_NAME)
-        )
+        val dbFile = File(context.filesDir, "SQLite/$DATABASE_NAME")
 
-        for (dbFile in possiblePaths) {
-            try {
-                Log.d(TAG, "Attempting to open database at: ${dbFile.absolutePath}")
-                
-                if (!dbFile.exists()) {
-                    Log.d(TAG, "Database file does not exist at: ${dbFile.absolutePath}")
-                    continue
-                }
-                
-                if (!dbFile.canRead()) {
-                    Log.d(TAG, "Database file is not readable at: ${dbFile.absolutePath}")
-                    continue
-                }
+        try {
+            Log.d(TAG, "Attempting to open database at: SQLite/${DATABASE_NAME}")
 
+            if (!dbFile.exists()) {
+                Log.d(TAG, "Database file does not exist at: ${dbFile.absolutePath}")
+            } else if (!dbFile.canRead()) {
+                Log.d(TAG, "Database file is not readable at: ${dbFile.absolutePath}")
+            } else {
                 Log.d(TAG, "Found database file at: ${dbFile.absolutePath} (${dbFile.length()} bytes)")
 
                 // Open the existing database in read-only mode first to verify it's accessible.
                 database = SQLiteDatabase.openDatabase(dbFile.absolutePath, null, SQLiteDatabase.OPEN_READONLY)
                 Log.d(TAG, "Database opened successfully in read-only mode.")
-                
+
                 // Verify the database has the expected table structure.
                 if (!verifyDatabaseStructure()) {
                     Log.d(TAG, "Database structure verification failed for: ${dbFile.absolutePath}")
                     database?.close()
                     database = null
-                    continue
+                } else {
+                    // Close read-only connection and open in read-write mode.
+                    database?.close()
+                    database = SQLiteDatabase.openDatabase(dbFile.absolutePath, null, SQLiteDatabase.OPEN_READWRITE)
+                    Log.d(TAG, "Database opened successfully in read-write mode at: ${dbFile.absolutePath}")
+
+                    isInitialized = true
+                    return true
                 }
-                
-                // Close read-only connection and open in read-write mode.
-                database?.close()
-                database = SQLiteDatabase.openDatabase(dbFile.absolutePath, null, SQLiteDatabase.OPEN_READWRITE)
-                Log.d(TAG, "Database opened successfully in read-write mode at: ${dbFile.absolutePath}")
-                
-                isInitialized = true
-                return true
-            } catch (e: Exception) {
-                Log.e(TAG, "Failed to open database at ${dbFile.absolutePath}: ${e.message}", e)
-                database?.close()
-                database = null
-                continue
             }
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to open database at ${dbFile.absolutePath}: ${e.message}", e)
+            database?.close()
+            database = null
         }
 
-        Log.e(TAG, "Failed to find or open database in any of the expected locations.")
+        Log.e(TAG, "Failed to find or open the SQLite database.")
         
         // If no database exists, try to create one in the default location.
-        Log.d(TAG, "Attempting to create a new database...")
+        Log.d(TAG, "Now attempting to create a new SQLite database at ${dbFile.absolutePath}...")
         return createNewDatabase()
     }
 
