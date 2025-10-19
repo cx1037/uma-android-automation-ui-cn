@@ -230,13 +230,14 @@ Start Template Matching Test: ${settings.debug.debugMode_startTemplateMatchingTe
 Start Single Training OCR Test: ${settings.debug.debugMode_startSingleTrainingOCRTest ? "✅" : "❌"}
 Start Comprehensive Training OCR Test: ${settings.debug.debugMode_startComprehensiveTrainingOCRTest ? "✅" : "❌"}
 Start Date OCR Test: ${settings.debug.debugMode_startDateOCRTest ? "✅" : "❌"}
+Start Race List Detection Test: ${settings.debug.debugMode_startRaceListDetectionTest ? "✅" : "❌"}
 Hide String Comparison Results: ${settings.debug.enableHideOCRComparisonResults ? "✅" : "❌"}
 
 ****************************************`
 
         bsc.setSettings({ ...bsc.settings, misc: { ...bsc.settings.misc, formattedSettingsString: formattedString } })
         return formattedString
-    }, [bsc.settings, bsc.appName, bsc.appVersion])
+    }, [bsc.settings])
 
     const introMessage = bsc.settings.misc.enableSettingsDisplay
         ? `****************************************\nWelcome to ${bsc.appName} v${bsc.appVersion}\n****************************************\n\n${formatSettings()}`
