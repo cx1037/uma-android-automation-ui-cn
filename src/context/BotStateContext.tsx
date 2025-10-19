@@ -96,6 +96,7 @@ export interface Settings {
         debugMode_startSingleTrainingOCRTest: boolean
         debugMode_startComprehensiveTrainingOCRTest: boolean
         debugMode_startDateOCRTest: boolean
+        debugMode_startRaceListDetectionTest: boolean
         enableHideOCRComparisonResults: boolean
     }
 }
@@ -174,6 +175,7 @@ export const defaultSettings: Settings = {
         debugMode_startSingleTrainingOCRTest: false,
         debugMode_startComprehensiveTrainingOCRTest: false,
         debugMode_startDateOCRTest: false,
+        debugMode_startRaceListDetectionTest: false,
         enableHideOCRComparisonResults: true,
     },
 }
