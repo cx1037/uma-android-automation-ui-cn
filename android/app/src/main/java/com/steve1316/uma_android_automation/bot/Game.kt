@@ -54,6 +54,11 @@ class Game(val myContext: Context) {
 	////////////////////////////////////////////////////////////////////
 	// Misc
     var currentDate: Date = Date(1, "Early", 1, 1)
+	var aptitudes: Aptitudes = Aptitudes(
+		track = Track("B", "B"),
+		distance = Distance("B", "B", "B", "B"),
+		style = Style("B", "B", "B", "B")
+	)
 	private var inheritancesDone = 0
 
 	data class Date(
@@ -61,6 +66,31 @@ class Game(val myContext: Context) {
 		val phase: String,
 		val month: Int,
 		val turnNumber: Int
+	)
+
+	data class Track(
+		val turf: String,
+		val dirt: String
+	)
+
+	data class Distance(
+		val sprint: String,
+		val mile: String,
+		val medium: String,
+		val long: String
+	)
+
+	data class Style(
+		val front: String,
+		val pace: String,
+		val late: String,
+		val end: String
+	)
+
+	data class Aptitudes(
+		val track: Track,
+		val distance: Distance,
+		val style: Style
 	)
 
 	////////////////////////////////////////////////////////////////////
