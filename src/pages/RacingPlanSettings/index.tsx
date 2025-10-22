@@ -34,13 +34,13 @@ const RacingPlanSettings = () => {
     const bsc = useContext(BotStateContext)
     const { settings, setSettings } = bsc
 
-    const { enableRacingPlan, racingPlan, minFansThreshold, preferredTerrain } = settings.racing
+    const { enableRacingPlan, racingPlan, minFansThreshold, preferredTerrain, lookAheadDays, smartRacingCheckInterval } = settings.racing
     const preferredGrades = (settings.racing as any).preferredGrades ?? ["G1", "G2", "G3"]
 
     const [searchQuery, setSearchQuery] = useState("")
 
     // Parse racing plan from JSON string.
-    const parsedRacingPlan: PlannedRace[] = racingPlan && racingPlan !== "[]" ? JSON.parse(racingPlan) : []
+    const parsedRacingPlan: PlannedRace[] = racingPlan && racingPlan !== "[]" && typeof racingPlan === "string" ? JSON.parse(racingPlan) : []
 
     // Convert races.json to array.
     const allRaces: Race[] = Object.values(racesData)
@@ -225,6 +225,40 @@ const RacingPlanSettings = () => {
                         placeholder="0"
                     />
                     <Text style={styles.inputDescription}>Bot will prioritize races with at least this many fans. (Max 30000)</Text>
+                </View>
+
+                <View style={styles.section}>
+                    <Text style={styles.inputLabel}>Look-Ahead Days</Text>
+                    <Input
+                        style={styles.input}
+                        value={lookAheadDays.toString()}
+                        onChangeText={(text) => {
+                            let value = parseInt(text) || 0
+                            // Cap between 0 and 30 days.
+                            value = Math.max(0, Math.min(value, 30))
+                            updateRacingSetting("lookAheadDays", value)
+                        }}
+                        keyboardType="numeric"
+                        placeholder="10"
+                    />
+                    <Text style={styles.inputDescription}>Number of days to look ahead when making smart racing decisions. (Range: 0-30)</Text>
+                </View>
+
+                <View style={styles.section}>
+                    <Text style={styles.inputLabel}>Smart Racing Check Interval</Text>
+                    <Input
+                        style={styles.input}
+                        value={smartRacingCheckInterval.toString()}
+                        onChangeText={(text) => {
+                            let value = parseInt(text) || 2
+                            // Cap between 1 and 5 days.
+                            value = Math.max(1, Math.min(value, 5))
+                            updateRacingSetting("smartRacingCheckInterval", value)
+                        }}
+                        keyboardType="numeric"
+                        placeholder="2"
+                    />
+                    <Text style={styles.inputDescription}>How often the bot checks for optimal racing opportunities. Lower values = more frequent checks. (Range: 1-5)</Text>
                 </View>
 
                 <View style={styles.section}>
