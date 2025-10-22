@@ -39,6 +39,7 @@ const CustomSlider: React.FC<CustomSliderProps> = ({
     const [isDragging, setIsDragging] = useState(false)
     const [sliderWidth, setSliderWidth] = useState(0)
     const [tooltipPosition, setTooltipPosition] = useState(0)
+    const [localValue, setLocalValue] = useState(value)
     const [inputValue, setInputValue] = useState(value.toString())
     const thumbScale = useRef(new Animated.Value(1)).current
     const tooltipOpacity = useRef(new Animated.Value(0)).current
@@ -82,7 +83,7 @@ const CustomSlider: React.FC<CustomSliderProps> = ({
             borderRadius: 10,
             backgroundColor: colors.primary,
             zIndex: 1,
-            top: 10, // Position it in the middle of the slider height
+            top: 10, // Position it in the middle of the slider height.
         },
         tooltip: {
             position: "absolute",
@@ -144,13 +145,17 @@ const CustomSlider: React.FC<CustomSliderProps> = ({
         }
     }, [sliderWidth, value, min, max])
 
-    // Update input value when external value changes.
+    // Update local value when external value changes (but not during dragging).
     useEffect(() => {
-        setInputValue(value.toString())
-    }, [value])
+        if (!isDragging) {
+            setLocalValue(value)
+            setInputValue(value.toString())
+        }
+    }, [value, isDragging])
 
     const handleSlidingStart = (sliderValue: number) => {
         setIsDragging(true)
+        setLocalValue(sliderValue)
         Animated.parallel([
             Animated.timing(thumbScale, {
                 toValue: 1.3,
@@ -170,6 +175,7 @@ const CustomSlider: React.FC<CustomSliderProps> = ({
 
     const handleSlidingComplete = () => {
         setIsDragging(false)
+        onValueChange(localValue)
         Animated.parallel([
             Animated.timing(thumbScale, {
                 toValue: 1,
@@ -183,14 +189,15 @@ const CustomSlider: React.FC<CustomSliderProps> = ({
             }),
         ]).start()
 
-        // Call the onSlidingComplete prop if provided
+        // Call the onSlidingComplete prop if provided.
         if (onSlidingComplete) {
-            onSlidingComplete(value)
+            onSlidingComplete(localValue)
         }
     }
 
     const handleValueChange = (sliderValue: number) => {
-        onValueChange(sliderValue)
+        // Only update local state during dragging, don't call parent onValueChange.
+        setLocalValue(sliderValue)
         setInputValue(sliderValue.toString())
         if (isDragging) {
             const position = calculateTooltipPosition(sliderValue)
@@ -204,6 +211,7 @@ const CustomSlider: React.FC<CustomSliderProps> = ({
         if (!isNaN(numValue) && numValue >= min && numValue <= max) {
             // Round to nearest step.
             const roundedValue = Math.round(numValue / step) * step
+            setLocalValue(roundedValue)
             onValueChange(roundedValue)
         }
     }
@@ -214,11 +222,12 @@ const CustomSlider: React.FC<CustomSliderProps> = ({
             // Clamp value to min/max and round to nearest step.
             const clampedValue = Math.max(min, Math.min(max, numValue))
             const roundedValue = Math.round(clampedValue / step) * step
+            setLocalValue(roundedValue)
             onValueChange(roundedValue)
             setInputValue(roundedValue.toString())
         } else {
             // Reset to current value if invalid.
-            setInputValue(value.toString())
+            setInputValue(localValue.toString())
         }
     }
 
@@ -245,7 +254,7 @@ const CustomSlider: React.FC<CustomSliderProps> = ({
                     pointerEvents="none"
                 >
                     <Text style={styles.tooltipText}>
-                        {value}
+                        {localValue.toFixed(1)}
                         {labelUnit}
                     </Text>
                 </Animated.View>
@@ -265,7 +274,7 @@ const CustomSlider: React.FC<CustomSliderProps> = ({
                 {/* Slider with hidden default thumb */}
                 <Slider
                     style={{ width: "100%", height: 40 }}
-                    value={value}
+                    value={localValue}
                     onValueChange={handleValueChange}
                     onSlidingStart={handleSlidingStart}
                     onSlidingComplete={handleSlidingComplete}
@@ -283,7 +292,7 @@ const CustomSlider: React.FC<CustomSliderProps> = ({
                     <Text style={styles.labelText}>{showLabels ? min + labelUnit : ""}</Text>
                     <View style={styles.inputContainer}>
                         <Input
-                            value={inputValue}
+                            value={localValue % 1 === 0 ? localValue.toString() : localValue.toFixed(1)}
                             onChangeText={handleInputChange}
                             onEndEditing={handleInputSubmit}
                             onBlur={handleInputSubmit}
