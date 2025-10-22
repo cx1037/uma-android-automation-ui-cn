@@ -182,6 +182,8 @@ const RacingSettings = () => {
                     <NavigationLink
                         title="Go to Racing Plan Settings"
                         description="Configure prioritized races to target including enabling additional filters for race selection."
+                        disabled={!enableFarmingFans || enableForceRacing}
+                        disabledDescription="Farming Fans must be enabled and Force Racing must be disabled to use the Racing Plan Settings."
                         onPress={() => navigation.navigate("RacingPlanSettings" as never)}
                         style={{ ...styles.section, marginTop: 0 }}
                     />
