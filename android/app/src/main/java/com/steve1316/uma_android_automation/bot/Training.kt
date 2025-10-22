@@ -59,6 +59,7 @@ class Training(private val game: Game) {
 	private val maximumFailureChance: Int = SettingsHelper.getIntSetting("training", "maximumFailureChance")
 	private val disableTrainingOnMaxedStat: Boolean = SettingsHelper.getBooleanSetting("training", "disableTrainingOnMaxedStat")
 	private val focusOnSparkStatTarget: Boolean = SettingsHelper.getBooleanSetting("training", "focusOnSparkStatTarget")
+	private val preferredDistanceOverride: String = SettingsHelper.getStringSetting("training", "preferredDistanceOverride")
 	private val statTargetsByDistance: MutableMap<String, IntArray> = mutableMapOf(
 		"Sprint" to intArrayOf(0, 0, 0, 0, 0),
 		"Mile" to intArrayOf(0, 0, 0, 0, 0),
@@ -75,6 +76,55 @@ class Training(private val game: Game) {
 	// Public Training Methods
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
+
+	/**
+	 * Updates the preferred distance based on character aptitudes or manual override setting.
+	 * 
+	 * Priority order for automatic determination:
+	 * 1. Check all distances for S aptitude first (Sprint → Mile → Medium → Long)
+	 * 2. If no S aptitude found, check for A aptitude in same order
+	 * 3. If no S or A aptitude found, default to "Medium"
+	 */
+	fun updatePreferredDistance() {
+		game.printToLog("\n[TRAINING] Updating preferred distance...")
+		
+		// If manual override is set and not "Auto", use the manual value.
+		if (preferredDistanceOverride != "Auto") {
+			preferredDistance = preferredDistanceOverride
+			game.printToLog("[TRAINING] Using manual override: $preferredDistance.")
+			return
+		}
+		
+		// Automatic determination based on aptitudes.
+		val aptitudes = game.aptitudes.distance
+		
+		// First, check all distances for S aptitude.
+		if (aptitudes.sprint == "S") {
+			preferredDistance = "Sprint"
+		} else if (aptitudes.mile == "S") {
+			preferredDistance = "Mile"
+		} else if (aptitudes.medium == "S") {
+			preferredDistance = "Medium"
+		} else if (aptitudes.long == "S") {
+			preferredDistance = "Long"
+		}
+		// Then check for A aptitude if no S found.
+		else if (aptitudes.sprint == "A") {
+			preferredDistance = "Sprint"
+		} else if (aptitudes.mile == "A") {
+			preferredDistance = "Mile"
+		} else if (aptitudes.medium == "A") {
+			preferredDistance = "Medium"
+		} else if (aptitudes.long == "A") {
+			preferredDistance = "Long"
+		}
+		// Default fallback if no S or A aptitude found.
+		else {
+			preferredDistance = "Medium"
+		}
+		
+		game.printToLog("[TRAINING] Determined preferred distance: $preferredDistance (Sprint: ${aptitudes.sprint}, Mile: ${aptitudes.mile}, Medium: ${aptitudes.medium}, Long: ${aptitudes.long})")
+	}
 
 	/**
 	 * Sets up stat targets for different race distances by reading values from SQLite settings. These targets are used to determine training priorities based on the expected race distance.
