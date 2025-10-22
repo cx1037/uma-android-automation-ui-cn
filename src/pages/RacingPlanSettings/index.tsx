@@ -1,11 +1,13 @@
 import { useContext, useState } from "react"
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from "react-native"
 import { useNavigation } from "@react-navigation/native"
+import { Divider } from "react-native-paper"
 import { useTheme } from "../../context/ThemeContext"
 import { BotStateContext } from "../../context/BotStateContext"
 import CustomCheckbox from "../../components/CustomCheckbox"
 import CustomButton from "../../components/CustomButton"
 import CustomScrollView from "../../components/CustomScrollView"
+import CustomTitle from "../../components/CustomTitle"
 import { Input } from "../../components/ui/input"
 import { ArrowLeft, CircleCheckBig, Plus, Trash2 } from "lucide-react-native"
 import racesData from "../../data/races.json"
@@ -358,12 +360,21 @@ const RacingPlanSettings = () => {
             <ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1 }}>
                 <View className="m-1">
                     <View style={styles.section}>
+                        <CustomTitle
+                            title="Racing Plan"
+                            description={
+                                "This feature uses intelligent opportunity cost analysis to optimize race selection. It looks ahead N days to find races matching your character's aptitudes (A/S for terrain and distance), then scores them based on fans, grade, and aptitude matches.\n\nWhen enabled, note that this feature does not take effect until the Senior Year. Until then, it farm using the settings from the Racing Settings page. The bot will only race when the current opportunity is good enough AND waiting doesn't offer significantly better value.\n\nThis prevents the bot from waiting forever for perfect races while ensuring steady fan accumulation throughout the scenario."
+                            }
+                        />
+
+                        <Divider style={{ marginVertical: 16 }} />
+
                         <CustomCheckbox
                             id="enable-racing-plan"
                             checked={enableRacingPlan}
                             onCheckedChange={(checked) => updateRacingSetting("enableRacingPlan", checked)}
-                            label="Enable Racing Plan"
-                            description={"When enabled, the bot will prioritize races in your racing plan by only racing these races on the days that they are available. This will override the \"Days to Run Extra Races\" setting but note that the \"Force Racing\" setting will still take precedence.\n\nIf no Planned Races are selected, the bot will follow its default race selection behavior but will now consider minimum fan threshold, preferred terrain, and preferred race grades."}
+                            label="Enable Racing Plan (beta)"
+                            description={"When enabled, the bot will use smart race planning to optimize race selection."}
                         />
                     </View>
 
