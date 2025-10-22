@@ -295,14 +295,14 @@ const Settings = () => {
                             debug: { ...bsc.settings.debug, templateMatchConfidence: value },
                         })
                     }}
-                    min={50}
-                    max={100}
-                    step={1}
+                    min={0.5}
+                    max={1.0}
+                    step={0.1}
                     label="Adjust Confidence for Template Matching"
                     labelUnit=""
                     showValue={true}
                     showLabels={true}
-                    description="Sets the minimum confidence level for template matching with 1080p as the baseline. Consider lowering this to something like 70% at lower resolutions."
+                    description="Sets the minimum confidence level for template matching with 1080p as the baseline. Consider lowering this to something like 0.7 or 70% at lower resolutions. Making it too low will cause the bot to match on too many things as false positives."
                 />
 
                 <CustomSlider
@@ -320,14 +320,14 @@ const Settings = () => {
                             debug: { ...bsc.settings.debug, templateMatchCustomScale: value },
                         })
                     }}
-                    min={50}
-                    max={300}
-                    step={1}
+                    min={0.5}
+                    max={3.0}
+                    step={0.1}
                     label="Set the Custom Image Scale for Template Matching"
                     labelUnit=""
                     showValue={true}
                     showLabels={true}
-                    description="Manually set the scale to do template matching. The Basic Template Matching Test can help find your recommended scale."
+                    description="Manually set the scale to do template matching. The Basic Template Matching Test can help find your recommended scale. Making it too low or too high will cause the bot to match on too little or too many things as false positives."
                 />
 
                 <Separator style={{ marginVertical: 16 }} />

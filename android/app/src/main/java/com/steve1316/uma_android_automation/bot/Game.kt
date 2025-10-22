@@ -260,8 +260,8 @@ class Game(val myContext: Context) {
 		}
 
 		if (medianScales.isNotEmpty()) {
-			printToLog("\n[TEST] The following are the recommended scales to set (pick one as a whole number value): $medianScales.")
-			printToLog("[TEST] The following are the recommended confidences to set (pick one as a whole number value): $medianConfidences.")
+			printToLog("\n[TEST] The following are the recommended scales to set: $medianScales.")
+			printToLog("[TEST] The following are the recommended confidences to set: $medianConfidences.")
 		} else {
 			printToLog("\n[ERROR] No median scale/confidence can be found.", isError = true)
 		}
@@ -648,7 +648,7 @@ class Game(val myContext: Context) {
 		printToLog("[INFO] Device Information: ${SharedData.displayWidth}x${SharedData.displayHeight}, DPI ${SharedData.displayDPI}")
 		if (SharedData.displayWidth != 1080) printToLog("[WARNING] ⚠️ Bot performance will be severely degraded since display width is not 1080p unless an appropriate scale is set for your device.")
 		if (debugMode) printToLog("[WARNING] ⚠️ Debug Mode is enabled. All bot operations will be significantly slower as a result.")
-		if (SettingsHelper.getIntSetting("debug", "templateMatchCustomScale").toDouble() / 100.0 != 1.0) printToLog("[INFO] Manual scale has been set to ${SettingsHelper.getIntSetting("debug", "templateMatchCustomScale").toDouble() / 100.0}")
+		if (SettingsHelper.getStringSetting("debug", "templateMatchCustomScale").toDouble() != 1.0) printToLog("[INFO] Manual scale has been set to ${SettingsHelper.getStringSetting("debug", "templateMatchCustomScale").toDouble()}")
 		printToLog("[WARNING] ⚠️ Note that certain Android notification styles (like banners) are big enough that they cover the area that contains the Mood which will interfere with mood recovery logic in the beginning.")
 		val packageInfo = myContext.packageManager.getPackageInfo(myContext.packageName, 0)
 		printToLog("[INFO] Bot version: ${packageInfo.versionName} (${packageInfo.versionCode})\n\n")

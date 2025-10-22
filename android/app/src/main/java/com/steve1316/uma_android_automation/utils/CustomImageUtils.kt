@@ -37,8 +37,8 @@ class CustomImageUtils(context: Context, private val game: Game) : ImageUtils(co
 	// SQLite Settings
 	private val threshold: Int = SettingsHelper.getIntSetting("ocr", "ocrThreshold")
 	override var debugMode: Boolean = SettingsHelper.getBooleanSetting("debug", "enableDebugMode")
-	override var confidence: Double = SettingsHelper.getIntSetting("debug", "templateMatchConfidence").toDouble() / 100.0
-	override var customScale: Double = SettingsHelper.getIntSetting("debug", "templateMatchCustomScale").toDouble() / 100.0
+	override var confidence: Double = SettingsHelper.getStringSetting("debug", "templateMatchConfidence").toDouble()
+	override var customScale: Double = SettingsHelper.getStringSetting("debug", "templateMatchCustomScale").toDouble()
 
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////

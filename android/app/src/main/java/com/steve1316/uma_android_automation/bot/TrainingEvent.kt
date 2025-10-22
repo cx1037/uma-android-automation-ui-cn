@@ -214,7 +214,7 @@ class TrainingEvent(private val game: Game) {
                 optionNumber += 1
             }
 
-            val minimumConfidence = SettingsHelper.getIntSetting("debug", "templateMatchConfidence").toDouble() / 100.0
+            val minimumConfidence = SettingsHelper.getStringSetting("debug", "templateMatchConfidence").toDouble()
             val resultString = if (confidence >= minimumConfidence) {
                 "[TRAINING_EVENT] For this Training Event consisting of:\n$eventRewardsString\nThe bot will select Option ${optionSelected + 1}: \"${eventRewards[optionSelected]}\" with a " +
                         "selection weight of $max."
