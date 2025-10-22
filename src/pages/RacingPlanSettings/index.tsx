@@ -91,10 +91,10 @@ const RacingPlanSettings = () => {
     }
 
     const addAllRacesToPlan = () => {
-        const newPlan: PlannedRace[] = filteredRaces.map((race) => ({
+        const newPlan: PlannedRace[] = filteredRaces.map((race, index) => ({
             raceName: race.name,
             date: race.date,
-            priority: parsedRacingPlan.length,
+            priority: index,
         }))
 
         updateRacingSetting("racingPlan", JSON.stringify(newPlan))
