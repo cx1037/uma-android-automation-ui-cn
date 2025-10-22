@@ -20,24 +20,12 @@ import { useSettingsFileManager } from "../../hooks/useSettingsFileManager"
 const Settings = () => {
     const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false)
 
-    // Local state for sliders to improve performance
-    const [localSkillPointCheck, setLocalSkillPointCheck] = useState<number>(0)
-    const [localTemplateMatchConfidence, setLocalTemplateMatchConfidence] = useState<number>(0)
-    const [localTemplateMatchCustomScale, setLocalTemplateMatchCustomScale] = useState<number>(0)
-
     const bsc = useContext(BotStateContext)
     const { colors } = useTheme()
     const navigation = useNavigation()
 
     const { openDataDirectory, resetSettings } = useSettings()
     const { handleImportSettings, handleExportSettings, showImportDialog, setShowImportDialog, showResetDialog, setShowResetDialog } = useSettingsFileManager()
-
-    // Initialize local slider state with current settings
-    useEffect(() => {
-        setLocalSkillPointCheck(bsc.settings.general.skillPointCheck)
-        setLocalTemplateMatchConfidence(bsc.settings.debug.templateMatchConfidence)
-        setLocalTemplateMatchCustomScale(bsc.settings.debug.templateMatchCustomScale)
-    }, [bsc.settings.general.skillPointCheck, bsc.settings.debug.templateMatchConfidence, bsc.settings.debug.templateMatchCustomScale])
 
     const styles = StyleSheet.create({
         root: {
@@ -181,10 +169,13 @@ const Settings = () => {
                 {bsc.settings.general.enableSkillPointCheck && (
                     <View style={{ marginTop: 8, marginLeft: 20 }}>
                         <CustomSlider
-                            value={localSkillPointCheck}
+                            value={bsc.settings.general.skillPointCheck}
                             placeholder={bsc.defaultSettings.general.skillPointCheck}
                             onValueChange={(value) => {
-                                setLocalSkillPointCheck(value)
+                                bsc.setSettings({
+                                    ...bsc.settings,
+                                    general: { ...bsc.settings.general, skillPointCheck: value },
+                                })
                             }}
                             onSlidingComplete={(value) => {
                                 bsc.setSettings({
@@ -290,10 +281,13 @@ const Settings = () => {
                 )}
 
                 <CustomSlider
-                    value={localTemplateMatchConfidence}
+                    value={bsc.settings.debug.templateMatchConfidence}
                     placeholder={bsc.defaultSettings.debug.templateMatchConfidence}
                     onValueChange={(value) => {
-                        setLocalTemplateMatchConfidence(value)
+                        bsc.setSettings({
+                            ...bsc.settings,
+                            debug: { ...bsc.settings.debug, templateMatchConfidence: value },
+                        })
                     }}
                     onSlidingComplete={(value) => {
                         bsc.setSettings({
@@ -312,10 +306,13 @@ const Settings = () => {
                 />
 
                 <CustomSlider
-                    value={localTemplateMatchCustomScale}
+                    value={bsc.settings.debug.templateMatchCustomScale}
                     placeholder={bsc.defaultSettings.debug.templateMatchCustomScale}
                     onValueChange={(value) => {
-                        setLocalTemplateMatchCustomScale(value)
+                        bsc.setSettings({
+                            ...bsc.settings,
+                            debug: { ...bsc.settings.debug, templateMatchCustomScale: value },
+                        })
                     }}
                     onSlidingComplete={(value) => {
                         bsc.setSettings({
