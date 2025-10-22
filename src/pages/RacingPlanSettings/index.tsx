@@ -391,7 +391,7 @@ const RacingPlanSettings = () => {
                         <CustomTitle
                             title="Racing Plan"
                             description={
-                                "This feature uses intelligent opportunity cost analysis to optimize race selection. It looks ahead N days to find races matching your character's aptitudes (A/S for terrain and distance), then scores them based on fans, grade, and aptitude matches.\n\nWhen enabled, note that this feature does not take effect until the Senior Year. Until then, it farm using the settings from the Racing Settings page. The bot will only race when the current opportunity is good enough AND waiting doesn't offer significantly better value.\n\nThis prevents the bot from waiting forever for perfect races while ensuring steady fan accumulation throughout the scenario."
+                                "Uses opportunity cost analysis to optimize race selection by looking ahead N days for races matching your character's aptitudes (A/S terrain/distance). Scores races by fans, grade, and aptitude matches.\n\nUses standard settings until Classic Year, then combines both this and standard racing settings during Classic Year. Only fully activates in Senior Year. Races when current opportunities are good enough and waiting doesn't offer significantly better value, ensuring steady fan accumulation without endless waiting."
                             }
                         />
 
@@ -401,7 +401,7 @@ const RacingPlanSettings = () => {
                             id="enable-racing-plan"
                             checked={enableRacingPlan}
                             onCheckedChange={(checked) => updateRacingSetting("enableRacingPlan", checked)}
-                            label="Enable Racing Plan (beta)"
+                            label="Enable Racing Plan (BETA)"
                             description={"When enabled, the bot will use smart race planning to optimize race selection."}
                         />
                     </View>
