@@ -49,6 +49,7 @@ export interface Settings {
         maximumFailureChance: number
         disableTrainingOnMaxedStat: boolean
         focusOnSparkStatTarget: boolean
+        preferredDistanceOverride: string
     }
 
     // Training Stat Target settings
@@ -144,6 +145,7 @@ export const defaultSettings: Settings = {
         maximumFailureChance: 20,
         disableTrainingOnMaxedStat: true,
         focusOnSparkStatTarget: false,
+        preferredDistanceOverride: "Auto",
     },
     trainingStatTarget: {
         trainingSprintStatTarget_speedStatTarget: 900,
