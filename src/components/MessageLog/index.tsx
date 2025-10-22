@@ -1,4 +1,4 @@
-import { useContext, useState, useMemo, useCallback, memo } from "react"
+import { useContext, useState, useMemo, useCallback, memo, useEffect } from "react"
 import { MessageLogContext } from "../../context/MessageLogContext"
 import { BotStateContext } from "../../context/BotStateContext"
 import { StyleSheet, Text, View, TextInput, TouchableOpacity } from "react-native"
@@ -145,7 +145,8 @@ const MessageLog = () => {
         setShowErrorDialog(true)
     }, [])
 
-    const formatSettings = useCallback(() => {
+    // Format settings when settings change.
+    const formattedSettingsString = useMemo(() => {
         const settings = bsc.settings
 
         // Campaign selection.
@@ -186,7 +187,7 @@ const MessageLog = () => {
 
         const longTargetsString = `Long: \n\t\tSpeed: ${settings.trainingStatTarget.trainingLongStatTarget_speedStatTarget}\t\tStamina: ${settings.trainingStatTarget.trainingLongStatTarget_staminaStatTarget}\t\tPower: ${settings.trainingStatTarget.trainingLongStatTarget_powerStatTarget}\n\t\tGuts: ${settings.trainingStatTarget.trainingLongStatTarget_gutsStatTarget}\t\t\tWit: ${settings.trainingStatTarget.trainingLongStatTarget_witStatTarget}`
 
-        const formattedString = `Campaign Selected: ${campaignString}
+        return `Campaign Selected: ${campaignString}
 
 ---------- Training Event Options ----------
 Character Selected: ${characterString}
@@ -235,13 +236,18 @@ Start Aptitudes Detection Test: ${settings.debug.debugMode_startAptitudesDetecti
 Hide String Comparison Results: ${settings.debug.enableHideOCRComparisonResults ? "✅" : "❌"}
 
 ****************************************`
+}, [bsc.settings])
 
-        bsc.setSettings({ ...bsc.settings, misc: { ...bsc.settings.misc, formattedSettingsString: formattedString } })
-        return formattedString
-    }, [bsc.settings])
+    // Save the formatted string to the context for persistence.
+    useEffect(() => {
+        bsc.setSettings({
+            ...bsc.settings,
+            misc: { ...bsc.settings.misc, formattedSettingsString: formattedSettingsString },
+        })
+    }, [formattedSettingsString])
 
     const introMessage = bsc.settings.misc.enableSettingsDisplay
-        ? `****************************************\nWelcome to ${bsc.appName} v${bsc.appVersion}\n****************************************\n\n${formatSettings()}`
+        ? `****************************************\nWelcome to ${bsc.appName} v${bsc.appVersion}\n****************************************\n\n${formattedSettingsString}`
         : `****************************************\nWelcome to ${bsc.appName} v${bsc.appVersion}\n****************************************`
 
     // Process log messages with color coding and virtualization.
