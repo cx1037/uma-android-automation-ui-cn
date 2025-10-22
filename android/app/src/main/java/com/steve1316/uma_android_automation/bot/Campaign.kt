@@ -77,7 +77,8 @@ open class Campaign(val game: Game) {
 
 				 if (game.racing.encounteredRacingPopup || needToRace) {
 					game.printToLog("[INFO] Racing by default.", tag = tag)
-					if (!game.racing.skipRacing && !handleRaceEvents()) {
+					 // The !game.racing.skipRacing was removed due to possibility of getting stuck in a loop.
+					if (!handleRaceEvents()) {
 						if (game.racing.detectedMandatoryRaceCheck) {
 							game.printToLog("\n[END] Stopping bot due to detection of Mandatory Race.", tag = tag)
 							game.notificationMessage = "Stopping bot due to detection of Mandatory Race."
