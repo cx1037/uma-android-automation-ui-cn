@@ -395,7 +395,7 @@ const RacingPlanSettings = () => {
                             }
                         />
 
-                        <Divider style={{ marginVertical: 16 }} />
+                        <Divider style={{ marginBottom: 16 }} />
 
                         <CustomCheckbox
                             id="enable-racing-plan"
