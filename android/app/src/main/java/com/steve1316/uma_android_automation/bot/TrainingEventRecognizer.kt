@@ -68,14 +68,14 @@ class TrainingEventRecognizer(private val game: Game, private val imageUtils: Cu
 	 * Fix incorrect characters determined by OCR by replacing them with their Japanese equivalents.
 	 */
 	private fun fixIncorrectCharacters() {
-		game.printToLog("\n[EVENT-RECOGNIZER] Now attempting to fix incorrect characters in: $result", tag = tag)
+		game.printToLog("\n[TRAINING_EVENT_RECOGNIZER] Now attempting to fix incorrect characters in: $result", tag = tag)
 		
 		if (result.last() == '/') {
 			result = result.replace("/", "！")
 		}
 		
 		result = result.replace("(", "（").replace(")", "）")
-		game.printToLog("[EVENT-RECOGNIZER] Finished attempting to fix incorrect characters: $result", tag = tag)
+		game.printToLog("[TRAINING_EVENT_RECOGNIZER] Finished attempting to fix incorrect characters: $result", tag = tag)
 	}
 	
 	/**
@@ -83,9 +83,9 @@ class TrainingEventRecognizer(private val game: Game, private val imageUtils: Cu
 	 */
 	private fun findMostSimilarString() {
 		if (!hideComparisonResults) {
-			game.printToLog("\n[EVENT-RECOGNIZER] Now starting process to find most similar string to: $result\n", tag = tag)
+			game.printToLog("\n[TRAINING_EVENT_RECOGNIZER] Now starting process to find most similar string to: $result\n", tag = tag)
 		} else {
-			game.printToLog("\n[EVENT-RECOGNIZER] Now starting process to find most similar string to: $result", tag = tag)
+			game.printToLog("\n[TRAINING_EVENT_RECOGNIZER] Now starting process to find most similar string to: $result", tag = tag)
 		}
 		
 		// Remove any detected whitespaces.
@@ -205,11 +205,11 @@ class TrainingEventRecognizer(private val game: Game, private val imageUtils: Cu
 		}
 		
 		if (!hideComparisonResults) {
-			game.printToLog("\n[EVENT-RECOGNIZER] Finished process to find similar string.", tag = tag)
+			game.printToLog("\n[TRAINING_EVENT_RECOGNIZER] Finished process to find similar string.", tag = tag)
 		} else {
-			game.printToLog("[EVENT-RECOGNIZER] Finished process to find similar string.", tag = tag)
+			game.printToLog("[TRAINING_EVENT_RECOGNIZER] Finished process to find similar string.", tag = tag)
 		}
-		game.printToLog("[EVENT-RECOGNIZER] Event data fetched for \"${eventTitle}\".")
+		game.printToLog("[TRAINING_EVENT_RECOGNIZER] Event data fetched for \"${eventTitle}\".")
 	}
 
 	/**
