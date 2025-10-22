@@ -23,6 +23,8 @@ export interface Settings {
         minFansThreshold: number
         preferredTerrain: string
         preferredGrades: string[]
+        lookAheadDays: number
+        smartRacingCheckInterval: number
     }
 
     // Training Event settings
@@ -122,6 +124,8 @@ export const defaultSettings: Settings = {
         minFansThreshold: 0,
         preferredTerrain: "Any",
         preferredGrades: ["G1", "G2", "G3"],
+        lookAheadDays: 10,
+        smartRacingCheckInterval: 2,
     },
     trainingEvent: {
         enablePrioritizeEnergyOptions: false,
