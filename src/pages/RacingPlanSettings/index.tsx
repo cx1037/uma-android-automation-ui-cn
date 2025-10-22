@@ -216,15 +216,13 @@ const RacingPlanSettings = () => {
                         style={styles.input}
                         value={minFansThreshold.toString()}
                         onChangeText={(text) => {
-                            let value = parseInt(text) || 0
-                            // Cap at maximum of 30000.
-                            value = Math.min(value, 30000)
+                            const value = parseInt(text) || 0
                             updateRacingSetting("minFansThreshold", value)
                         }}
                         keyboardType="numeric"
                         placeholder="0"
                     />
-                    <Text style={styles.inputDescription}>Bot will prioritize races with at least this many fans. (Max 30000)</Text>
+                    <Text style={styles.inputDescription}>Bot will prioritize races with at least this many fans.</Text>
                 </View>
 
                 <View style={styles.section}>
@@ -233,15 +231,13 @@ const RacingPlanSettings = () => {
                         style={styles.input}
                         value={lookAheadDays.toString()}
                         onChangeText={(text) => {
-                            let value = parseInt(text) || 0
-                            // Cap between 0 and 30 days.
-                            value = Math.max(0, Math.min(value, 30))
+                            const value = parseInt(text) || 10
                             updateRacingSetting("lookAheadDays", value)
                         }}
                         keyboardType="numeric"
                         placeholder="10"
                     />
-                    <Text style={styles.inputDescription}>Number of days to look ahead when making smart racing decisions. (Range: 0-30)</Text>
+                    <Text style={styles.inputDescription}>Number of days to look ahead when making smart racing decisions.</Text>
                 </View>
 
                 <View style={styles.section}>
@@ -250,15 +246,13 @@ const RacingPlanSettings = () => {
                         style={styles.input}
                         value={smartRacingCheckInterval.toString()}
                         onChangeText={(text) => {
-                            let value = parseInt(text) || 2
-                            // Cap between 1 and 5 days.
-                            value = Math.max(1, Math.min(value, 5))
+                            const value = parseInt(text) || 2
                             updateRacingSetting("smartRacingCheckInterval", value)
                         }}
                         keyboardType="numeric"
                         placeholder="2"
                     />
-                    <Text style={styles.inputDescription}>How often the bot checks for optimal racing opportunities. Lower values = more frequent checks. (Range: 1-5)</Text>
+                    <Text style={styles.inputDescription}>How often the bot checks for optimal racing opportunities. Lower values = more frequent checks.</Text>
                 </View>
 
                 <View style={styles.section}>
