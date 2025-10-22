@@ -447,6 +447,9 @@ class Game(val myContext: Context) {
                 """.trimIndent(),
 				tag = tag
 			)
+			
+			// Update preferred distance based on new aptitudes.
+			training.updatePreferredDistance()
 		}
 	}
 
@@ -669,8 +672,9 @@ class Game(val myContext: Context) {
 		} else if (SettingsHelper.getBooleanSetting("debug", "debugMode_startAptitudesDetectionTest")) {
 			startAptitudesDetectionTest()
 		} else {
-			// Update the stat targets by distances.
+			// Update the stat targets by distances and the preferred distance for training.
 			training.setStatTargetsByDistances()
+			training.updatePreferredDistance()
 
 			wait(5.0)
 
