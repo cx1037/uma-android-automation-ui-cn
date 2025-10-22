@@ -9,6 +9,7 @@ import CustomCheckbox from "../../components/CustomCheckbox"
 import CustomTitle from "../../components/CustomTitle"
 import DraggablePriorityList from "../../components/DraggablePriorityList"
 import CustomAccordion from "../../components/CustomAccordion"
+import CustomSelect from "../../components/CustomSelect"
 import { ArrowLeft } from "lucide-react-native"
 
 const TrainingSettings = () => {
@@ -19,7 +20,7 @@ const TrainingSettings = () => {
     const [prioritizationModalVisible, setPrioritizationModalVisible] = useState(false)
 
     const { settings, setSettings, defaultSettings } = bsc
-    const { trainingBlacklist, statPrioritization, maximumFailureChance, disableTrainingOnMaxedStat, focusOnSparkStatTarget } = settings.training
+    const { trainingBlacklist, statPrioritization, maximumFailureChance, disableTrainingOnMaxedStat, focusOnSparkStatTarget, preferredDistanceOverride } = settings.training
 
     const stats = ["Speed", "Stamina", "Power", "Guts", "Wit"]
 
@@ -291,6 +292,28 @@ const TrainingSettings = () => {
                             description="When enabled, the bot will prioritize training sessions that have a chance to trigger spark events for stats that are below their target values."
                             className="my-2"
                         />
+                    </View>
+
+                    <View style={styles.section}>
+                        <View style={styles.row}>
+                            <Text style={styles.label}>Preferred Distance Override</Text>
+                            <CustomSelect
+                                value={preferredDistanceOverride}
+                                onValueChange={(value) => updateTrainingSetting("preferredDistanceOverride", value)}
+                                options={[
+                                    { label: "Auto", value: "Auto" },
+                                    { label: "Sprint", value: "Sprint" },
+                                    { label: "Mile", value: "Mile" },
+                                    { label: "Medium", value: "Medium" },
+                                    { label: "Long", value: "Long" },
+                                ]}
+                                placeholder="Select distance"
+                                width={200}
+                            />
+                        </View>
+                        <Text style={[styles.label, { fontSize: 14, color: colors.foreground, opacity: 0.7, marginTop: 4 }]}>
+                            Set the preferred race distance for training targets. "Auto" will automatically determine based on character aptitudes reading from left to right (S {">"} A priority).
+                        </Text>
                     </View>
 
                     {/* Stat Target Settings */}
