@@ -25,6 +25,8 @@ export interface Settings {
         preferredGrades: string[]
         lookAheadDays: number
         smartRacingCheckInterval: number
+        enableRaceStrategyOverride: boolean
+        juniorYearRaceStrategy: string
     }
 
     // Training Event settings
@@ -127,6 +129,8 @@ export const defaultSettings: Settings = {
         preferredGrades: ["G1", "G2", "G3"],
         lookAheadDays: 10,
         smartRacingCheckInterval: 2,
+        enableRaceStrategyOverride: false,
+        juniorYearRaceStrategy: "Front",
     },
     trainingEvent: {
         enablePrioritizeEnergyOptions: false,
