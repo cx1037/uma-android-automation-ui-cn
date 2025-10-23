@@ -22,10 +22,17 @@ class Racing (private val game: Game) {
     var raceRepeatWarningCheck = false
     var encounteredRacingPopup = false
     var skipRacing = false
-    var firstTime = true
+    var firstTimeSmartRacingSetup = true
+    var firstTimeRacing = true
 
     private val enableStopOnMandatoryRace: Boolean = SettingsHelper.getBooleanSetting("racing", "enableStopOnMandatoryRaces")
     var detectedMandatoryRaceCheck = false
+
+    // Race strategy override settings.
+    private val enableRaceStrategyOverride = SettingsHelper.getBooleanSetting("racing", "enableRaceStrategyOverride")
+    private val juniorYearRaceStrategy = SettingsHelper.getStringSetting("racing", "juniorYearRaceStrategy")
+    private var originalRaceStrategy: String? = null
+    private var hasAppliedStrategyOverride = false
 
     companion object {
         private const val TABLE_RACES = "races"
@@ -970,9 +977,9 @@ class Racing (private val game: Game) {
         // Check if smart racing is enabled - if so, use smartRacingCheckInterval instead of daysToRunExtraRaces.
         // Additionally, it makes sure that it always run at the beginning for the first time in order to score upcoming races.
         val enableRacingPlan = SettingsHelper.getBooleanSetting("racing", "enableRacingPlan")
-        if (firstTime || (enableRacingPlan && enableFarmingFans)) {
+        if (firstTimeSmartRacingSetup || (enableRacingPlan && enableFarmingFans)) {
             val smartRacingCheckInterval = SettingsHelper.getIntSetting("racing", "smartRacingCheckInterval")
-            firstTime = false
+            firstTimeSmartRacingSetup = false
             return dayNumber % smartRacingCheckInterval == 0 && !raceRepeatWarningCheck &&
                     game.imageUtils.findImage("race_select_extra_locked_uma_finals", tries = 1, region = game.imageUtils.regionBottomHalf).first == null &&
                     game.imageUtils.findImage("race_select_extra_locked", tries = 1, region = game.imageUtils.regionBottomHalf).first == null &&
@@ -1113,6 +1120,9 @@ class Racing (private val game: Game) {
 
             game.waitForLoading()
 
+            // Handle race strategy override if enabled.
+            handleRaceStrategyOverride()
+
             // Skip the race if possible, otherwise run it manually.
             val resultCheck: Boolean = if (game.imageUtils.findImage("race_skip_locked", tries = 5, region = game.imageUtils.regionBottomHalf).first == null) {
                 skipRace()
@@ -1198,6 +1208,9 @@ class Racing (private val game: Game) {
             game.findAndTapImage("race_confirm", tries = 30, region = game.imageUtils.regionBottomHalf)
             game.findAndTapImage("race_confirm", tries = 10, region = game.imageUtils.regionBottomHalf)
             game.wait(2.0)
+
+            // Handle race strategy override if enabled.
+            handleRaceStrategyOverride()
 
             // Skip the race if possible, otherwise run it manually.
             val resultCheck: Boolean = if (game.imageUtils.findImage("race_skip_locked", tries = 5, region = game.imageUtils.regionBottomHalf).first == null) {
@@ -1395,8 +1408,140 @@ class Racing (private val game: Game) {
                 game.wait(2.0)
                 game.findAndTapImage("race_end", tries = 10, region = game.imageUtils.regionBottomHalf)
             }
+
+            firstTimeRacing = false
         } else {
             game.printToLog("[ERROR] Cannot start the cleanup process for finishing the race. Moving on...", tag = tag, isError = true)
         }
+    }
+
+    /**
+     * Handles race strategy override for Junior Year races.
+     *
+     * During Junior Year: Applies the user-selected strategy and stores the original.
+     * After Junior Year: Restores the original strategy and disables the feature.
+     */
+    private fun handleRaceStrategyOverride() {
+        if (!enableRaceStrategyOverride || (firstTimeRacing && game.currentDate.year != 1)) {
+            return
+        }
+
+        val currentYear = game.currentDate.year
+        game.printToLog("[RACE] Handling race strategy override for Year $currentYear.", tag = tag)
+
+        // Check if we're on the racing screen by looking for the Change Strategy button.
+        if (!game.findAndTapImage("race_change_strategy", tries = 1, region = game.imageUtils.regionBottomHalf)) {
+            game.printToLog("[RACE] Change Strategy button not found. Skipping strategy override.", tag = tag)
+            return
+        }
+
+        // Wait for the strategy selection popup to appear.
+        game.wait(2.0)
+
+        // Find the confirm button to use as reference point for strategy coordinates.
+        val confirmLocation = game.imageUtils.findImage("confirm", region = game.imageUtils.regionBottomHalf).first
+        if (confirmLocation == null) {
+            game.printToLog("[ERROR] Could not find confirm button for strategy selection. Skipping strategy override.", tag = tag, isError = true)
+            game.findAndTapImage("cancel", region = game.imageUtils.regionMiddle)
+            return
+        }
+
+        val baseX = confirmLocation.x.toInt()
+        val baseY = confirmLocation.y.toInt()
+
+        if (currentYear == 1) {
+            // Junior Year: Apply user's selected strategy and store original.
+            if (!hasAppliedStrategyOverride) {
+                // Detect and store the original strategy.
+                val originalStrategy = detectOriginalStrategy()
+                if (originalStrategy != null) {
+                    originalRaceStrategy = originalStrategy
+                    game.printToLog("[RACE] Detected original race strategy: $originalStrategy", tag = tag)
+                }
+
+                // Apply the user's selected strategy.
+                game.printToLog("[RACE] Applying user-selected strategy: $juniorYearRaceStrategy", tag = tag)
+
+                if (modifyRacingStrategy(baseX, baseY, juniorYearRaceStrategy)) {
+                    hasAppliedStrategyOverride = true
+                    game.printToLog("[RACE] Successfully applied strategy override for Junior Year.", tag = tag)
+                } else {
+                    game.printToLog("[ERROR] Failed to apply strategy override.", tag = tag, isError = true)
+                }
+            }
+        } else {
+            // Year 2+: Restore original strategy and disable feature.
+            if (hasAppliedStrategyOverride && originalRaceStrategy != null) {
+                val restoreStrategy = originalRaceStrategy!!.uppercase()
+                game.printToLog("[RACE] Restoring original race strategy: $restoreStrategy", tag = tag)
+                
+                if (modifyRacingStrategy(baseX, baseY, restoreStrategy)) {
+                    hasAppliedStrategyOverride = false
+                    game.printToLog("[RACE] Successfully restored original strategy. Strategy override disabled for rest of run.", tag = tag)
+                } else {
+                    game.printToLog("[ERROR] Failed to restore original strategy.", tag = tag, isError = true)
+                }
+            }
+        }
+
+        // Click confirm to apply the strategy change.
+        if (game.findAndTapImage("confirm", tries = 3, region = game.imageUtils.regionBottomHalf)) {
+            game.wait(2.0)
+            game.printToLog("[RACE] Strategy change confirmed.", tag = tag)
+        } else {
+            game.printToLog("[ERROR] Failed to confirm strategy change.", tag = tag, isError = true)
+        }
+    }
+
+    /**
+     * Detects the original race strategy by searching for strategy indicators.
+     * 
+     * @return The detected strategy name or null if not found.
+     */
+    private fun detectOriginalStrategy(): String? {
+        val strategyImages = listOf(
+            "race_strategy_end" to "End",
+            "race_strategy_late" to "Late", 
+            "race_strategy_pace" to "Pace",
+            "race_strategy_front" to "Front"
+        )
+
+        for ((imageName, strategyName) in strategyImages) {
+            if (game.imageUtils.findImage(imageName).first != null) {
+                return strategyName
+            }
+        }
+
+        return null
+    }
+
+    /**
+     * Clicks on a specific strategy button using coordinate offsets from the confirm button.
+     * 
+     * @param baseX The X coordinate of the confirm button.
+     * @param baseY The Y coordinate of the confirm button.
+     * @param strategy The strategy to select ("Front", "Pace", "Late", "End").
+     * @return True if the click was successful, false otherwise.
+     */
+    private fun modifyRacingStrategy(baseX: Int, baseY: Int, strategy: String): Boolean {
+        val strategyOffsets = mapOf(
+            "End" to Pair(-585, -210),
+            "Late" to Pair(-355, -210),
+            "Pace" to Pair(-125, -210),
+            "Front" to Pair(105, -210)
+        )
+
+        val offset = strategyOffsets[strategy]
+        if (offset == null) {
+            game.printToLog("[ERROR] Unknown strategy: $strategy", tag = tag, isError = true)
+            return false
+        }
+
+        val targetX = (baseX + offset.first).toDouble()
+        val targetY = (baseY + offset.second).toDouble()
+
+        game.printToLog("[RACE] Clicking strategy button at ($targetX, $targetY) for strategy: $strategy", tag = tag)
+        
+        return game.gestureUtils.tap(targetX, targetY)
     }
 }
