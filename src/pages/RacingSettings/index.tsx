@@ -4,6 +4,7 @@ import { useNavigation } from "@react-navigation/native"
 import { useTheme } from "../../context/ThemeContext"
 import { BotStateContext } from "../../context/BotStateContext"
 import CustomCheckbox from "../../components/CustomCheckbox"
+import CustomSelect from "../../components/CustomSelect"
 import { Input } from "../../components/ui/input"
 import NavigationLink from "../../components/NavigationLink"
 import { ArrowLeft } from "lucide-react-native"
@@ -14,7 +15,7 @@ const RacingSettings = () => {
     const bsc = useContext(BotStateContext)
 
     const { settings, setSettings } = bsc
-    const { enableFarmingFans, daysToRunExtraRaces, disableRaceRetries, enableStopOnMandatoryRaces, enableForceRacing } = settings.racing
+    const { enableFarmingFans, daysToRunExtraRaces, disableRaceRetries, enableStopOnMandatoryRaces, enableForceRacing, enableRaceStrategyOverride, juniorYearRaceStrategy } = settings.racing
 
     const updateRacingSetting = (key: keyof typeof settings.racing, value: any) => {
         setSettings({
@@ -161,6 +162,36 @@ const RacingSettings = () => {
                             description="When enabled, the bot will automatically stop when it encounters a mandatory race, allowing you to manually handle them."
                             className="my-2"
                         />
+                    </View>
+
+                    <View style={styles.section}>
+                        <CustomCheckbox
+                            id="enable-race-strategy-override"
+                            checked={enableRaceStrategyOverride}
+                            onCheckedChange={(checked) => updateRacingSetting("enableRaceStrategyOverride", checked)}
+                            label="Override Race Strategy (Junior Year)"
+                            description="When enabled, forces the bot to use a specific race strategy during Junior Year races instead of the horse's original race strategy."
+                            className="my-2"
+                        />
+                        {enableRaceStrategyOverride && (
+                            <View style={styles.inputContainer}>
+                                <Text style={styles.inputLabel}>Junior Year Race Strategy</Text>
+                                <CustomSelect
+                                    options={[
+                                        { value: "Front", label: "Front" },
+                                        { value: "Pace", label: "Pace" },
+                                        { value: "Late", label: "Late" },
+                                        { value: "End", label: "End" },
+                                    ]}
+                                    value={juniorYearRaceStrategy}
+                                    onValueChange={(value) => updateRacingSetting("juniorYearRaceStrategy", value)}
+                                    placeholder="Select strategy"
+                                />
+                                <Text style={styles.inputDescription}>
+                                    The race strategy to use for all races during Junior Year. After Year 1, the bot will revert to using the horse's original race strategy.
+                                </Text>
+                            </View>
+                        )}
                     </View>
 
                     <View style={styles.section}>
